@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NetCar</string>
+    <string name="please_login">Az alkalmazás használatához lépj be</string>
+    <string name="email_address">Email cím</string>
+    <string name="password">Jelszó</string>
+    <string name="btn_signin_text">Bejelentkezés</string>
+    <string name="btn_sigin_error_email_1">Kérlek add meg az email címedet</string>
+    <string name="btn_sigin_error_email_2">Kérlek adj meg egy érvényes email címet</string>
+    <string name="btn_sigin_error_password_1">Kérlek add meg a jelszavad</string>
+    <string name="btn_sigin_error_password_2">Helytelen jelszó</string>
+    <string name="btn_signup_text">Regisztráció</string>
+</resources>

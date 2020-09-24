@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">NetCar</string>
+    <string name="please_login">Please login to use the application</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="btn_signin_text">Sign in</string>
+    <string name="btn_sigin_error_email_1">Please enter your email address</string>
+    <string name="btn_sigin_error_email_2">Please enter a valid email address</string>
+    <string name="btn_sigin_error_password_1">Please enter your password</string>
+    <string name="btn_sigin_error_password_2">Wrong password</string>
+    <string name="btn_signup_text">Sign up</string>
 </resources>

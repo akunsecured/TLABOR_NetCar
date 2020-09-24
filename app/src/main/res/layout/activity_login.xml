@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="48dp"
+    android:background="@color/bgColor"
+    android:padding="28dp"
     android:weightSum = "3"
     android:orientation="vertical"
     tools:context=".LoginActivity">
@@ -18,35 +19,55 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="16dp"
-        android:text="Please enter your e-mail and password" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email" />
+        android:textColor="@color/textColor"
+        android:textSize="16dp"
+        android:text="@string/please_login" />
 
     <EditText
         android:id="@+id/etEmailAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="@string/email_address"
+        android:textColorHint="@color/editTextHintColor"
+        android:textColor="@color/editTextColor"
+        android:theme="@style/editTextTheme"
         android:inputType="textEmailAddress"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Password"/>
 
     <EditText
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberPassword"/>
+        android:hint="@string/password"
+        android:textColorHint="@color/editTextHintColor"
+        android:textColor="@color/editTextColor"
+        android:theme="@style/editTextTheme"
+        android:inputType="textWebPassword"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"/>
 
     <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="315dp"
+        android:id="@+id/btnSignIn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Sign in" />
+        android:background="@drawable/login_button"
+        android:text="@string/btn_signin_text"
+        android:textColor="@color/btnTextColor"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="10dp"/>
+
+    <Button
+        android:id="@+id/btnSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/login_button"
+        android:text="@string/btn_signup_text"
+        android:textColor="@color/btnTextColor"/>
+
 
 </LinearLayout>
