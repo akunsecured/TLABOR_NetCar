@@ -1,7 +1,9 @@
-package com.netcar
+package hu.bme.aut.netcar
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.netcar.R
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -33,7 +35,15 @@ class LoginActivity : AppCompatActivity() {
             }
             else {
                 // Login megvalósítása
+
+
+                startActivity(Intent(this, ImageViewActivity::class.java))
             }
+        }
+
+        // Signup activity-re való váltás
+        btnSignUp.setOnClickListener {
+            startActivity(Intent(this, SignupActivity::class.java))
         }
     }
 }

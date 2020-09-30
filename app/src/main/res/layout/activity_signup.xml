@@ -4,27 +4,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bgColor"
-    android:padding="28dp"
-    android:weightSum = "3"
+    android:paddingHorizontal="28dp"
+    android:paddingVertical="256dp"
+    android:weightSum="3"
     android:orientation="vertical"
-    tools:context="hu.bme.aut.netcar.LoginActivity">
+    tools:context="hu.bme.aut.netcar.SignupActivity">
 
-    <FrameLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1.25" />
-    
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="16dp"
-        android:textColor="@color/textColor"
+        android:text="@string/signup_text"
         android:textSize="16dp"
-        android:text="@string/please_login" />
+        android:textColor="@color/textColor"/>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"/>
 
     <EditText
-        android:id="@+id/etEmailAddress"
+        android:id="@+id/etNameGiven"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/profile_name"
+        android:textColorHint="@color/editTextHintColor"
+        android:textColor="@color/editTextColor"
+        android:theme="@style/editTextTheme"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/etEmailGiven"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/email_address"
@@ -34,7 +42,7 @@
         android:inputType="textEmailAddress"/>
 
     <EditText
-        android:id="@+id/etPassword"
+        android:id="@+id/etPasswordGiven"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/password"
@@ -43,31 +51,14 @@
         android:theme="@style/editTextTheme"
         android:inputType="textWebPassword"/>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="36dp"/>
-
-    <Button
-        android:id="@+id/btnSignIn"
+    <EditText
+        android:id="@+id/etPasswordConfGiven"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/login_button"
-        android:text="@string/btn_signin_text"
-        android:textColor="@color/btnTextColor"/>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="10dp"/>
-
-    <Button
-        android:id="@+id/btnSignUp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/login_button"
-        android:text="@string/btn_signup_text"
-        android:textColor="@color/btnTextColor"/>
-
+        android:hint="@string/password_confirm"
+        android:textColorHint="@color/editTextHintColor"
+        android:textColor="@color/editTextColor"
+        android:theme="@style/editTextTheme"
+        android:inputType="textWebPassword"/>
 
 </LinearLayout>

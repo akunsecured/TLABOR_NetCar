@@ -1,4 +1,4 @@
-package com.netcar
+package hu.bme.aut.netcar
 
 import org.junit.Test
 

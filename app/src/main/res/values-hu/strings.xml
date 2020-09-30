@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">NetCar</string>
     <string name="please_login">Az alkalmazás használatához lépj be</string>
@@ -10,4 +9,8 @@
     <string name="btn_sigin_error_password_1">Kérlek add meg a jelszavad</string>
     <string name="btn_sigin_error_password_2">Helytelen jelszó</string>
     <string name="btn_signup_text">Regisztráció</string>
+    <string name="signup_text">Kérjük töltse ki a következő adatokat:</string>
+    <string name="profile_name">Profil neve</string>
+    <string name="password_confirm">Jelszó megerősítése</string>
+    <string name="press_this_button">Nyomd meg ezt a gombot</string>
 </resources>
