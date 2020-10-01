@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.squareup.picasso.Picasso
 
 class ListAdapter(val context: Context, val list: ArrayList<Car>): BaseAdapter() {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -20,6 +21,16 @@ class ListAdapter(val context: Context, val list: ArrayList<Car>): BaseAdapter()
         val carSeat = view.findViewById(R.id.car_seats) as TextView
         val carYear = view.findViewById(R.id.car_year) as TextView
         val carBrand = view.findViewById(R.id.car_brand) as TextView
+
+        if(position % 2 == 0) {
+            Picasso.get()
+            .load("https://ekladata.com/ADe6dQnZamiJG9zdAqNDGLTVsoA.png")
+            .into(carImage)
+        } else {
+            Picasso.get()
+                .load("https://tesco.hu/img/tescoce_hu/upload/cars/mcqueen-intro-v2.png")
+                .into(carImage)
+        }
 
         carId.text = list[position].id.toString()
         carContent.text = list[position].content

@@ -69,5 +69,18 @@
         android:text="@string/btn_signup_text"
         android:textColor="@color/btnTextColor"/>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="10dp"/>
+
+    <Button
+        android:id="@+id/btnTestPic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/login_button"
+        android:text="Test picture"
+        android:textColor="@color/btnTextColor"/>
+
 
 </LinearLayout>

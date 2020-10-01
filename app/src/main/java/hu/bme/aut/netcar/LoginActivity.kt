@@ -44,5 +44,9 @@ class LoginActivity : AppCompatActivity() {
         btnSignUp.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
         }
+
+        btnTestPic.setOnClickListener {
+            startActivity(Intent(this, ImageViewActivity::class.java))
+        }
     }
 }
