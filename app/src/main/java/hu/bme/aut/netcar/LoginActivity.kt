@@ -3,7 +3,6 @@ package hu.bme.aut.netcar
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.netcar.R
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -37,7 +36,7 @@ class LoginActivity : AppCompatActivity() {
                 // Login megvalósítása
 
 
-                startActivity(Intent(this, ImageViewActivity::class.java))
+                startActivity(Intent(this, ReadFromJsonActivity::class.java))
             }
         }
 

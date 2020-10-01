@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.netcar">
+    package="hu.bme.aut.netcar">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -11,10 +11,10 @@
         android:roundIcon="@mipmap/icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name="hu.bme.aut.netcar.ImageViewActivity" />
-        <activity android:name="hu.bme.aut.netcar.SignupActivity" />
-        <activity android:name="hu.bme.aut.netcar.LoginActivity">
+        <activity android:name=".ReadFromJsonActivity"></activity>
+        <activity android:name=".ImageViewActivity" />
+        <activity android:name=".SignupActivity" />
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

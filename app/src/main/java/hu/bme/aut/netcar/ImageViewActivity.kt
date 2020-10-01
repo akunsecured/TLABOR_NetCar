@@ -6,7 +6,7 @@ import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
-import com.netcar.R
+import hu.bme.aut.netcar.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_image_view.*
 import java.net.HttpURLConnection

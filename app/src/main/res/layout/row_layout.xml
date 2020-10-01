@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="4dp"
+    android:id="@+id/car_row">
+
+    <ImageView
+        android:id="@+id/car_image"
+        android:layout_width="192dp"
+        android:layout_height="192dp"></ImageView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp">
+
+        <TextView
+            android:id="@+id/car_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            tools:text="id">
+        </TextView>
+
+        <TextView
+            android:id="@+id/car_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            tools:text="content">
+        </TextView>
+
+        <TextView
+            android:id="@+id/car_plate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            tools:text="plate">
+        </TextView>
+
+        <TextView
+            android:id="@+id/car_wheels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            tools:text="wheels">
+        </TextView>
+
+        <TextView
+            android:id="@+id/car_seats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            tools:text="seats">
+        </TextView>
+
+        <TextView
+            android:id="@+id/car_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            tools:text="year">
+        </TextView>
+
+        <TextView
+            android:id="@+id/car_brand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            tools:text="brand">
+        </TextView>
+    </LinearLayout>
+</LinearLayout>
