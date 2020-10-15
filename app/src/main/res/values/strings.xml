@@ -24,4 +24,7 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="credits">Credits</string>
+    <string name="balance">Balance:</string>
+    <string name="your_rating">Your rating:</string>
 </resources>

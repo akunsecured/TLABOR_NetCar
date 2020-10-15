@@ -1,21 +1,64 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="hu.bme.aut.netcar.fragments.rating.RatingFragment">
+    android:layout_height="wrap_content"
+    android:background="@color/bgColor"
+    android:padding="80dp"
+    android:weightSum = "3"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context="hu.bme.aut.netcar.LoginActivity">
 
     <TextView
-        android:id="@+id/text_slideshow"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_gravity="center"
+        android:paddingTop="16dp"
+        android:textColor="@color/textColor"
+        android:textSize="35dp"
+        android:text="@string/your_rating"
+        android:paddingBottom="70dp"/>
+
+    <ImageView
+        android:id="@+id/creditimage"
+        android:layout_width="256dp"
+        android:layout_height="256dp"
+        android:layout_gravity="center"
+        tools:src="@drawable/star" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="16dp"
+            android:textColor="@color/textColor"
+            android:textSize="30dp"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="16dp"
+            android:textColor="@color/textColor"
+            android:textSize="30dp"
+            android:text="out of"
+            android:gravity="center"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="16dp"
+            android:textColor="@color/textColor"
+            android:textSize="30dp"
+            android:text="5"
+            android:gravity="center"/>
+    </LinearLayout>
+</LinearLayout>
