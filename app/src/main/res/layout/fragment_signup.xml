@@ -1,0 +1,83 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/signup_fragment"
+    tools:context="hu.bme.aut.netcar.fragments.signup.SignupFragment">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="28dp"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:id="@+id/netcar_logo_login"
+            android:src="@mipmap/icon_round"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:textSize="20dp"
+            android:textColor="@color/textColor"
+            android:gravity="center"
+            android:text="@string/signup_text"/>
+
+        <EditText
+            android:id="@+id/etNameGiven"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/profile_name"
+            android:textColorHint="@color/editTextHintColor"
+            android:textColor="@color/editTextColor"
+            android:theme="@style/editTextTheme"
+            android:inputType="text"/>
+
+        <EditText
+            android:id="@+id/etEmailGiven"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/email_address"
+            android:textColorHint="@color/editTextHintColor"
+            android:textColor="@color/editTextColor"
+            android:theme="@style/editTextTheme"
+            android:inputType="textEmailAddress"/>
+
+        <EditText
+            android:id="@+id/etPasswordGiven"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"
+            android:textColorHint="@color/editTextHintColor"
+            android:textColor="@color/editTextColor"
+            android:theme="@style/editTextTheme"
+            android:inputType="textWebPassword"/>
+
+        <EditText
+            android:id="@+id/etPasswordConfGiven"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password_confirm"
+            android:textColorHint="@color/editTextHintColor"
+            android:textColor="@color/editTextColor"
+            android:theme="@style/editTextTheme"
+            android:inputType="textWebPassword"
+            android:layout_marginBottom="28dp"/>
+
+        <Button
+            android:id="@+id/btnSignUp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/login_button"
+            android:text="@string/btn_signup_text"
+            android:textColor="@color/btnTextColor"/>
+
+    </LinearLayout>
+
+</FrameLayout>

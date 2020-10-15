@@ -3,13 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/bgColor"
     android:padding="80dp"
-    android:weightSum = "3"
     android:orientation="vertical"
-    android:gravity="center"
-    tools:context="hu.bme.aut.netcar.LoginActivity">
+    android:gravity="center">
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,46 +17,33 @@
         android:textColor="@color/textColor"
         android:textSize="35dp"
         android:text="@string/your_rating"
-        android:paddingBottom="70dp"/>
+        android:paddingBottom="24dp"/>
 
     <ImageView
         android:id="@+id/creditimage"
-        android:layout_width="256dp"
-        android:layout_height="256dp"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
         android:layout_gravity="center"
         tools:src="@drawable/star" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:paddingTop="16dp"
             android:textColor="@color/textColor"
             android:textSize="30dp"
-            android:gravity="center"/>
+            android:text="1"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:paddingTop="16dp"
             android:textColor="@color/textColor"
             android:textSize="30dp"
-            android:text="out of"
-            android:gravity="center"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:paddingTop="16dp"
-            android:textColor="@color/textColor"
-            android:textSize="30dp"
-            android:text="5"
-            android:gravity="center"/>
+            android:text="@string/out_of_5"/>
     </LinearLayout>
 </LinearLayout>

@@ -21,10 +21,13 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
     <string name="credits">Credits</string>
     <string name="balance">Balance:</string>
     <string name="your_rating">Your rating:</string>
+    <string name="menu_rating">Rating</string>
+    <string name="menu_credits">Credits</string>
+    <string name="menu_map">Map</string>
+    <string name="menu_logout">Logout</string>
+    <string name="out_of_5">out of 5</string>
+    <string name="btn_add_credits">Add credits</string>
 </resources>

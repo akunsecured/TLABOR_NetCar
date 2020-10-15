@@ -8,18 +8,18 @@
     <fragment
         android:id="@+id/nav_map"
         android:name="hu.bme.aut.netcar.fragments.map.MapFragment"
-        android:label="@string/menu_home"
+        android:label="@string/menu_map"
         tools:layout="@layout/fragment_map" />
 
     <fragment
         android:id="@+id/nav_credits"
         android:name="hu.bme.aut.netcar.fragments.credits.CreditsFragment"
-        android:label="@string/menu_gallery"
+        android:label="@string/menu_credits"
         tools:layout="@layout/fragment_credits" />
 
     <fragment
         android:id="@+id/nav_rating"
         android:name="hu.bme.aut.netcar.fragments.rating.RatingFragment"
-        android:label="@string/menu_slideshow"
+        android:label="@string/menu_rating"
         tools:layout="@layout/fragment_rating" />
 </navigation>

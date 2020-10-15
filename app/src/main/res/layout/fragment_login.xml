@@ -1,0 +1,73 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/login_fragment"
+    tools:context="hu.bme.aut.netcar.fragments.login.LoginFragment">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="28dp"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:id="@+id/netcar_logo_login"
+            android:src="@mipmap/icon_round"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:textSize="20dp"
+            android:textColor="@color/textColor"
+            android:gravity="center"
+            android:text="@string/please_login"/>
+
+        <EditText
+            android:id="@+id/etEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/email_address"
+            android:textColorHint="@color/editTextHintColor"
+            android:textColor="@color/editTextColor"
+            android:theme="@style/editTextTheme"
+            android:inputType="textEmailAddress"/>
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"
+            android:textColorHint="@color/editTextHintColor"
+            android:textColor="@color/editTextColor"
+            android:theme="@style/editTextTheme"
+            android:inputType="textWebPassword"
+            android:layout_marginBottom="28dp"/>
+
+        <Button
+            android:id="@+id/btnSignIn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/login_button"
+            android:text="@string/btn_signin_text"
+            android:textColor="@color/btnTextColor"
+            android:layout_marginBottom="14dp"/>
+
+        <Button
+            android:id="@+id/btnSignUp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/login_button"
+            android:text="@string/btn_signup_text"
+            android:textColor="@color/btnTextColor"/>
+
+    </LinearLayout>
+</FrameLayout>

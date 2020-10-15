@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/bgColor"
     android:padding="80dp"
-    android:weightSum = "3"
     android:orientation="vertical"
-    android:gravity="center"
-    tools:context="hu.bme.aut.netcar.LoginActivity">
+    android:gravity="center">
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,12 +16,12 @@
         android:textColor="@color/textColor"
         android:textSize="35dp"
         android:text="@string/credits"
-        android:paddingBottom="70dp"/>
+        android:paddingBottom="24dp"/>
 
     <ImageView
         android:id="@+id/creditimage"
-        android:layout_width="256dp"
-        android:layout_height="256dp"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
         android:layout_gravity="center"
         tools:src="@drawable/cash" />
 
@@ -38,11 +35,19 @@
         android:text="@string/balance" />
 
     <TextView
-        android:id="@+id/creditamount"
+        android:id="@+id/tvCreditAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:paddingTop="16dp"
         android:textColor="@color/textColor"
-        android:textSize="25dp" />
+        android:textSize="25dp"
+        android:text="$100"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btnAddCredits"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_add_credits"/>
 </LinearLayout>
