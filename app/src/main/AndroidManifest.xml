@@ -11,7 +11,11 @@
         android:roundIcon="@mipmap/icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ReadFromJsonActivity"></activity>
+        <activity
+            android:name=".NavigationActivity"
+            android:label="@string/title_activity_navigation"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".ReadFromJsonActivity" />
         <activity android:name=".ImageViewActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".LoginActivity">

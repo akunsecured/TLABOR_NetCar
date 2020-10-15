@@ -36,17 +36,13 @@ class LoginActivity : AppCompatActivity() {
                 // Login megvalósítása
 
 
-                startActivity(Intent(this, ReadFromJsonActivity::class.java))
+                startActivity(Intent(this, NavigationActivity::class.java))
             }
         }
 
         // Signup activity-re való váltás
         btnSignUp.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
-        }
-
-        btnTestPic.setOnClickListener {
-            startActivity(Intent(this, ImageViewActivity::class.java))
         }
     }
 }
