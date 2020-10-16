@@ -25,7 +25,7 @@ class SignupFragment : Fragment() {
                 R.id.action_SignupFragment_to_LoginFragment, null
             )
 
-            Toast.makeText(context, "You have successfully registered. Now you can login to use the app!", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, getString(R.string.successfully_registered), Toast.LENGTH_LONG).show()
         }
     }
 }

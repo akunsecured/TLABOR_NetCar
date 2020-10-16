@@ -29,7 +29,8 @@ class MapsFragment : Fragment() {
          */
         val bp = LatLng(47.481384, 19.055265)
         googleMap.addMarker(MarkerOptions().position(bp).title("Marker in Budapest"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(bp))
+        val zoomLevel = 16.0f
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bp, zoomLevel))
     }
 
     override fun onCreateView(

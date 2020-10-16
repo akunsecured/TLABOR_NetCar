@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bgColor"
-    android:padding="80dp"
+    android:padding="60dp"
     android:orientation="vertical"
     android:gravity="center">
 
@@ -16,6 +16,7 @@
         android:textColor="@color/textColor"
         android:textSize="35dp"
         android:text="@string/credits"
+        android:textAlignment="center"
         android:paddingBottom="24dp"/>
 
     <ImageView
@@ -32,7 +33,8 @@
         android:paddingTop="16dp"
         android:textColor="@color/textColor"
         android:textSize="30dp"
-        android:text="@string/balance" />
+        android:text="@string/balance"
+        android:textAlignment="center"/>
 
     <TextView
         android:id="@+id/tvCreditAmount"
@@ -43,6 +45,7 @@
         android:textColor="@color/textColor"
         android:textSize="25dp"
         android:text="$100"
+        android:textAlignment="center"
         android:layout_marginBottom="24dp"/>
 
     <Button

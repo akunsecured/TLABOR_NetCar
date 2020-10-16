@@ -13,4 +13,21 @@
     <string name="profile_name">Profil neve</string>
     <string name="password_confirm">Jelszó megerősítése</string>
     <string name="press_this_button">Nyomd meg ezt a gombot</string>
+    <string name="navigation_drawer_open">Navigációs fül megnyitása</string>
+    <string name="navigation_drawer_close">Navigációs fül bezárása</string>
+    <string name="action_settings">Beállítások</string>
+    <string name="credits">Kreditek</string>
+    <string name="balance">Összeg:</string>
+    <string name="your_rating">Kapott értékelésed:</string>
+    <string name="menu_rating">Értékelés</string>
+    <string name="menu_credits">Kreditek</string>
+    <string name="menu_map">Térkép</string>
+    <string name="menu_logout">Kilépés</string>
+    <string name="out_of_5">az 5-ből</string>
+    <string name="btn_add_credits">Kredit feltöltése</string>
+    <string name="are_you_sure_want_logout">Biztosan ki szeretnél jelentkezni?</string>
+    <string name="yes">Igen</string>
+    <string name="no">Nem</string>
+    <string name="menu_settings">Beállítások</string>
+    <string name="successfully_registered">Sikeresen regisztráltál! Most már be tudsz lépni, hogy használhasd az alkalmazást!</string>
 </resources>
