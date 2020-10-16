@@ -1,9 +1,11 @@
 package hu.bme.aut.netcar
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -43,6 +45,19 @@ class NavigationActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // Logout item
+        navView.menu.findItem(R.id.nav_logout).setOnMenuItemClickListener {
+            AlertDialog.Builder(this)
+                .setMessage(getString(R.string.are_you_sure_want_logout))
+                .setPositiveButton(getString(R.string.no), null)
+                .setNegativeButton(getString(R.string.yes)) {
+                        dialogInterface, i -> this.finish()
+                }
+                .show()
+
+            return@setOnMenuItemClickListener true;
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -54,6 +69,16 @@ class NavigationActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onBackPressed() {
+        AlertDialog.Builder(this)
+        .setMessage(getString(R.string.are_you_sure_want_logout))
+        .setPositiveButton(getString(R.string.no), null)
+        .setNegativeButton(getString(R.string.yes)) {
+                dialogInterface, i -> this.finish()
+        }
+        .show()
     }
 
 }

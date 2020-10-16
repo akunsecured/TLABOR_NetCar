@@ -30,4 +30,7 @@
     <string name="menu_logout">Logout</string>
     <string name="out_of_5">out of 5</string>
     <string name="btn_add_credits">Add credits</string>
+    <string name="are_you_sure_want_logout">Are you sure you want to logout?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

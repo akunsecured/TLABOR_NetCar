@@ -22,10 +22,6 @@
             android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".ReadFromJsonActivity" />
-        <activity android:name=".SignupActivity" />
-        <activity android:name=".LoginActivity">
-        </activity>
     </application>
 
 </manifest>

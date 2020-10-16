@@ -16,11 +16,12 @@
             android:id="@+id/nav_rating"
             android:icon="@drawable/ic_menu_star"
             android:title="@string/menu_rating" />
-        <item
-            android:id="@+id/nav_logout"
-            android:icon="@drawable/ic_menu_logout"
-            android:gravity="end"
-            android:layout_gravity="end"
-            android:title="@string/menu_logout" />
     </group>
+
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/ic_menu_logout"
+        android:gravity="bottom"
+        android:layout_gravity="bottom"
+        android:title="@string/menu_logout" />
 </menu>
