@@ -31,4 +31,5 @@
     <string name="menu_settings">Beállítások</string>
     <string name="successfully_registered">Sikeresen regisztráltál! Most már be tudsz lépni, hogy használhasd az alkalmazást!</string>
     <string name="register_as_driver">Regisztrálás sofőrként</string>
+    <string name="active_driver">Aktív sofőr</string>
 </resources>

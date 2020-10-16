@@ -1,22 +1,24 @@
 package hu.bme.aut.netcar
 
-import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.CompoundButton
+import android.widget.Switch
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
+
 
 class NavigationActivity : AppCompatActivity() {
 
@@ -51,8 +53,7 @@ class NavigationActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setMessage(getString(R.string.are_you_sure_want_logout))
                 .setPositiveButton(getString(R.string.no), null)
-                .setNegativeButton(getString(R.string.yes)) {
-                        dialogInterface, i -> this.finish()
+                .setNegativeButton(getString(R.string.yes)) { dialogInterface, i -> this.finish()
                 }
                 .show()
 
@@ -63,6 +64,21 @@ class NavigationActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.navigation, menu)
+        val item: MenuItem = menu.findItem(R.id.switchId) as MenuItem
+        item.setActionView(R.layout.switch_layout)
+        val switchAB: Switch = item
+            .getActionView().findViewById(R.id.switchAB)
+        switchAB.isChecked = false
+
+        switchAB.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                Toast.makeText(application, "ON", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(application, "OFF", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
         return true
     }
 
@@ -75,8 +91,7 @@ class NavigationActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
         .setMessage(getString(R.string.are_you_sure_want_logout))
         .setPositiveButton(getString(R.string.no), null)
-        .setNegativeButton(getString(R.string.yes)) {
-                dialogInterface, i -> this.finish()
+        .setNegativeButton(getString(R.string.yes)) { dialogInterface, i -> this.finish()
         }
         .show()
     }
