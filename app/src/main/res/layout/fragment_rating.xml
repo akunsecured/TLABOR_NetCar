@@ -21,10 +21,10 @@
 
     <ImageView
         android:id="@+id/creditimage"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
+        android:layout_width="224dp"
+        android:layout_height="224dp"
         android:layout_gravity="center"
-        tools:src="@drawable/star" />
+        android:src="@drawable/star" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -44,6 +44,7 @@
             android:paddingTop="16dp"
             android:textColor="@color/textColor"
             android:textSize="30dp"
-            android:text="@string/out_of_5"/>
+            android:text="@string/out_of_5"
+            android:paddingLeft="5dp"/>
     </LinearLayout>
 </LinearLayout>
