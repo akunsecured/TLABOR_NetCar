@@ -25,7 +25,8 @@ class CreditsFragment : Fragment() {
 
         btnAddCredits.setOnClickListener {
             var credits = tvCreditAmount.text.toString().removeRange(0, 1).toInt()
-            val builder : AlertDialog.Builder = AlertDialog.Builder(view.context).setTitle("ADDING CREDITS").setMessage("Enter credits:")
+            val builder : AlertDialog.Builder = AlertDialog.Builder(view.context).setTitle(getString(
+                            R.string.dialog_title_adding_credits)).setMessage(getString(R.string.dialog_message_adding_credits))
             val input = EditText(context)
             val lp = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -35,7 +36,7 @@ class CreditsFragment : Fragment() {
             input.layoutParams = lp
             input.inputType = InputType.TYPE_CLASS_NUMBER
             builder.setView(input)
-                .setNeutralButton("Add") { _, _ ->
+                .setNeutralButton(getString(R.string.dialog_button_adding_credits)) { _, _ ->
                     tvCreditAmount.text = "$" + (credits + input.text.toString().toInt()).toString()
                 }
 

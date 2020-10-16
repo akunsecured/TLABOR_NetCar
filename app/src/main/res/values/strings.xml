@@ -37,4 +37,7 @@
     <string name="successfully_registered">You have successfully registered. Now you can login to use the app!</string>
     <string name="register_as_driver">Register as driver</string>
     <string name="active_driver">Active driver</string>
+    <string name="dialog_title_adding_credits">ADDING CREDITS</string>
+    <string name="dialog_message_adding_credits">Enter credits:</string>
+    <string name="dialog_button_adding_credits">Add</string>
 </resources>

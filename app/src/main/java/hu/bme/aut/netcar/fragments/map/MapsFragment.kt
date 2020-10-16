@@ -1,18 +1,21 @@
 package hu.bme.aut.netcar.fragments.map
 
-import androidx.fragment.app.Fragment
-
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.tasks.Task
 import hu.bme.aut.netcar.R
 
 class MapsFragment : Fragment() {
@@ -27,10 +30,14 @@ class MapsFragment : Fragment() {
          * install it inside the SupportMapFragment. This method will only be triggered once the
          * user has installed Google Play services and returned to the app.
          */
+
         val bp = LatLng(47.481384, 19.055265)
+
+        googleMap.isMyLocationEnabled = true // <- erre kellene azt, amit a @MainActivity-ben csináltam
+
         googleMap.addMarker(MarkerOptions().position(bp).title("Marker in Budapest"))
         val zoomLevel = 16.0f
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bp, zoomLevel))
+        // googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bp, zoomLevel))
     }
 
     override fun onCreateView(
