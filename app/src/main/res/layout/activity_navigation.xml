@@ -20,5 +20,16 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
+        app:menu="@menu/activity_main_drawer">
+
+        <Button
+            android:id="@+id/btnRegisterAsDriver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/register_as_driver_button"
+            android:textColor="@color/btnTextColor"
+            android:text="@string/register_as_driver"
+            android:layout_gravity="bottom"
+            android:layout_margin="10dp" />
+    </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>
