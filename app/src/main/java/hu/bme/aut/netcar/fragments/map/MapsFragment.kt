@@ -3,7 +3,6 @@ package hu.bme.aut.netcar.fragments.map
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -14,8 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -37,20 +35,7 @@ class MapsFragment : Fragment() {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
-    private val callback = OnMapReadyCallback { googleMap ->
-        setUpMap(googleMap)
-
-        val bp = LatLng(47.481384, 19.055265)
-
-        var markersArray = DataManager.drivers
-        placeMarkerOnMap(markersArray, googleMap)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
         return inflater.inflate(R.layout.fragment_maps, container, false)
     }
@@ -61,33 +46,11 @@ class MapsFragment : Fragment() {
         mapFragment?.getMapAsync(callback)
     }
 
-    fun drawableToBitmap(drawable: Drawable): Bitmap? {
-        if (drawable is BitmapDrawable) {
-            return drawable.bitmap
-        }
-        val bitmap =
-            Bitmap.createBitmap(
-                drawable.intrinsicWidth,
-                drawable.intrinsicHeight,
-                Bitmap.Config.ARGB_8888
-            )
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
-        return bitmap
-    }
+    private val callback = OnMapReadyCallback { googleMap ->
+        setUpMap(googleMap)
 
-    private fun placeMarkerOnMap(markers: ArrayList<Driver>, map: GoogleMap) {
-        for (driver in markers){
-            val markerOptions = MarkerOptions().position(driver.location).title(driver.name+ " (" + driver.serial +")").snippet("Márka: " + driver.carmodel + ", Szabad hely: " + driver.seats.toString())
-            val d = resources.getDrawable(R.drawable.ic_map_car)
-            markerOptions.icon(
-                BitmapDescriptorFactory.fromBitmap(
-                    drawableToBitmap(d)
-                )
-            )
-            map.addMarker(markerOptions)
-        }
+        var markersArray = DataManager.drivers
+        placeMarkerOnMap(markersArray, googleMap)
     }
 
     // Asking for location permission
@@ -103,7 +66,10 @@ class MapsFragment : Fragment() {
             return
         }
 
+        // Other map control buttons
         googleMap.uiSettings.isZoomControlsEnabled = true
+        googleMap.uiSettings.isCompassEnabled = true
+        googleMap.uiSettings.isMapToolbarEnabled = true
 
         // If permission was granted, we can see our device's current location
         googleMap.isMyLocationEnabled = true
@@ -118,16 +84,7 @@ class MapsFragment : Fragment() {
         }
     }
 
-    // To refresh the actual Fragment
-    private fun refreshFragment() {
-        activity?.supportFragmentManager?.beginTransaction()?.replace(this.id, MapsFragment())?.commit()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
             LOCATION_PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty()) {
@@ -145,5 +102,43 @@ class MapsFragment : Fragment() {
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults)
             }
         }
+    }
+
+    // To refresh the actual Fragment
+    private fun refreshFragment() {
+        activity?.supportFragmentManager?.beginTransaction()?.replace(this.id, MapsFragment())?.commit()
+    }
+
+    // Function to place markers of a list on the map
+    private fun placeMarkerOnMap(markers: ArrayList<Driver>, map: GoogleMap) {
+        for (driver in markers){
+            val markerOptions = MarkerOptions().position(driver.location)
+                .title(driver.name+ " (" + driver.serial +")")
+                .snippet("Márka: " + driver.carmodel + ", Szabad hely: " + driver.seats.toString())
+            val d = resources.getDrawable(R.drawable.ic_map_car)
+            markerOptions.icon(
+                BitmapDescriptorFactory.fromBitmap(
+                    drawableToBitmap(d)
+                )
+            )
+            map.addMarker(markerOptions)
+        }
+    }
+
+    // Function to make bitmap objects of XML
+    private fun drawableToBitmap(drawable: Drawable): Bitmap? {
+        if (drawable is BitmapDrawable) {
+            return drawable.bitmap
+        }
+        val bitmap =
+            Bitmap.createBitmap(
+                drawable.intrinsicWidth,
+                drawable.intrinsicHeight,
+                Bitmap.Config.ARGB_8888
+            )
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
     }
 }
