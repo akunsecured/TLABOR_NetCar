@@ -10,7 +10,7 @@
     <string name="btn_sigin_error_password_2">Wrong password</string>
     <string name="btn_signup_text">Sign up</string>
     <string name="signup_text">Please fill the following items:</string>
-    <string name="profile_name">Profile Name</string>
+    <string name="profile_name">User Name</string>
     <string name="password_confirm">Confirm Password</string>
     <string name="press_this_button">Press this button</string>
     <string name="title_activity_navigation" translatable="false">NavigationActivity</string>
