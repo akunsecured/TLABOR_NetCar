@@ -21,6 +21,8 @@ class SignupFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         btnSignUp.setOnClickListener {
+            var canNavigate = true
+
             findNavController().navigate(
                 R.id.action_SignupFragment_to_LoginFragment, null
             )

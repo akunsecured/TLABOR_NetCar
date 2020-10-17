@@ -2,6 +2,11 @@ package hu.bme.aut.netcar.fragments.map
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,12 +18,15 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import hu.bme.aut.netcar.R
+import hu.bme.aut.netcar.data.DataManager
+import hu.bme.aut.netcar.data.Driver
+
 
 class MapsFragment : Fragment() {
 
@@ -34,7 +42,8 @@ class MapsFragment : Fragment() {
 
         val bp = LatLng(47.481384, 19.055265)
 
-        googleMap.addMarker(MarkerOptions().position(bp).title("Marker in Budapest"))
+        var markersArray = DataManager.drivers
+        placeMarkerOnMap(markersArray, googleMap)
     }
 
     override fun onCreateView(
@@ -52,11 +61,45 @@ class MapsFragment : Fragment() {
         mapFragment?.getMapAsync(callback)
     }
 
+    fun drawableToBitmap(drawable: Drawable): Bitmap? {
+        if (drawable is BitmapDrawable) {
+            return drawable.bitmap
+        }
+        val bitmap =
+            Bitmap.createBitmap(
+                drawable.intrinsicWidth,
+                drawable.intrinsicHeight,
+                Bitmap.Config.ARGB_8888
+            )
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
+    }
+
+    private fun placeMarkerOnMap(markers: ArrayList<Driver>, map: GoogleMap) {
+        for (driver in markers){
+            val markerOptions = MarkerOptions().position(driver.location).title(driver.name+ " (" + driver.serial +")").snippet("Márka: " + driver.carmodel + ", Szabad hely: " + driver.seats.toString())
+            val d = resources.getDrawable(R.drawable.ic_map_car)
+            markerOptions.icon(
+                BitmapDescriptorFactory.fromBitmap(
+                    drawableToBitmap(d)
+                )
+            )
+            map.addMarker(markerOptions)
+        }
+    }
+
     // Asking for location permission
-    private fun setUpMap(googleMap : GoogleMap) {
-        if (ContextCompat.checkSelfPermission(this.requireActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+    private fun setUpMap(googleMap: GoogleMap) {
+        if (ContextCompat.checkSelfPermission(
+                this.requireActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
             return
         }
 
@@ -80,7 +123,11 @@ class MapsFragment : Fragment() {
         activity?.supportFragmentManager?.beginTransaction()?.replace(this.id, MapsFragment())?.commit()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
             LOCATION_PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty()) {
@@ -90,7 +137,7 @@ class MapsFragment : Fragment() {
                             success = false
                     }
                     if (success)
-                        // If the permission was granted, the fragment must be refreshed to see the current location
+                    // If the permission was granted, the fragment must be refreshed to see the current location
                         refreshFragment()
                 }
             }
