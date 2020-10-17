@@ -37,7 +37,14 @@ class CreditsFragment : Fragment() {
             input.inputType = InputType.TYPE_CLASS_NUMBER
             builder.setView(input)
                 .setNeutralButton(getString(R.string.dialog_button_adding_credits)) { _, _ ->
-                    tvCreditAmount.text = "$" + (credits + input.text.toString().toInt()).toString()
+                    if(input.text.isEmpty()) {
+                        tvCreditAmount.text =
+                            "$" + (credits + 0).toString()
+                    }
+                    else{
+                        tvCreditAmount.text =
+                            "$" + (credits + input.text.toString().toInt()).toString()
+                    }
                 }
 
             val dialog = builder.create()
