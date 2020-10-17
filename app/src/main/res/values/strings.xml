@@ -5,9 +5,14 @@
     <string name="password">Password</string>
     <string name="btn_signin_text">Sign in</string>
     <string name="btn_sigin_error_email_1">Please enter your email address</string>
+    <string name="btn_sigin_error_username_1">Please enter your username</string>
+    <string name="btn_sigin_error_username_2">The username is too short</string>
+    <string name="btn_sigin_error_username_3">The username may not contain special characters</string>
     <string name="btn_sigin_error_email_2">Please enter a valid email address</string>
     <string name="btn_sigin_error_password_1">Please enter your password</string>
-    <string name="btn_sigin_error_password_2">Wrong password</string>
+    <string name="btn_sigin_error_password_2">The password is too short</string>
+    <string name="btn_sigin_error_password_3">The password may not contain special characters</string>
+    <string name="btn_sigin_error_password_4">The passwords do not match</string>
     <string name="btn_signup_text">Sign up</string>
     <string name="signup_text">Please fill the following items:</string>
     <string name="profile_name">User Name</string>

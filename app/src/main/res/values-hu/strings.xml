@@ -6,8 +6,13 @@
     <string name="btn_signin_text">Bejelentkezés</string>
     <string name="btn_sigin_error_email_1">Kérlek add meg az email címedet</string>
     <string name="btn_sigin_error_email_2">Kérlek adj meg egy érvényes email címet</string>
+    <string name="btn_sigin_error_username_1">Kérlek add meg a felhasználó nevedet</string>
+    <string name="btn_sigin_error_username_2">A felhasználó név túl rövid</string>
+    <string name="btn_sigin_error_username_3">A felhasználó név nem tartalmazhat speciális karaktereket</string>
     <string name="btn_sigin_error_password_1">Kérlek add meg a jelszavad</string>
-    <string name="btn_sigin_error_password_2">Helytelen jelszó</string>
+    <string name="btn_sigin_error_password_2">A jelszó túl rövid</string>
+    <string name="btn_sigin_error_password_3">A jelszó nem tartalmazhat speciális karaktereket</string>
+    <string name="btn_sigin_error_password_4">A jelszavak nem egyeznek</string>
     <string name="btn_signup_text">Regisztráció</string>
     <string name="signup_text">Kérjük töltse ki a következő adatokat:</string>
     <string name="profile_name">Felhasználónév</string>
