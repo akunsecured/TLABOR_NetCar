@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#3A559F</color>
+    <color name="colorPrimaryDark">#3A559F</color>
+    <color name="colorAccent">#00BCD4</color>
     <color name="bgColor">#000000</color>
     <color name="textColor">#FFFFFF</color>
     <color name="editTextColor">#FFFFFF</color>
     <color name="editTextHintColor">#FFFFFF</color>
     <color name="btnTextColor">#FFFFFF</color>
-    <color name="btnBgColor">#5783fa</color>
+    <color name="btnBgColor">#3A559F</color>
 </resources>
