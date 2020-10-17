@@ -2,42 +2,35 @@ package hu.bme.aut.netcar.fragments.map
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.Task
 import hu.bme.aut.netcar.R
 
 class MapsFragment : Fragment() {
 
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+    }
+
     private val callback = OnMapReadyCallback { googleMap ->
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
+        setUpMap(googleMap)
 
         val bp = LatLng(47.481384, 19.055265)
 
-        googleMap.isMyLocationEnabled = true // <- erre kellene azt, amit a @MainActivity-ben csináltam
-
         googleMap.addMarker(MarkerOptions().position(bp).title("Marker in Budapest"))
         val zoomLevel = 16.0f
-        // googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bp, zoomLevel))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bp, zoomLevel))
     }
 
     override fun onCreateView(
@@ -52,5 +45,42 @@ class MapsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
+    }
+
+    // Asking for location permission
+    private fun setUpMap(googleMap : GoogleMap) {
+        if (ContextCompat.checkSelfPermission(this.requireActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+            return
+        }
+
+        // If permission was granted, we can see our device's current location
+        googleMap.isMyLocationEnabled = true
+    }
+
+    // To refresh the actual Fragment
+    private fun refreshFragment() {
+        activity?.supportFragmentManager?.beginTransaction()?.replace(this.id, MapsFragment())?.commit()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            LOCATION_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty()) {
+                    var success = true
+                    for (i in grantResults.indices) {
+                        if (grantResults[i] == PackageManager.PERMISSION_DENIED)
+                            success = false
+                    }
+                    if (success)
+                        // If the permission was granted, the fragment must be refreshed to see the current location
+                        refreshFragment()
+                }
+            }
+            else -> {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+            }
+        }
     }
 }
