@@ -2,12 +2,15 @@ package hu.bme.aut.netcar.fragments.map
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 
@@ -19,6 +22,9 @@ import hu.bme.aut.netcar.R
 
 class MapsFragment : Fragment() {
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var lastLocation: Location
+
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
@@ -29,8 +35,6 @@ class MapsFragment : Fragment() {
         val bp = LatLng(47.481384, 19.055265)
 
         googleMap.addMarker(MarkerOptions().position(bp).title("Marker in Budapest"))
-        val zoomLevel = 16.0f
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bp, zoomLevel))
     }
 
     override fun onCreateView(
@@ -38,6 +42,7 @@ class MapsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
         return inflater.inflate(R.layout.fragment_maps, container, false)
     }
 
@@ -55,8 +60,18 @@ class MapsFragment : Fragment() {
             return
         }
 
+        googleMap.uiSettings.isZoomControlsEnabled = true
+
         // If permission was granted, we can see our device's current location
         googleMap.isMyLocationEnabled = true
+
+        fusedLocationClient.lastLocation.addOnSuccessListener(this.requireActivity()) { location ->
+            if (location != null) {
+                lastLocation = location
+                val currentLatLng = LatLng(location.longitude, location.longitude)
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+            }
+        }
     }
 
     // To refresh the actual Fragment
