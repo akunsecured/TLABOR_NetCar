@@ -65,11 +65,12 @@ class MapsFragment : Fragment() {
         // If permission was granted, we can see our device's current location
         googleMap.isMyLocationEnabled = true
 
+        // Zoom into last location
         fusedLocationClient.lastLocation.addOnSuccessListener(this.requireActivity()) { location ->
             if (location != null) {
                 lastLocation = location
-                val currentLatLng = LatLng(location.longitude, location.longitude)
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                val currentLatLng = LatLng(location.latitude, location.longitude)
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16.0f))
             }
         }
     }
