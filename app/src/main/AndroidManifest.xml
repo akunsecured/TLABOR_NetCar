@@ -32,7 +32,8 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".MainActivity"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,7 +43,8 @@
         <activity
             android:name=".NavigationActivity"
             android:label="@string/title_activity_navigation"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
