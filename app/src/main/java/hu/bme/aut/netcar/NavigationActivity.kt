@@ -5,47 +5,45 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Switch
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_navigation.*
 
 
 class NavigationActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
+    private lateinit var navBtn: FloatingActionButton
+    private lateinit var mDrawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
 
-        val fab: FloatingActionButton = findViewById(R.id.fab)
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        mDrawerLayout = drawer_layout
+        actionBarDrawerToggle = ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close)
+        mDrawerLayout.addDrawerListener(actionBarDrawerToggle)
+        actionBarDrawerToggle.syncState()
+
+        navBtn = findViewById(R.id.navBtn)
+        navBtn.setOnClickListener {
+            mDrawerLayout.openDrawer(GravityCompat.START)
         }
-        fab.isEnabled = false
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_map, R.id.nav_credits, R.id.nav_rating
-            ), drawerLayout
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         // Logout item
@@ -87,11 +85,16 @@ class NavigationActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        AlertDialog.Builder(this)
-        .setMessage(getString(R.string.are_you_sure_want_logout))
-        .setPositiveButton(getString(R.string.no), null)
-        .setNegativeButton(getString(R.string.yes)) { dialogInterface, i -> this.finish()
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START))
+            mDrawerLayout.closeDrawer(GravityCompat.START)
+        else {
+            AlertDialog.Builder(this)
+                .setMessage(getString(R.string.are_you_sure_want_logout))
+                .setPositiveButton(getString(R.string.no), null)
+                .setNegativeButton(getString(R.string.yes)) { dialogInterface, i ->
+                    this.finish()
+                }
+                .show()
         }
-        .show()
     }
 }

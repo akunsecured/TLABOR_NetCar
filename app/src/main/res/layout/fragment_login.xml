@@ -2,9 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/login_fragment"
-    tools:context="hu.bme.aut.netcar.fragments.login.LoginFragment">
+    app:layoutDescription="@xml/icon_motion_scene"
+    tools:context="hu.bme.aut.netcar.fragments.LoginFragment">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -13,12 +15,21 @@
         android:layout_marginHorizontal="28dp"
         android:layout_gravity="center">
 
-        <ImageView
-            android:id="@+id/netcar_logo_login"
-            android:src="@mipmap/icon_round"
-            android:layout_width="128dp"
-            android:layout_height="128dp"
-            android:layout_gravity="center"/>
+        <androidx.constraintlayout.motion.widget.MotionLayout
+            app:layoutDescription="@xml/icon_motion_scene"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:motionDebug="SHOW_ALL">
+
+            <ImageView
+                android:id="@+id/netcar_logo_login"
+                android:src="@drawable/icon_round"
+                android:layout_width="164dp"
+                android:layout_height="164dp"
+                android:layout_gravity="center"/>
+
+        </androidx.constraintlayout.motion.widget.MotionLayout>
+
 
         <TextView
             android:layout_width="wrap_content"

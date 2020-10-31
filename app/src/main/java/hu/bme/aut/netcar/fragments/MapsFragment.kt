@@ -1,4 +1,4 @@
-package hu.bme.aut.netcar.fragments.map
+package hu.bme.aut.netcar.fragments
 
 import android.Manifest
 import android.content.pm.PackageManager

@@ -1,4 +1,4 @@
-package hu.bme.aut.netcar.fragments.register_driver
+package hu.bme.aut.netcar.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

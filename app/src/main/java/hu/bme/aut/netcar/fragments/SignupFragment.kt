@@ -1,4 +1,4 @@
-package hu.bme.aut.netcar.fragments.signup
+package hu.bme.aut.netcar.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,7 +20,7 @@ class SignupFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_signup, container, false)
 
-    fun isLettersOrNumbers(string: String): Boolean {
+    private fun isLettersOrNumbers(string: String): Boolean {
         for(c in string){
             if(c !in 'A'..'Z' && c !in 'a'..'z' && c !in '0'..'9'){
                 return false
@@ -29,7 +29,7 @@ class SignupFragment : Fragment() {
         return true;
     }
 
-    fun isValidEmail(string: String): Boolean{
+    private fun isValidEmail(string: String): Boolean{
         val regex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$"
         val pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE)
         val matcher: Matcher = pattern.matcher(string as CharSequence)

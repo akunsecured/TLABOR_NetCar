@@ -2,12 +2,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="hu.bme.aut.netcar.fragments.register_driver.RegisterDriverFragment">
+    tools:context="hu.bme.aut.netcar.fragments.RegisterDriverFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="xy" />
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="Please fill the following details:"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+
+    </LinearLayout>
 
 </FrameLayout>

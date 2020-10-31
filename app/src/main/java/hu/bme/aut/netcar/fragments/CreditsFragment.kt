@@ -1,4 +1,4 @@
-package hu.bme.aut.netcar.fragments.credits
+package hu.bme.aut.netcar.fragments
 
 import android.os.Bundle
 import android.text.InputType

@@ -1,14 +1,10 @@
-package hu.bme.aut.netcar.fragments.login
+package hu.bme.aut.netcar.fragments
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import hu.bme.aut.netcar.NavigationActivity
