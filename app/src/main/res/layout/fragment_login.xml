@@ -1,84 +1,105 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:id="@+id/login_fragment"
-    app:layoutDescription="@xml/icon_motion_scene"
+    app:layoutDescription="@xml/fragment_login_scene"
     tools:context="hu.bme.aut.netcar.fragments.LoginFragment">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/netcar_logo_login"
+        android:layout_width="164dp"
+        android:layout_height="164dp"
+        android:layout_gravity="center"
+        android:src="@drawable/icon_round"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginHorizontal="28dp"
-        android:layout_gravity="center">
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:padding="24dp"
+        android:text="@string/please_login"
+        android:textColor="@color/textColor"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/etEmailAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.constraintlayout.motion.widget.MotionLayout
-            app:layoutDescription="@xml/icon_motion_scene"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:motionDebug="SHOW_ALL">
+    <EditText
+        android:id="@+id/etEmailAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="4dp"
+        android:hint="@string/email_address"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/editTextColor"
+        android:textColorHint="@color/editTextHintColor"
+        android:theme="@style/editTextTheme"
+        app:layout_constraintBottom_toTopOf="@+id/etPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-            <ImageView
-                android:id="@+id/netcar_logo_login"
-                android:src="@drawable/icon_round"
-                android:layout_width="164dp"
-                android:layout_height="164dp"
-                android:layout_gravity="center"/>
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:hint="@string/password"
+        android:inputType="textWebPassword"
+        android:textColor="@color/editTextColor"
+        android:textColorHint="@color/editTextHintColor"
+        android:theme="@style/editTextTheme"
+        app:layout_constraintBottom_toTopOf="@+id/btnSignIn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        </androidx.constraintlayout.motion.widget.MotionLayout>
+    <Button
+        android:id="@+id/btnSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/login_button"
+        android:text="@string/btn_signin_text"
+        android:textColor="@color/btnTextColor"
+        app:layout_constraintBottom_toTopOf="@+id/btnSignUp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="24dp"
-            android:textSize="20dp"
-            android:textColor="@color/textColor"
-            android:gravity="center"
-            android:text="@string/please_login"/>
-
-        <EditText
-            android:id="@+id/etEmailAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/email_address"
-            android:textColorHint="@color/editTextHintColor"
-            android:textColor="@color/editTextColor"
-            android:theme="@style/editTextTheme"
-            android:inputType="textEmailAddress"/>
-
-        <EditText
-            android:id="@+id/etPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/password"
-            android:textColorHint="@color/editTextHintColor"
-            android:textColor="@color/editTextColor"
-            android:theme="@style/editTextTheme"
-            android:inputType="textWebPassword"
-            android:layout_marginBottom="28dp"/>
-
-        <Button
-            android:id="@+id/btnSignIn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/login_button"
-            android:text="@string/btn_signin_text"
-            android:textColor="@color/btnTextColor"
-            android:layout_marginBottom="14dp"/>
-
-        <Button
-            android:id="@+id/btnSignUp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/login_button"
-            android:text="@string/btn_signup_text"
-            android:textColor="@color/btnTextColor"/>
-
-    </LinearLayout>
-</FrameLayout>
+    <Button
+        android:id="@+id/btnSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="220dp"
+        android:background="@drawable/login_button"
+        android:text="@string/btn_signup_text"
+        android:textColor="@color/btnTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.motion.widget.MotionLayout>
