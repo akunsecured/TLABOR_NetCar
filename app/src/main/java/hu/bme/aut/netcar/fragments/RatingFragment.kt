@@ -6,18 +6,18 @@ import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import hu.bme.aut.netcar.R
 
 class RatingFragment : Fragment() {
 
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val inflater = TransitionInflater.from(requireContext())
-        enterTransition = inflater.inflateTransition(R.transition.slide_right)
-        exitTransition = inflater.inflateTransition(R.transition.fade)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            val inflater = TransitionInflater.from(requireContext())
+            enterTransition = inflater.inflateTransition(R.transition.slide_right)
+            exitTransition = inflater.inflateTransition(R.transition.fade)
+        }
     }
 
     override fun onCreateView(
