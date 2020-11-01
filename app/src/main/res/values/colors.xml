@@ -9,4 +9,5 @@
     <color name="editTextHintColor">#3A559F</color>
     <color name="btnTextColor">#FFFFFF</color>
     <color name="btnBgColor">#3A559F</color>
+    <color name="color_floating_button">#3A559F</color>
 </resources>
