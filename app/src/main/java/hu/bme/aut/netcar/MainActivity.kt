@@ -2,12 +2,14 @@ package hu.bme.aut.netcar
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import hu.bme.aut.netcar.fragments.LoginFragment
+import hu.bme.aut.netcar.fragments.SignupFragment
 import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
-            Thread.sleep(300)
+            Thread.sleep(200)
         }
         catch (e: Exception){
             e.printStackTrace()

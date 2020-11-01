@@ -94,6 +94,8 @@
             motion:transitionEasing="accelerate"
             android:layout_width="164dp"
             android:id="@+id/netcar_logo_login"
-            motion:layout_constraintBottom_toTopOf="@+id/etEmailAddress" />
+            motion:layout_constraintBottom_toTopOf="@+id/textView3"
+            motion:layout_constraintVertical_bias="1.0"
+            motion:layout_constraintHorizontal_bias="0.497" />
     </ConstraintSet>
 </MotionScene>

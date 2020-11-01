@@ -11,7 +11,7 @@ import hu.bme.aut.netcar.NavigationActivity
 import hu.bme.aut.netcar.R
 import kotlinx.android.synthetic.main.fragment_login.*
 
-class LoginFragment() : Fragment() {
+class LoginFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
