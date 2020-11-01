@@ -21,8 +21,8 @@ class SignupFragment : Fragment() {
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             val inflater = TransitionInflater.from(requireContext())
-            enterTransition = inflater.inflateTransition(R.transition.slide_left)
-            exitTransition = inflater.inflateTransition(R.transition.slide_right)
+            enterTransition = inflater.inflateTransition(R.transition.slide_top)
+            exitTransition = inflater.inflateTransition(R.transition.slide_bottom)
         }
     }
 
