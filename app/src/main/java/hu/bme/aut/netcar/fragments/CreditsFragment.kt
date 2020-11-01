@@ -1,18 +1,29 @@
 package hu.bme.aut.netcar.fragments
 
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import hu.bme.aut.netcar.R
 import kotlinx.android.synthetic.main.fragment_credits.*
 
 class CreditsFragment : Fragment() {
+
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val inflater = TransitionInflater.from(requireContext())
+        enterTransition = inflater.inflateTransition(R.transition.slide_right)
+        exitTransition = inflater.inflateTransition(R.transition.fade)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
