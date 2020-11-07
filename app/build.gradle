@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "hu.bme.aut.netcar"
-        minSdkVersion 16
+        minSdkVersion 26
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -58,6 +58,7 @@ dependencies {
 
     def retrofit_version = '2.9.0'
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
 
     def moshi_version = '1.9.2'

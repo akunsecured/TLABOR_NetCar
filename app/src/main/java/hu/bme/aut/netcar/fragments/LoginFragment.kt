@@ -7,14 +7,23 @@ import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import hu.bme.aut.netcar.NavigationActivity
 import hu.bme.aut.netcar.R
+import hu.bme.aut.netcar.data.DataResult
+import hu.bme.aut.netcar.network.DriverAPI
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.nav_header_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 class LoginFragment : Fragment() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -33,7 +42,9 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         btnSignIn.setOnClickListener {
-            startActivity(Intent(context, NavigationActivity::class.java))
+            val intent = Intent(this.requireContext(), NavigationActivity::class.java)
+            intent.putExtra(NavigationActivity.USER_ID, 123)
+            startActivity(intent)
         }
         btnSignUp.setOnClickListener {
             findNavController().navigate(
