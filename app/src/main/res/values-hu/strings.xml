@@ -50,4 +50,9 @@
     <string name="btn_cancel_text">Mégse</string>
     <string name="choose_picture">Kép kiválasztása</string>
     <string name="driver_registration">Sofőr regisztráció</string>
+    <string name="save">Mentés</string>
+    <string name="changes_saved">A változtatások el lettek mentve</string>
+    <string name="image_saved">Az új profilkép el lett mentve</string>
+    <string name="no_changes">Nem történt változtatás</string>
+    <string name="confirm_password_to_save">Kérlek erősítsd meg a jelszavaddal a változtatások elmentését</string>
 </resources>
