@@ -40,4 +40,14 @@
     <string name="dialog_title_adding_credits">KREDITEK FELTÖLTÉSE</string>
     <string name="dialog_message_adding_credits">Írd be a kreditet:</string>
     <string name="dialog_button_adding_credits">Hozzáad</string>
+    <string name="open">Megnyitás</string>
+    <string name="close">Bezárás</string>
+    <string name="btn_register_text">Regisztrál</string>
+    <string name="license_plate_number">Rendszám</string>
+    <string name="car_brand">Márka</string>
+    <string name="seats">Férőhely száma</string>
+    <string name="model">Modell</string>
+    <string name="btn_cancel_text">Mégse</string>
+    <string name="choose_picture">Kép kiválasztása</string>
+    <string name="driver_registration">Sofőr regisztráció</string>
 </resources>

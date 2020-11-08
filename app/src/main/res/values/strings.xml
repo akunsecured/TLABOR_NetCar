@@ -47,4 +47,12 @@
     <string name="dialog_button_adding_credits">Add</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="btn_register_text">Register</string>
+    <string name="license_plate_number">License Plate Number</string>
+    <string name="car_brand">Car Brand</string>
+    <string name="seats">Number Of Seats</string>
+    <string name="model">Model</string>
+    <string name="btn_cancel_text">Cancel</string>
+    <string name="choose_picture">Choose Picture</string>
+    <string name="driver_registration">Driver registration</string>
 </resources>

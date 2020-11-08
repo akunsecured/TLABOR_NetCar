@@ -77,7 +77,7 @@ class SettingsFragment : Fragment() {
 
     private fun startFileChooser() {
         var intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
-        startActivityForResult(Intent.createChooser(intent, "Choose Picture"), 111)
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.choose_picture)), 111)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

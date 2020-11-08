@@ -1,8 +1,15 @@
 package hu.bme.aut.netcar
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -19,6 +26,10 @@ import com.google.android.material.navigation.NavigationView
 import hu.bme.aut.netcar.data.DataResult
 import hu.bme.aut.netcar.network.DriverAPI
 import kotlinx.android.synthetic.main.activity_navigation.*
+import kotlinx.android.synthetic.main.activity_navigation.view.*
+import kotlinx.android.synthetic.main.dialog_register_driver.*
+import kotlinx.android.synthetic.main.dialog_register_driver.view.*
+import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -34,6 +45,9 @@ class NavigationActivity : AppCompatActivity() {
     private lateinit var navBtn: FloatingActionButton
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var driverAPI: DriverAPI
+    private lateinit var filepath: Uri
+    private lateinit var bitmap: Bitmap
+    private lateinit var mDialogView: View
     var userid: Int = 0
     companion object{
         var USER_ID = "USER_ID"
@@ -97,6 +111,29 @@ class NavigationActivity : AppCompatActivity() {
                 }
             }
         })
+
+        navView.btnRegisterAsDriver.setOnClickListener {
+            mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_register_driver, null)
+            val mBuilder = AlertDialog.Builder(this)
+                .setView(mDialogView)
+                .setTitle(getString(R.string.driver_registration))
+            val mAlertDialog = mBuilder.show()
+
+            mDialogView.car_image_button.setOnClickListener {
+                startFileChooser()
+            }
+
+            mDialogView.btnRegister.setOnClickListener{
+                mAlertDialog.dismiss()
+                val plate = mDialogView.etLicensePlateGiven.text.toString()
+                val brand = mDialogView.etLicensePlateGiven.text.toString()
+                val model = mDialogView.etLicensePlateGiven.text.toString()
+                val seats = mDialogView.etLicensePlateGiven.text.toString()
+            }
+            mDialogView.btnCancel.setOnClickListener {
+                mAlertDialog.dismiss()
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -135,6 +172,21 @@ class NavigationActivity : AppCompatActivity() {
                     this.finish()
                 }
                 .show()
+        }
+    }
+
+    private fun startFileChooser() {
+        var intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.choose_picture)), 111)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 111 && resultCode == Activity.RESULT_OK && data != null) {
+            filepath = data.data!!
+            val contentResolver = this.contentResolver
+            bitmap = MediaStore.Images.Media.getBitmap(contentResolver, filepath)
+            mDialogView.car_image_button.setImageBitmap(bitmap)
         }
     }
 }
