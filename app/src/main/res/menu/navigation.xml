@@ -6,8 +6,7 @@
         android:title="@string/active_driver"
         app:showAsAction="always" />
     <item
-        android:id="@+id/switchId"
+        android:id="@+id/switchOldId"
         android:title=""
-        app:actionLayout="@layout/switch_layout"
         app:showAsAction="always" />
 </menu>

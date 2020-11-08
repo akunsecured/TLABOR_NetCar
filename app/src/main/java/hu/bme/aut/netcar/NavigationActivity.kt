@@ -15,7 +15,9 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -27,9 +29,7 @@ import hu.bme.aut.netcar.data.DataResult
 import hu.bme.aut.netcar.network.DriverAPI
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.activity_navigation.view.*
-import kotlinx.android.synthetic.main.dialog_register_driver.*
 import kotlinx.android.synthetic.main.dialog_register_driver.view.*
-import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -58,7 +58,12 @@ class NavigationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_navigation)
         userid = this.intent.getIntExtra(USER_ID, -1)
         mDrawerLayout = drawer_layout
-        actionBarDrawerToggle = ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close)
+        actionBarDrawerToggle = ActionBarDrawerToggle(
+            this,
+            mDrawerLayout,
+            R.string.open,
+            R.string.close
+        )
         mDrawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.syncState()
 
@@ -99,11 +104,14 @@ class NavigationActivity : AppCompatActivity() {
                 Toast.makeText(application, "Something went wrong", Toast.LENGTH_LONG).show()
             }
 
-            override fun onResponse(call: Call<List<DataResult>>, response: Response<List<DataResult>>) {
+            override fun onResponse(
+                call: Call<List<DataResult>>,
+                response: Response<List<DataResult>>
+            ) {
                 var dataResults = response.body()
                 if (dataResults != null) {
-                    for(dr : DataResult in dataResults){
-                        if(dr.id!! == userid){
+                    for (dr: DataResult in dataResults) {
+                        if (dr.id!! == userid) {
                             header_name.text = dr.content
                             header_email.text = dr.rendszam
                         }
@@ -111,6 +119,16 @@ class NavigationActivity : AppCompatActivity() {
                 }
             }
         })
+
+        switchDriver.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                Toast.makeText(application, "Enabled", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(application, "Disabled", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
 
         navView.btnRegisterAsDriver.setOnClickListener {
             mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_register_driver, null)
@@ -137,22 +155,7 @@ class NavigationActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.navigation, menu)
-        val item: MenuItem = menu.findItem(R.id.switchId) as MenuItem
-        item.setActionView(R.layout.switch_layout)
-        val switchActiveDriver : Switch = item.actionView.findViewById(R.id.switchAB)
-        switchActiveDriver.isChecked = false
-
-        switchActiveDriver.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                Toast.makeText(application, "ON", Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                Toast.makeText(application, "OFF", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
         return true
     }
 
@@ -177,7 +180,10 @@ class NavigationActivity : AppCompatActivity() {
 
     private fun startFileChooser() {
         var intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
-        startActivityForResult(Intent.createChooser(intent, getString(R.string.choose_picture)), 111)
+        startActivityForResult(
+            Intent.createChooser(intent, getString(R.string.choose_picture)),
+            111
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

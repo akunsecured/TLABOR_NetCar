@@ -26,7 +26,11 @@
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_menu_logout"
             android:title="@string/menu_logout" />
-    </group>
 
+        <item
+            android:id="@+id/nav_active_driver"
+            android:icon="@drawable/ic_menu_driver"
+            android:title="@string/active_driver" />
+    </group>
 
 </menu>

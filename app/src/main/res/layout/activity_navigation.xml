@@ -53,5 +53,16 @@
             android:text="@string/register_as_driver"
             android:layout_gravity="bottom"
             android:layout_margin="10dp" />
+        <Switch
+            android:id="@+id/switchDriver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="435dp"
+            android:layout_marginEnd="16dp"
+            android:layout_gravity="end"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:trackTint="#C6C5C5"
+            android:theme="@style/SCBSwitch"/>
     </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>
