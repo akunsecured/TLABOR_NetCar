@@ -55,4 +55,7 @@
     <string name="image_saved">Az új profilkép el lett mentve</string>
     <string name="no_changes">Nem történt változtatás</string>
     <string name="confirm_password_to_save">Kérlek erősítsd meg a jelszavaddal a változtatások elmentését</string>
+    <string name="file_upload">Koppints a képre és válassz ki egy képet a feltöltéshez</string>
+    <string name="profile_name2">Profil Név</string>
+    <string name="new_password">Új Jelszó</string>
 </resources>

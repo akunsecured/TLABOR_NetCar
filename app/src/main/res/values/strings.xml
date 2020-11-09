@@ -60,4 +60,7 @@
     <string name="image_saved">The new profile image has been saved</string>
     <string name="no_changes">Nothing has been changed</string>
     <string name="confirm_password_to_save">Please confirm your password in order to save the changes</string>
+    <string name="file_upload">Tap on the image and select a file to upload</string>
+    <string name="profile_name2">Profile Name</string>
+    <string name="new_password">New Password</string>
 </resources>
