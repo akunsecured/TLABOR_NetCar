@@ -13,11 +13,9 @@ class RatingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            val inflater = TransitionInflater.from(requireContext())
-            enterTransition = inflater.inflateTransition(R.transition.slide_right)
-            exitTransition = inflater.inflateTransition(R.transition.fade)
-        }
+        val inflater = TransitionInflater.from(requireContext())
+        enterTransition = inflater.inflateTransition(R.transition.slide_right)
+        exitTransition = inflater.inflateTransition(R.transition.fade)
     }
 
     override fun onCreateView(

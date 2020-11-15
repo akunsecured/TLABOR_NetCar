@@ -1,6 +1,7 @@
 package hu.bme.aut.netcar.network
 
 import hu.bme.aut.netcar.data.DataResult
+import hu.bme.aut.netcar.data.User
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -8,19 +9,20 @@ interface Api {
     @GET("/greeting")
     fun getDetails() : Call<List<DataResult>>
 
-    @FormUrlEncoded
-    @POST("/adduser")
-    fun createUser (
-        @Field("username") username: String,
-        @Field("email") email: String,
-        @Field("password") password: String,
-        @Field("pictureUrl") pictureUrl: String
-    ) : Call<DefaultResponse>
+    @GET("getAllUsers")
+    fun getUsers() : Call<List<User>>
 
+    @POST("addUser")
+    fun addNewUser(
+        @Body user: User
+    ) : Call<StringResponse>
+
+    /* TODO: userLogin
     @FormUrlEncoded
     @POST("userlogin")
     fun userLogin (
         @Field("email") email: String,
         @Field("password") password: String
-    ) : Call<LoginResponse>
+    ) : Call<StringResponse>
+     */
 }

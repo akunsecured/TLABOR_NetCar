@@ -1,6 +1,6 @@
 package hu.bme.aut.netcar.fragments
 
-import android.os.Build
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.InputType
 import android.transition.TransitionInflater
@@ -18,11 +18,9 @@ class CreditsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            val inflater = TransitionInflater.from(requireContext())
-            enterTransition = inflater.inflateTransition(R.transition.slide_right)
-            exitTransition = inflater.inflateTransition(R.transition.fade)
-        }
+        val inflater = TransitionInflater.from(requireContext())
+        enterTransition = inflater.inflateTransition(R.transition.slide_right)
+        exitTransition = inflater.inflateTransition(R.transition.fade)
     }
 
     override fun onCreateView(
@@ -31,11 +29,12 @@ class CreditsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View?  = inflater.inflate(R.layout.fragment_credits, container, false)
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         btnAddCredits.setOnClickListener {
-            var credits = tvCreditAmount.text.toString().removeRange(0, 1).toInt()
+            val credits = tvCreditAmount.text.toString().removeRange(0, 1).toInt()
             val builder : AlertDialog.Builder = AlertDialog.Builder(view.context).setTitle(getString(
                             R.string.dialog_title_adding_credits)).setMessage(getString(R.string.dialog_message_adding_credits))
             val input = EditText(context)

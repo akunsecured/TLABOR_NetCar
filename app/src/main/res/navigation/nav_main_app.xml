@@ -24,6 +24,12 @@
         tools:layout="@layout/fragment_rating" />
 
     <fragment
+        android:id="@+id/nav_trips"
+        android:name="hu.bme.aut.netcar.fragments.TripsFragment"
+        android:label="@string/menu_trips"
+        tools:layout="@layout/fragment_trips" />
+
+    <fragment
         android:id="@+id/nav_settings"
         android:name="hu.bme.aut.netcar.fragments.SettingsFragment"
         android:label="@string/menu_settings"

@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.fragment_settings.view.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 
 
+@Suppress("DEPRECATION")
 class SettingsFragment : Fragment() {
 
     private lateinit var filepath: Uri
@@ -61,7 +62,7 @@ class SettingsFragment : Fragment() {
                 val alertDialog = builder.show()
 
                 dialogLayout.dialog_settings_btnSave.setOnClickListener {
-                    val pw: String
+                    //val pw: String
                     if (dialogLayout.etPassword1.text.isEmpty()) {
                         dialogLayout.etPassword1.requestFocus()
                         dialogLayout.etPassword1.error = getString(R.string.btn_sigin_error_password_1)
@@ -127,7 +128,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun startFileChooser() {
-        var intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
+        val intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
         startActivityForResult(
             Intent.createChooser(intent, getString(R.string.choose_picture)),
             111

@@ -3,7 +3,7 @@ package hu.bme.aut.netcar.data
 import com.google.android.gms.maps.model.LatLng
 
 object DataManager {
-    var drivers = arrayListOf<Driver>(
+    var drivers = arrayListOf(
         Driver("Kiss Pista", "BMW","M3", "ABC-123", 4, LatLng(47.482552, 19.075173)),
         Driver("Végh Béla", "Audi","A6", "CBA-456", 3, LatLng(47.483115, 19.048300)),
         Driver("Gipsz Jakab", "Toyota","Corolla", "FJR-638", 4, LatLng(47.462954, 19.038709)),

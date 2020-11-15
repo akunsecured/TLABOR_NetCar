@@ -1,5 +1,6 @@
 package hu.bme.aut.netcar
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
@@ -33,6 +34,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
+@Suppress("DEPRECATION")
 class NavigationActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -48,6 +50,7 @@ class NavigationActivity : AppCompatActivity() {
         var USER_ID = "USER_ID"
     }
 
+    @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
@@ -78,11 +81,17 @@ class NavigationActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setMessage(getString(R.string.are_you_sure_want_logout))
                 .setPositiveButton(getString(R.string.no), null)
-                .setNegativeButton(getString(R.string.yes)) { dialogInterface, i -> this.finish()
+                .setNegativeButton(getString(R.string.yes)) { _, _ -> this.finish()
                 }
                 .show()
 
-            return@setOnMenuItemClickListener true;
+            return@setOnMenuItemClickListener true
+        }
+
+        // Active Driver item
+        navView.menu.findItem(R.id.nav_active_driver).setOnMenuItemClickListener {
+            switchDriver.isChecked = !switchDriver.isChecked
+            return@setOnMenuItemClickListener true
         }
 
         //retrofit
@@ -98,7 +107,7 @@ class NavigationActivity : AppCompatActivity() {
                 call: Call<List<DataResult>>,
                 response: Response<List<DataResult>>
             ) {
-                var dataResults = response.body()
+                val dataResults = response.body()
                 if (dataResults != null) {
                     for (dr: DataResult in dataResults) {
                         if (dr.id!! == userid) {
@@ -133,10 +142,12 @@ class NavigationActivity : AppCompatActivity() {
 
             mDialogView.btnRegister.setOnClickListener{
                 mAlertDialog.dismiss()
+                /*
                 val plate = mDialogView.etLicensePlateGiven.text.toString()
                 val brand = mDialogView.etLicensePlateGiven.text.toString()
                 val model = mDialogView.etLicensePlateGiven.text.toString()
                 val seats = mDialogView.etLicensePlateGiven.text.toString()
+                */
             }
             mDialogView.btnCancel.setOnClickListener {
                 mAlertDialog.dismiss()
@@ -161,7 +172,7 @@ class NavigationActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                 .setMessage(getString(R.string.are_you_sure_want_logout))
                 .setPositiveButton(getString(R.string.no), null)
-                .setNegativeButton(getString(R.string.yes)) { dialogInterface, i ->
+                .setNegativeButton(getString(R.string.yes)) { _, _ ->
                     this.finish()
                 }
                 .show()
@@ -169,7 +180,7 @@ class NavigationActivity : AppCompatActivity() {
     }
 
     private fun startFileChooser() {
-        var intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
+        val intent = Intent().setType("image/*").setAction(Intent.ACTION_GET_CONTENT)
         startActivityForResult(
             Intent.createChooser(intent, getString(R.string.choose_picture)),
             111

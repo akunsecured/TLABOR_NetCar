@@ -1,6 +1,5 @@
 package hu.bme.aut.netcar.fragments
 
-import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
@@ -10,20 +9,30 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import hu.bme.aut.netcar.R
+import hu.bme.aut.netcar.data.User
+import hu.bme.aut.netcar.network.Api
+import hu.bme.aut.netcar.network.RetrofitClient
+import hu.bme.aut.netcar.network.StringResponse
 import kotlinx.android.synthetic.main.fragment_login.btnSignUp
 import kotlinx.android.synthetic.main.fragment_signup.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class SignupFragment : Fragment() {
 
+    private lateinit var api: Api
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            val inflater = TransitionInflater.from(requireContext())
-            enterTransition = inflater.inflateTransition(R.transition.slide_top)
-            exitTransition = inflater.inflateTransition(R.transition.slide_bottom)
-        }
+
+        api = RetrofitClient.INSTANCE
+
+        val inflater = TransitionInflater.from(requireContext())
+        enterTransition = inflater.inflateTransition(R.transition.slide_top)
+        exitTransition = inflater.inflateTransition(R.transition.slide_bottom)
     }
 
     override fun onCreateView(
@@ -37,7 +46,7 @@ class SignupFragment : Fragment() {
                 return false
             }
         }
-        return true;
+        return true
     }
 
     private fun isValidEmail(string: String): Boolean{
@@ -51,10 +60,10 @@ class SignupFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         btnSignUp.setOnClickListener {
-            var userNameIn = etNameGiven.text.toString()
-            var emailAddressIn = etEmailGiven.text.toString()
-            var passwordIn = etPasswordGiven.text.toString()
-            var confpasswordIn = etPasswordConfGiven.text.toString()
+            val userNameIn = etNameGiven.text.toString()
+            val emailAddressIn = etEmailGiven.text.toString()
+            val passwordIn = etPasswordGiven.text.toString()
+            val confpasswordIn = etPasswordConfGiven.text.toString()
 
             if (userNameIn.isEmpty()) {
                 etNameGiven.requestFocus()
@@ -96,6 +105,42 @@ class SignupFragment : Fragment() {
                 etPasswordGiven.error = getResources().getString(R.string.btn_sigin_error_password_4)
             }
             else {
+                val newUser = User(name = etNameGiven.text.toString(), email = etEmailGiven.text.toString(),
+                    password = etPasswordGiven.text.toString())
+
+                api.addNewUser(newUser)
+                    .enqueue(object : Callback<StringResponse> {
+                        override fun onResponse(
+                            call: Call<StringResponse>,
+                            response: Response<StringResponse>
+                        ) {
+                            if (response.body()?.response.equals("SUCCESSFUL_REGISTRATION")) {
+                                findNavController().navigate(
+                                    R.id.action_SignupFragment_to_LoginFragment, null
+                                )
+                                Toast.makeText(
+                                    context,
+                                    getString(R.string.successfully_registered),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                            if (response.body()?.response.equals("EMAIL_ALREADY_USED")) {
+                                Toast.makeText(
+                                    context,
+                                    "Error: email is already used!",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<StringResponse>, t: Throwable) {
+                            Toast.makeText(requireContext(), "Something went wrong.", Toast.LENGTH_LONG).show()
+                        }
+
+                    })
+
+
+                /*
                 findNavController().navigate(
                     R.id.action_SignupFragment_to_LoginFragment, null
                 )
@@ -104,6 +149,7 @@ class SignupFragment : Fragment() {
                     getString(R.string.successfully_registered),
                     Toast.LENGTH_LONG
                 ).show()
+                 */
             }
         }
     }

@@ -1,6 +1,7 @@
 package hu.bme.aut.netcar.fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -30,7 +31,6 @@ import hu.bme.aut.netcar.data.DataManager
 import hu.bme.aut.netcar.data.Driver
 import kotlinx.android.synthetic.main.dialog_marker.*
 import kotlinx.android.synthetic.main.dialog_marker.view.*
-import kotlinx.android.synthetic.main.dialog_register_driver.view.*
 import kotlinx.android.synthetic.main.dialog_register_driver.view.btnCancel
 
 
@@ -128,8 +128,9 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     }
 
     // Function to place markers of a list on the map
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun placeMarkerOnMap(drivers: ArrayList<Driver>, map: GoogleMap) {
-        for (driver in drivers){
+        for (driver in drivers) {
             val markerOptions = MarkerOptions().position(driver.location)
                 .title(driver.name + "," + driver.carbrand + "," + driver.carmodel  + "," + driver.serial + "," + driver.seats.toString())
             val d = resources.getDrawable(R.drawable.ic_map_car)
@@ -167,9 +168,9 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         val mAlertDialog = mBuilder.show()
         val str = marker?.title?.split(',')
         mAlertDialog.driver_name.text = str!![0]
-        mAlertDialog.car_brand.text = str!![1]
-        mAlertDialog.car_model.text = str!![2]
-        mAlertDialog.car_plate.text = str!![3]
+        mAlertDialog.car_brand.text = str[1]
+        mAlertDialog.car_model.text = str[2]
+        mAlertDialog.car_plate.text = str[3]
 
         mDialogView.btnAccept.setOnClickListener{
             mAlertDialog.dismiss()
