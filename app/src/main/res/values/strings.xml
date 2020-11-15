@@ -63,4 +63,6 @@
     <string name="file_upload">Tap on the image and select a file to upload</string>
     <string name="profile_name2">Profile Name</string>
     <string name="new_password">New Password</string>
+    <string name="btn_accept_text">Accept</string>
+    <string name="trip_confirmation">Trip confirmation</string>
 </resources>

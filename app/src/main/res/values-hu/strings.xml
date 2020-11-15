@@ -58,4 +58,7 @@
     <string name="file_upload">Koppints a képre és válassz ki egy képet a feltöltéshez</string>
     <string name="profile_name2">Profil Név</string>
     <string name="new_password">Új Jelszó</string>
+    <string name="btn_accept_text">Elfogad</string>
+    <string name="trip_confirmation">Utazás megerősítése</string>
+
 </resources>

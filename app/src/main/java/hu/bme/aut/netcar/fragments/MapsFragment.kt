@@ -13,6 +13,7 @@ import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.*
@@ -22,13 +23,18 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.DataManager
 import hu.bme.aut.netcar.data.Driver
+import kotlinx.android.synthetic.main.dialog_marker.*
+import kotlinx.android.synthetic.main.dialog_marker.view.*
+import kotlinx.android.synthetic.main.dialog_register_driver.view.*
+import kotlinx.android.synthetic.main.dialog_register_driver.view.btnCancel
 
 
-class MapsFragment : Fragment() {
+class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
@@ -60,8 +66,8 @@ class MapsFragment : Fragment() {
     private val callback = OnMapReadyCallback { googleMap ->
         setUpMap(googleMap)
 
-        var markersArray = DataManager.drivers
-        placeMarkerOnMap(markersArray, googleMap)
+        val driversArray = DataManager.drivers
+        placeMarkerOnMap(driversArray, googleMap)
     }
 
     // Asking for location permission
@@ -78,6 +84,7 @@ class MapsFragment : Fragment() {
         }
 
         // Other map control buttons
+        googleMap.setOnMarkerClickListener(this)
         googleMap.uiSettings.isZoomControlsEnabled = true
         googleMap.uiSettings.isCompassEnabled = true
         googleMap.uiSettings.isMapToolbarEnabled = true
@@ -121,11 +128,10 @@ class MapsFragment : Fragment() {
     }
 
     // Function to place markers of a list on the map
-    private fun placeMarkerOnMap(markers: ArrayList<Driver>, map: GoogleMap) {
-        for (driver in markers){
+    private fun placeMarkerOnMap(drivers: ArrayList<Driver>, map: GoogleMap) {
+        for (driver in drivers){
             val markerOptions = MarkerOptions().position(driver.location)
-                .title(driver.name+ " (" + driver.serial +")")
-                .snippet("Márka: " + driver.carmodel + ", Szabad hely: " + driver.seats.toString())
+                .title(driver.name + "," + driver.carbrand + "," + driver.carmodel  + "," + driver.serial + "," + driver.seats.toString())
             val d = resources.getDrawable(R.drawable.ic_map_car)
             markerOptions.icon(
                 BitmapDescriptorFactory.fromBitmap(
@@ -151,5 +157,26 @@ class MapsFragment : Fragment() {
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
         return bitmap
+    }
+
+    override fun onMarkerClick(marker: Marker?): Boolean {
+        val mDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_marker, null)
+        val mBuilder = AlertDialog.Builder(requireContext())
+            .setView(mDialogView)
+            .setTitle(getString(R.string.trip_confirmation))
+        val mAlertDialog = mBuilder.show()
+        val str = marker?.title?.split(',')
+        mAlertDialog.driver_name.text = str!![0]
+        mAlertDialog.car_brand.text = str!![1]
+        mAlertDialog.car_model.text = str!![2]
+        mAlertDialog.car_plate.text = str!![3]
+
+        mDialogView.btnAccept.setOnClickListener{
+            mAlertDialog.dismiss()
+        }
+        mDialogView.btnCancel.setOnClickListener{
+            mAlertDialog.dismiss()
+        }
+        return true
     }
 }

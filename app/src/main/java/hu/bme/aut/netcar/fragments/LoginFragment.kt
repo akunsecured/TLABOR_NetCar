@@ -37,10 +37,10 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val email = etEmailAddress.text.toString().trim()
-        val password = etPassword.text.toString().trim()
-
         btnSignIn.setOnClickListener {
+            val email = etEmailAddress.text.toString().trim()
+            val password = etPassword.text.toString().trim()
+
             if (email.isEmpty()) {
                 etEmailAddress.error = getString(R.string.btn_sigin_error_email_1)
                 etEmailAddress.requestFocus()
@@ -53,7 +53,7 @@ class LoginFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            RetrofitClient.INSTANCE.userLogin(email, password)
+            /*RetrofitClient.INSTANCE.userLogin(email, password)
                 .enqueue(object: Callback<LoginResponse> {
                     override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                         TODO("Not yet implemented")
@@ -63,7 +63,7 @@ class LoginFragment : Fragment() {
                         Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
                     }
 
-                })
+                })*/
 
             val intent = Intent(this.requireContext(), NavigationActivity::class.java)
             intent.putExtra(NavigationActivity.USER_ID, 123)
