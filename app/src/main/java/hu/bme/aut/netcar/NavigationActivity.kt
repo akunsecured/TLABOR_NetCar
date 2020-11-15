@@ -8,16 +8,12 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.Menu
-import android.view.MenuItem
 import android.view.View
-import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.GravityCompat
-import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -26,7 +22,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import hu.bme.aut.netcar.data.DataResult
-import hu.bme.aut.netcar.network.DriverAPI
+import hu.bme.aut.netcar.network.Api
+import hu.bme.aut.netcar.network.RetrofitClient
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.activity_navigation.view.*
 import kotlinx.android.synthetic.main.dialog_register_driver.view.*
@@ -34,8 +31,6 @@ import kotlinx.android.synthetic.main.nav_header_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 
 class NavigationActivity : AppCompatActivity() {
@@ -44,7 +39,7 @@ class NavigationActivity : AppCompatActivity() {
     private lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
     private lateinit var navBtn: FloatingActionButton
     private lateinit var mDrawerLayout: DrawerLayout
-    private lateinit var driverAPI: DriverAPI
+    private lateinit var api: Api
     private lateinit var filepath: Uri
     private lateinit var bitmap: Bitmap
     private lateinit var mDialogView: View
@@ -91,14 +86,9 @@ class NavigationActivity : AppCompatActivity() {
         }
 
         //retrofit
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://temalab-291207.ew.r.appspot.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        api = RetrofitClient.INSTANCE
 
-        driverAPI = retrofit.create(DriverAPI::class.java)
-
-        val dataCall = driverAPI.getDetails()
+        val dataCall = api.getDetails()
         dataCall.enqueue(object : Callback<List<DataResult>> {
             override fun onFailure(call: Call<List<DataResult>>, t: Throwable) {
                 Toast.makeText(application, "Something went wrong", Toast.LENGTH_LONG).show()
