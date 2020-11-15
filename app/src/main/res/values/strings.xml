@@ -68,4 +68,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="btn_accept_text">Accept</string>
     <string name="trip_confirmation">Trip confirmation</string>
+    <string name="package_shipment">Package shipment</string>
+    <string name="package_weight_in_kg">Package weight in kg</string>
 </resources>

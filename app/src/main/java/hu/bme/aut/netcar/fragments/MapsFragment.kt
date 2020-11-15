@@ -14,10 +14,13 @@ import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -52,7 +55,11 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
         return inflater.inflate(R.layout.fragment_maps, container, false)
     }
@@ -102,7 +109,11 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
             LOCATION_PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty()) {
@@ -132,7 +143,7 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private fun placeMarkerOnMap(drivers: ArrayList<Driver>, map: GoogleMap) {
         for (driver in drivers) {
             val markerOptions = MarkerOptions().position(driver.location)
-                .title(driver.name + "," + driver.carbrand + "," + driver.carmodel  + "," + driver.serial + "," + driver.seats.toString())
+                .title(driver.name + "," + driver.carbrand + "," + driver.carmodel + "," + driver.serial + "," + driver.seats.toString())
             val d = resources.getDrawable(R.drawable.ic_map_car)
             markerOptions.icon(
                 BitmapDescriptorFactory.fromBitmap(
@@ -171,6 +182,15 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         mAlertDialog.car_brand.text = str[1]
         mAlertDialog.car_model.text = str[2]
         mAlertDialog.car_plate.text = str[3]
+
+        mDialogView.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(!mDialogView.checkbox_editText.isVisible){
+                mDialogView.checkbox_editText.visibility = View.VISIBLE
+            }
+            else{
+                mDialogView.checkbox_editText.visibility = View.INVISIBLE
+            }
+        }
 
         mDialogView.btnAccept.setOnClickListener{
             mAlertDialog.dismiss()
