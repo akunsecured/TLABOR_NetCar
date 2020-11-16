@@ -99,7 +99,8 @@
         app:layout_constraintHorizontal_bias="0.535"
         app:layout_constraintStart_toEndOf="@+id/checkbox_textview"
         app:layout_constraintTop_toBottomOf="@+id/cost"
-        app:layout_constraintVertical_bias="0.34"></CheckBox>
+        app:layout_constraintVertical_bias="0.34"
+        android:theme="@style/CheckBox"></CheckBox>
 
     <Button
         android:id="@+id/btnAccept"
@@ -115,7 +116,7 @@
         app:layout_constraintEnd_toStartOf="@+id/btnCancel"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/checkbox_editText" />
 
     <Button
         android:id="@+id/btnCancel"
@@ -129,7 +130,7 @@
         android:textColor="@color/btnTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/checkbox_editText" />
 
     <TextView
         android:id="@+id/checkbox_textview"

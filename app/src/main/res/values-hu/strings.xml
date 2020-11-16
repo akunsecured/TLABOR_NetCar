@@ -61,4 +61,6 @@
     <string name="btn_accept_text">Elfogad</string>
     <string name="trip_confirmation">Utazás megerősítése</string>
     <string name="menu_trips">Utazások</string>
+    <string name="package_shipment">Csomag szállítmány</string>
+    <string name="package_weight_in_kg">Csomag súlya kilogrammban</string>
 </resources>
