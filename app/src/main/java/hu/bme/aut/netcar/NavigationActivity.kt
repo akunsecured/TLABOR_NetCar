@@ -22,8 +22,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import hu.bme.aut.netcar.data.DataResult
-import hu.bme.aut.netcar.network.Api
+import hu.bme.aut.netcar.data.User
 import hu.bme.aut.netcar.network.RetrofitClient
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.activity_navigation.view.*
@@ -41,11 +40,11 @@ class NavigationActivity : AppCompatActivity() {
     private lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
     private lateinit var navBtn: FloatingActionButton
     private lateinit var mDrawerLayout: DrawerLayout
-    private lateinit var api: Api
     private lateinit var filepath: Uri
     private lateinit var bitmap: Bitmap
     private lateinit var mDialogView: View
-    var userid: Int = 0
+    private var User : User? = null
+    var userId: Int = -1
     companion object{
         var USER_ID = "USER_ID"
     }
@@ -54,7 +53,7 @@ class NavigationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
-        userid = this.intent.getIntExtra(USER_ID, -1)
+        userId = this.intent.getIntExtra(USER_ID, -1)
         mDrawerLayout = drawer_layout
         actionBarDrawerToggle = ActionBarDrawerToggle(
             this,
@@ -95,26 +94,17 @@ class NavigationActivity : AppCompatActivity() {
         }
 
         //retrofit
-        api = RetrofitClient.INSTANCE
-
-        val dataCall = api.getDetails()
-        dataCall.enqueue(object : Callback<List<DataResult>> {
-            override fun onFailure(call: Call<List<DataResult>>, t: Throwable) {
+        RetrofitClient.INSTANCE.getUser(userId)
+            .enqueue(object : Callback<User> {
+            override fun onFailure(call: Call<User>, t: Throwable) {
                 Toast.makeText(application, "Something went wrong", Toast.LENGTH_LONG).show()
             }
 
-            override fun onResponse(
-                call: Call<List<DataResult>>,
-                response: Response<List<DataResult>>
-            ) {
-                val dataResults = response.body()
-                if (dataResults != null) {
-                    for (dr: DataResult in dataResults) {
-                        if (dr.id!! == userid) {
-                            header_name.text = dr.content
-                            header_email.text = dr.rendszam
-                        }
-                    }
+            override fun onResponse(call: Call<User>, response: Response<User>) {
+                if (response.body() != null) {
+                    User = response.body()
+                    header_name.text = User!!.name
+                    header_email.text = User!!.email
                 }
             }
         })

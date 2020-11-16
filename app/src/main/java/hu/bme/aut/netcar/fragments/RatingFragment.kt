@@ -1,6 +1,5 @@
 package hu.bme.aut.netcar.fragments
 
-import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.LayoutInflater

@@ -8,13 +8,11 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
-import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CompoundButton
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -37,6 +35,7 @@ import kotlinx.android.synthetic.main.dialog_marker.view.*
 import kotlinx.android.synthetic.main.dialog_register_driver.view.btnCancel
 
 
+@Suppress("DEPRECATION")
 class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -48,11 +47,9 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            val inflater = TransitionInflater.from(requireContext())
-            enterTransition = inflater.inflateTransition(R.transition.fade)
-            exitTransition = inflater.inflateTransition(R.transition.fade)
-        }
+        val inflater = TransitionInflater.from(requireContext())
+        enterTransition = inflater.inflateTransition(R.transition.fade)
+        exitTransition = inflater.inflateTransition(R.transition.fade)
     }
 
     override fun onCreateView(
@@ -183,7 +180,7 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         mAlertDialog.car_model.text = str[2]
         mAlertDialog.car_plate.text = str[3]
 
-        mDialogView.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+        mDialogView.checkBox.setOnCheckedChangeListener { _, _ ->
             if(!mDialogView.checkbox_editText.isVisible){
                 mDialogView.checkbox_editText.visibility = View.VISIBLE
             }

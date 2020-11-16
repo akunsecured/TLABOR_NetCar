@@ -1,25 +1,28 @@
 package hu.bme.aut.netcar.fragments
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import hu.bme.aut.netcar.NavigationActivity
 import hu.bme.aut.netcar.R
+import hu.bme.aut.netcar.network.LoginResponse
+import hu.bme.aut.netcar.network.RetrofitClient
 import kotlinx.android.synthetic.main.fragment_login.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class LoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            val inflater = TransitionInflater.from(requireContext())
-            exitTransition = inflater.inflateTransition(R.transition.fade)
-        }
+        val inflater = TransitionInflater.from(requireContext())
+        exitTransition = inflater.inflateTransition(R.transition.fade)
     }
 
     override fun onCreateView(
@@ -47,21 +50,36 @@ class LoginFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            /*RetrofitClient.INSTANCE.userLogin(email, password)
+            RetrofitClient.INSTANCE.userLogin(email, password)
                 .enqueue(object: Callback<LoginResponse> {
                     override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                        TODO("Not yet implemented")
+                        when (response.body()?.message) {
+                            "WRONG_PASSWORD" -> {
+                                etPassword.text.clear()
+                                etPassword.error = "Wrong password, please try again"
+                                etPassword.requestFocus()
+                            }
+
+                            "NO_EMAIL_FOUND" -> {
+                                etPassword.text.clear()
+                                etEmailAddress.error = "There is no account with this email"
+                                etEmailAddress.requestFocus()
+                            }
+
+                            "SUCCESSFUL_LOGIN" -> {
+                                val userId = response.body()!!.id
+                                val intent = Intent(requireContext(), NavigationActivity::class.java)
+                                intent.putExtra(NavigationActivity.USER_ID, userId)
+                                startActivity(intent)
+                            }
+                        }
                     }
 
                     override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                         Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
                     }
 
-                })*/
-
-            val intent = Intent(this.requireContext(), NavigationActivity::class.java)
-            intent.putExtra(NavigationActivity.USER_ID, 123)
-            startActivity(intent)
+                })
         }
         btnSignUp.setOnClickListener {
             findNavController().navigate(
