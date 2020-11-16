@@ -24,4 +24,10 @@ interface Api {
         @Field("email") email: String,
         @Field("password") password: String
     ) : Call<LoginResponse>
+
+    @PUT("updateUser/{id}")
+    fun updateUser(
+        @Path("id") id: Int,
+        @Body userData: UserData
+    ) : Call<DefaultResponse>
 }

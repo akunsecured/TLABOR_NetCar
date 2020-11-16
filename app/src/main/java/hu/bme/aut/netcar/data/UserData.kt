@@ -6,9 +6,9 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 class UserData(
     @SerializedName("id") val userId: Int? = null,
-    @SerializedName("name") val name: String?,
-    @SerializedName("email") val email: String?,
-    @SerializedName("password") val password: String?,
-    @SerializedName("pictureUrl") val pictureUrl: String? = null,
-    @SerializedName("credits") val credits: Int? = 0
+    @SerializedName("name") var name: String?,
+    @SerializedName("email") var email: String?,
+    @SerializedName("password") var password: String?,
+    @SerializedName("pictureUrl") var pictureUrl: String? = null,
+    @SerializedName("credits") var credits: Int? = 0
 )

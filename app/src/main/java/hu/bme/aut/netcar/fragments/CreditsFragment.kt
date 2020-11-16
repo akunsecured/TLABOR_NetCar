@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import hu.bme.aut.netcar.NavigationActivity
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.UserData
+import hu.bme.aut.netcar.network.DefaultResponse
 import hu.bme.aut.netcar.network.RetrofitClient
 import kotlinx.android.synthetic.main.fragment_credits.*
 import retrofit2.Call
@@ -68,7 +69,7 @@ class CreditsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         btnAddCredits.setOnClickListener {
-            val credits = tvCreditAmount.text.toString().removeRange(0, 1).toInt()
+            val credits = tvCreditAmount.text.toString().split(' ')[1].toInt()
             val builder : AlertDialog.Builder = AlertDialog.Builder(view.context).setTitle(getString(
                             R.string.dialog_title_adding_credits)).setMessage(getString(R.string.dialog_message_adding_credits))
             val input = EditText(context)
@@ -81,13 +82,31 @@ class CreditsFragment : Fragment() {
             input.inputType = InputType.TYPE_CLASS_NUMBER
             builder.setView(input)
                 .setNeutralButton(getString(R.string.dialog_button_adding_credits)) { _, _ ->
-                    if(input.text.isEmpty()) {
+                    if(input.text.isNotEmpty()) {
+                        val newCredit: Int = input.text.toString().toInt()
+                        userData!!.credits = newCredit
+                        RetrofitClient.INSTANCE.updateUser(this.userDataId, this.userData!!)
+                            .enqueue(object: Callback<DefaultResponse>{
+                                override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
+                                    if (response.body()!!.message == "USER_SUCCESSFUL_UPDATED") {
+                                        tvCreditAmount.text =
+                                            "$" + (credits + input.text.toString().toInt()).toString()
+                                    }
+                                    else {
+                                        Toast.makeText(context!!, "Something went wrong when adding credits.", Toast.LENGTH_LONG)
+                                            .show()
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
+                                    Toast.makeText(context!!, "Something went wrong.", Toast.LENGTH_LONG)
+                                        .show()
+                                }
+                            })
+                    }
+                    else {
                         tvCreditAmount.text =
                             "$" + (credits + 0).toString()
-                    }
-                    else{
-                        tvCreditAmount.text =
-                            "$" + (credits + input.text.toString().toInt()).toString()
                     }
                 }
 
