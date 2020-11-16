@@ -9,5 +9,6 @@ class User(
     @SerializedName("name") val name: String?,
     @SerializedName("email") val email: String?,
     @SerializedName("password") val password: String?,
-    @SerializedName("pictureUrl") val pictureUrl: String? = null
+    @SerializedName("pictureUrl") val pictureUrl: String? = null,
+    @SerializedName("credits") val credits: Int? = 0
 )

@@ -12,7 +12,7 @@ import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.User
 import hu.bme.aut.netcar.network.Api
 import hu.bme.aut.netcar.network.RetrofitClient
-import hu.bme.aut.netcar.network.StringResponse
+import hu.bme.aut.netcar.network.DefaultResponse
 import kotlinx.android.synthetic.main.fragment_login.btnSignUp
 import kotlinx.android.synthetic.main.fragment_signup.*
 import retrofit2.Call
@@ -67,54 +67,54 @@ class SignupFragment : Fragment() {
 
             if (userNameIn.isEmpty()) {
                 etNameGiven.requestFocus()
-                etNameGiven.error = getResources().getString(R.string.btn_sigin_error_username_1)
+                etNameGiven.error = resources.getString(R.string.btn_sigin_error_username_1)
             }
             else if (!isLettersOrNumbers(userNameIn)){
                 etNameGiven.requestFocus()
-                etNameGiven.error = getResources().getString(R.string.btn_sigin_error_username_3)
+                etNameGiven.error = resources.getString(R.string.btn_sigin_error_username_3)
             }
             else if (userNameIn.length < 3) {
                 etNameGiven.requestFocus()
-                etNameGiven.error = getResources().getString(R.string.btn_sigin_error_username_2)
+                etNameGiven.error = resources.getString(R.string.btn_sigin_error_username_2)
             }
             else if (emailAddressIn.isEmpty()) {
                 etEmailGiven.requestFocus()
-                etEmailGiven.error = getResources().getString(R.string.btn_sigin_error_email_1)
+                etEmailGiven.error = resources.getString(R.string.btn_sigin_error_email_1)
             }
             else if (!isValidEmail(emailAddressIn)) {
                 etEmailGiven.requestFocus()
-                etEmailGiven.error = getResources().getString(R.string.btn_sigin_error_email_2)
+                etEmailGiven.error = resources.getString(R.string.btn_sigin_error_email_2)
             }
             else if (passwordIn.isEmpty()) {
                 etPasswordGiven.requestFocus()
-                etPasswordGiven.error = getResources().getString(R.string.btn_sigin_error_password_1)
+                etPasswordGiven.error = resources.getString(R.string.btn_sigin_error_password_1)
             }
             else if (!isLettersOrNumbers(passwordIn)) {
                 etPasswordGiven.requestFocus()
                 etPasswordGiven.text.clear()
-                etPasswordGiven.error = getResources().getString(R.string.btn_sigin_error_password_3)
+                etPasswordGiven.error = resources.getString(R.string.btn_sigin_error_password_3)
             }
             else if (userNameIn.length < 3) {
                 etPasswordGiven.requestFocus()
                 etPasswordGiven.text.clear()
-                etPasswordGiven.error = getResources().getString(R.string.btn_sigin_error_password_2)
+                etPasswordGiven.error = resources.getString(R.string.btn_sigin_error_password_2)
             }
             else if (passwordIn != confpasswordIn){
                 etPasswordGiven.requestFocus()
                 etPasswordGiven.text.clear()
-                etPasswordGiven.error = getResources().getString(R.string.btn_sigin_error_password_4)
+                etPasswordGiven.error = resources.getString(R.string.btn_sigin_error_password_4)
             }
             else {
                 val newUser = User(name = etNameGiven.text.toString(), email = etEmailGiven.text.toString(),
                     password = etPasswordGiven.text.toString())
 
                 api.addNewUser(newUser)
-                    .enqueue(object : Callback<StringResponse> {
+                    .enqueue(object : Callback<DefaultResponse> {
                         override fun onResponse(
-                            call: Call<StringResponse>,
-                            response: Response<StringResponse>
+                            call: Call<DefaultResponse>,
+                            response: Response<DefaultResponse>
                         ) {
-                            if (response.body()?.response.equals("SUCCESSFUL_REGISTRATION")) {
+                            if (response.body()?.message.equals("SUCCESSFUL_REGISTRATION")) {
                                 findNavController().navigate(
                                     R.id.action_SignupFragment_to_LoginFragment, null
                                 )
@@ -124,7 +124,7 @@ class SignupFragment : Fragment() {
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
-                            if (response.body()?.response.equals("EMAIL_ALREADY_USED")) {
+                            if (response.body()?.message.equals("EMAIL_ALREADY_USED")) {
                                 Toast.makeText(
                                     context,
                                     "Error: email is already used!",
@@ -133,7 +133,7 @@ class SignupFragment : Fragment() {
                             }
                         }
 
-                        override fun onFailure(call: Call<StringResponse>, t: Throwable) {
+                        override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
                             Toast.makeText(requireContext(), "Something went wrong.", Toast.LENGTH_LONG).show()
                         }
 
