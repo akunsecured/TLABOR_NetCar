@@ -65,22 +65,8 @@
         android:id="@+id/car_plate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="240dp"
         android:gravity="center"
-        android:textColor="@color/textColor"
-        android:textSize="28sp"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/cost"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/cost"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="204dp"
-        android:gravity="center"
-        android:text="100Ft"
         android:textColor="@color/textColor"
         android:textSize="28sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -92,15 +78,14 @@
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:layout_marginBottom="116dp"
+        android:theme="@style/CheckBox"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.535"
         app:layout_constraintStart_toEndOf="@+id/checkbox_textview"
-        app:layout_constraintTop_toBottomOf="@+id/cost"
-        app:layout_constraintVertical_bias="0.34"
-        android:theme="@style/CheckBox"/>
+        app:layout_constraintTop_toBottomOf="@+id/car_plate"
+        app:layout_constraintVertical_bias="0.315" />
 
     <Button
         android:id="@+id/btnAccept"
@@ -137,7 +122,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="36dp"
-        android:layout_marginTop="12dp"
         android:layout_marginBottom="116dp"
         android:gravity="center"
         android:text="@string/package_shipment"
@@ -145,10 +129,10 @@
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.082"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cost"
-        app:layout_constraintVertical_bias="0.34" />
+        app:layout_constraintTop_toBottomOf="@+id/car_plate"
+        app:layout_constraintVertical_bias="0.315" />
 
     <EditText
         android:id="@+id/checkbox_editText"
@@ -161,6 +145,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:inputType="number"
         app:layout_constraintTop_toBottomOf="@+id/checkbox_textview"
         app:layout_constraintVertical_bias="0.151"/>
 
