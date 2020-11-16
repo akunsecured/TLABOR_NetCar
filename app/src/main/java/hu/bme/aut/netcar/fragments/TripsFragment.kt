@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.netcar.R
-import hu.bme.aut.netcar.data.User
+import hu.bme.aut.netcar.data.UserData
 import hu.bme.aut.netcar.model.TripsAdapter
 import hu.bme.aut.netcar.network.Api
 import hu.bme.aut.netcar.network.RetrofitClient
@@ -40,10 +40,10 @@ class TripsFragment : Fragment() {
     private fun setUpData() {
 
         val dataCall = api.getUsers()
-        dataCall.enqueue(object : Callback<List<User>> {
+        dataCall.enqueue(object : Callback<List<UserData>> {
             override fun onResponse(
-                call: Call<List<User>>,
-                response: Response<List<User>>
+                call: Call<List<UserData>>,
+                response: Response<List<UserData>>
             ) {
                 val usersFromRetrofit = response.body()
                 if (usersFromRetrofit != null) {
@@ -53,7 +53,7 @@ class TripsFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<List<User>>, t: Throwable) {
+            override fun onFailure(call: Call<List<UserData>>, t: Throwable) {
                 TODO("Not yet implemented")
             }
 

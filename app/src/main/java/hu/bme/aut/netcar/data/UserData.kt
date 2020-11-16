@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-class User(
-    @SerializedName("id") val id: Int? = null,
+class UserData(
+    @SerializedName("id") val userId: Int? = null,
     @SerializedName("name") val name: String?,
     @SerializedName("email") val email: String?,
     @SerializedName("password") val password: String?,

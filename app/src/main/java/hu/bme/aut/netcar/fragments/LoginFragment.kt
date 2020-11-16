@@ -67,9 +67,8 @@ class LoginFragment : Fragment() {
                             }
 
                             "SUCCESSFUL_LOGIN" -> {
-                                val userId = response.body()!!.id
                                 val intent = Intent(requireContext(), NavigationActivity::class.java)
-                                intent.putExtra(NavigationActivity.USER_ID, userId)
+                                intent.putExtra(NavigationActivity.USERDATA_ID, response.body()!!.id)
                                 startActivity(intent)
                             }
                         }

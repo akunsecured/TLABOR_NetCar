@@ -22,7 +22,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import hu.bme.aut.netcar.data.User
+import hu.bme.aut.netcar.data.UserData
 import hu.bme.aut.netcar.network.RetrofitClient
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.activity_navigation.view.*
@@ -31,7 +31,6 @@ import kotlinx.android.synthetic.main.nav_header_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
 
 @Suppress("DEPRECATION")
 class NavigationActivity : AppCompatActivity() {
@@ -43,17 +42,17 @@ class NavigationActivity : AppCompatActivity() {
     private lateinit var filepath: Uri
     private lateinit var bitmap: Bitmap
     private lateinit var mDialogView: View
-    private var User : User? = null
-    var userId: Int = -1
+    private var userData : UserData? = null
+    var userDataId: Int = -1
     companion object{
-        var USER_ID = "USER_ID"
+        var USERDATA_ID = "USERDATA_ID"
     }
 
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
-        userId = this.intent.getIntExtra(USER_ID, -1)
+        userDataId = this.intent.getIntExtra(USERDATA_ID, -1)
         mDrawerLayout = drawer_layout
         actionBarDrawerToggle = ActionBarDrawerToggle(
             this,
@@ -94,17 +93,17 @@ class NavigationActivity : AppCompatActivity() {
         }
 
         //retrofit
-        RetrofitClient.INSTANCE.getUser(userId)
-            .enqueue(object : Callback<User> {
-            override fun onFailure(call: Call<User>, t: Throwable) {
+        RetrofitClient.INSTANCE.getUserById(userDataId)
+            .enqueue(object : Callback<UserData> {
+            override fun onFailure(call: Call<UserData>, t: Throwable) {
                 Toast.makeText(application, "Something went wrong", Toast.LENGTH_LONG).show()
             }
 
-            override fun onResponse(call: Call<User>, response: Response<User>) {
+            override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
                 if (response.body() != null) {
-                    User = response.body()
-                    header_name.text = User!!.name
-                    header_email.text = User!!.email
+                    userData = response.body()
+                    header_name.text = userData!!.name
+                    header_email.text = userData!!.email
                 }
             }
         })

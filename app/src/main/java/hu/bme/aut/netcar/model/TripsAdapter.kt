@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.netcar.R
-import hu.bme.aut.netcar.data.User
+import hu.bme.aut.netcar.data.UserData
 import kotlinx.android.synthetic.main.trips_list_item.view.*
 
 class TripsAdapter : RecyclerView.Adapter<TripsAdapter.TripsViewHolder>() {
 
-    private val list: ArrayList<User> = ArrayList()
+    private val list: ArrayList<UserData> = ArrayList()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -25,7 +25,7 @@ class TripsAdapter : RecyclerView.Adapter<TripsAdapter.TripsViewHolder>() {
         //val carPicture: ImageView = itemView.iv_carImage
         //val iconPicture: ImageView = itemView.iv_tripIcon
 
-        var driver: User? = null
+        var driver: UserData? = null
     }
 
     override fun onBindViewHolder(holder: TripsViewHolder, position: Int) {
@@ -41,8 +41,8 @@ class TripsAdapter : RecyclerView.Adapter<TripsAdapter.TripsViewHolder>() {
         return list.size
     }
 
-    fun addUser(user: User) {
-        list.add(user)
+    fun addUser(userData: UserData) {
+        list.add(userData)
         notifyItemInserted(list.size)
     }
 }

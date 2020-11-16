@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import hu.bme.aut.netcar.R
-import hu.bme.aut.netcar.data.User
+import hu.bme.aut.netcar.data.UserData
 import hu.bme.aut.netcar.network.Api
 import hu.bme.aut.netcar.network.RetrofitClient
 import hu.bme.aut.netcar.network.DefaultResponse
@@ -105,7 +105,7 @@ class SignupFragment : Fragment() {
                 etPasswordGiven.error = resources.getString(R.string.btn_sigin_error_password_4)
             }
             else {
-                val newUser = User(name = etNameGiven.text.toString(), email = etEmailGiven.text.toString(),
+                val newUser = UserData(name = etNameGiven.text.toString(), email = etEmailGiven.text.toString(),
                     password = etPasswordGiven.text.toString())
 
                 api.addNewUser(newUser)
