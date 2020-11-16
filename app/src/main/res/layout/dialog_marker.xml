@@ -100,7 +100,7 @@
         app:layout_constraintStart_toEndOf="@+id/checkbox_textview"
         app:layout_constraintTop_toBottomOf="@+id/cost"
         app:layout_constraintVertical_bias="0.34"
-        android:theme="@style/CheckBox"></CheckBox>
+        android:theme="@style/CheckBox"/>
 
     <Button
         android:id="@+id/btnAccept"
@@ -162,6 +162,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/checkbox_textview"
-        app:layout_constraintVertical_bias="0.151"></EditText>
+        app:layout_constraintVertical_bias="0.151"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -181,11 +182,12 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         mAlertDialog.car_plate.text = str[3]
 
         mDialogView.checkBox.setOnCheckedChangeListener { _, _ ->
-            if(!mDialogView.checkbox_editText.isVisible){
+            if (mDialogView.checkbox_editText.isGone) {
                 mDialogView.checkbox_editText.visibility = View.VISIBLE
             }
-            else{
-                mDialogView.checkbox_editText.visibility = View.INVISIBLE
+
+            else {
+                mDialogView.checkbox_editText.visibility = View.GONE
             }
         }
 
