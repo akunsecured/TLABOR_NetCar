@@ -9,25 +9,59 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import hu.bme.aut.netcar.NavigationActivity
 import hu.bme.aut.netcar.R
+import hu.bme.aut.netcar.data.UserData
+import hu.bme.aut.netcar.network.RetrofitClient
 import kotlinx.android.synthetic.main.fragment_credits.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CreditsFragment : Fragment() {
+
+    private var parentActivity: NavigationActivity? = null
+    private var userDataId: Int = -1
+    private var userData: UserData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val inflater = TransitionInflater.from(requireContext())
         enterTransition = inflater.inflateTransition(R.transition.slide_right)
         exitTransition = inflater.inflateTransition(R.transition.fade)
+
+        parentActivity = activity as NavigationActivity
+
+        userDataId = parentActivity!!.intent.getIntExtra(NavigationActivity.USERDATA_ID, -1)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View?  = inflater.inflate(R.layout.fragment_credits, container, false)
+    ): View?  {
+        val view = inflater.inflate(R.layout.fragment_credits, container, false)
+
+        RetrofitClient.INSTANCE.getUserById(userDataId)
+            .enqueue(object: Callback<UserData> {
+                override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
+                    userData = response.body()
+
+                    tvCreditAmount.text = ("$ ").plus(userData!!.credits.toString())
+                }
+
+                override fun onFailure(call: Call<UserData>, t: Throwable) {
+                    Toast.makeText(context!!, "Something went wrong.", Toast.LENGTH_LONG)
+                        .show()
+                }
+
+            })
+
+        return view
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
