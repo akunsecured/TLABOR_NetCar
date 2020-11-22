@@ -1,6 +1,5 @@
 package hu.bme.aut.netcar.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
@@ -8,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import hu.bme.aut.netcar.NavigationActivity
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.network.LoginResponse
 import hu.bme.aut.netcar.network.RetrofitClient
@@ -67,9 +66,10 @@ class LoginFragment : Fragment() {
                             }
 
                             "SUCCESSFUL_LOGIN" -> {
-                                val intent = Intent(requireContext(), NavigationActivity::class.java)
-                                intent.putExtra(NavigationActivity.USERDATA_ID, response.body()!!.id)
-                                startActivity(intent)
+                                etPassword.text.clear()
+                                val userDataId = response.body()!!.id
+                                val action = LoginFragmentDirections.actionLoginFragmentToNavigationActivity(userDataId!!)
+                                view.findNavController().navigate(action)
                             }
                         }
                     }

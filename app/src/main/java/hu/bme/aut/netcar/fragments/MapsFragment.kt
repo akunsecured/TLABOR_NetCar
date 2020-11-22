@@ -40,6 +40,7 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
+    private var userDataId: Int = -1
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -50,6 +51,11 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         val inflater = TransitionInflater.from(requireContext())
         enterTransition = inflater.inflateTransition(R.transition.fade)
         exitTransition = inflater.inflateTransition(R.transition.fade)
+
+        if (arguments != null) {
+            val id = arguments?.getInt("userDataId")
+            userDataId = id!!
+        }
     }
 
     override fun onCreateView(

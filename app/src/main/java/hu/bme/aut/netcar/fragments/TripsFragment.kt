@@ -21,6 +21,7 @@ class TripsFragment : Fragment() {
     private lateinit var adapter: TripsAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var api: Api
+    private var userDataId: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,6 +65,9 @@ class TripsFragment : Fragment() {
         super.onCreate(savedInstanceState)
         api = RetrofitClient.INSTANCE
         adapter = TripsAdapter()
+
+        val id = arguments?.getInt("userDataId")
+        userDataId = id!!
     }
 
 }

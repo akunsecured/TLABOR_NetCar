@@ -12,7 +12,6 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import hu.bme.aut.netcar.NavigationActivity
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.UserData
 import hu.bme.aut.netcar.network.DefaultResponse
@@ -24,7 +23,6 @@ import retrofit2.Response
 
 class CreditsFragment : Fragment() {
 
-    private var parentActivity: NavigationActivity? = null
     private var userDataId: Int = -1
     private var userData: UserData? = null
 
@@ -34,9 +32,9 @@ class CreditsFragment : Fragment() {
         enterTransition = inflater.inflateTransition(R.transition.slide_right)
         exitTransition = inflater.inflateTransition(R.transition.fade)
 
-        parentActivity = activity as NavigationActivity
-
-        userDataId = parentActivity!!.intent.getIntExtra(NavigationActivity.USERDATA_ID, -1)
+        val id = arguments?.getInt("userDataId")
+        userDataId = id!!
+        //userDataId = (activity as NavigationActivity).intent.getIntExtra(NavigationActivity.USERDATA_ID, -1)
     }
 
     override fun onCreateView(

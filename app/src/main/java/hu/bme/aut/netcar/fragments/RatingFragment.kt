@@ -10,11 +10,16 @@ import hu.bme.aut.netcar.R
 
 class RatingFragment : Fragment() {
 
+    private var userDataId: Int = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val inflater = TransitionInflater.from(requireContext())
         enterTransition = inflater.inflateTransition(R.transition.slide_right)
         exitTransition = inflater.inflateTransition(R.transition.fade)
+
+        val id = arguments?.getInt("userDataId")
+        userDataId = id!!
     }
 
     override fun onCreateView(

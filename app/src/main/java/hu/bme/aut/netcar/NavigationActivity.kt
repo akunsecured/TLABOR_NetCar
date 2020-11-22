@@ -6,34 +6,45 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import android.widget.Switch
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
+import androidx.navigation.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import hu.bme.aut.netcar.data.CarData
 import hu.bme.aut.netcar.data.UserData
+import hu.bme.aut.netcar.network.DefaultResponse
 import hu.bme.aut.netcar.network.RetrofitClient
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.activity_navigation.view.*
 import kotlinx.android.synthetic.main.dialog_register_driver.view.*
-import kotlinx.android.synthetic.main.nav_header_main.*
+import kotlinx.android.synthetic.main.nav_header_main.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 @Suppress("DEPRECATION")
-class NavigationActivity : AppCompatActivity() {
+class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    private val args: NavigationActivityArgs by navArgs()
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
@@ -42,17 +53,18 @@ class NavigationActivity : AppCompatActivity() {
     private lateinit var filepath: Uri
     private lateinit var bitmap: Bitmap
     private lateinit var mDialogView: View
+    private lateinit var navView: NavigationView
     private var userData : UserData? = null
-    var userDataId: Int = -1
-    companion object{
-        var USERDATA_ID = "USERDATA_ID"
-    }
+    private var userDataId: Int = -1
 
     @SuppressLint("InflateParams")
+    @Suppress("LABEL_NAME_CLASH")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
-        userDataId = this.intent.getIntExtra(USERDATA_ID, -1)
+
+        userDataId = args.userDataId
+
         mDrawerLayout = drawer_layout
         actionBarDrawerToggle = ActionBarDrawerToggle(
             this,
@@ -70,27 +82,10 @@ class NavigationActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val navView: NavigationView = findViewById(R.id.nav_view)
+        navView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
         navView.setupWithNavController(navController)
-
-        // Logout item
-        navView.menu.findItem(R.id.nav_logout).setOnMenuItemClickListener {
-            AlertDialog.Builder(this)
-                .setMessage(getString(R.string.are_you_sure_want_logout))
-                .setPositiveButton(getString(R.string.no), null)
-                .setNegativeButton(getString(R.string.yes)) { _, _ -> this.finish()
-                }
-                .show()
-
-            return@setOnMenuItemClickListener true
-        }
-
-        // Active Driver item
-        navView.menu.findItem(R.id.nav_active_driver).setOnMenuItemClickListener {
-            switchDriver.isChecked = !switchDriver.isChecked
-            return@setOnMenuItemClickListener true
-        }
+        navView.setNavigationItemSelectedListener(this)
 
         //retrofit
         RetrofitClient.INSTANCE.getUserById(userDataId)
@@ -102,8 +97,9 @@ class NavigationActivity : AppCompatActivity() {
             override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
                 if (response.body() != null) {
                     userData = response.body()
-                    header_name.text = userData!!.name
-                    header_email.text = userData!!.email
+                    if (userData != null) {
+                        updateHeader(userData!!)
+                    }
                 }
             }
         })
@@ -130,18 +126,57 @@ class NavigationActivity : AppCompatActivity() {
             }
 
             mDialogView.btnRegister.setOnClickListener{
-                mAlertDialog.dismiss()
-                /*
-                val plate = mDialogView.etLicensePlateGiven.text.toString()
-                val brand = mDialogView.etLicensePlateGiven.text.toString()
-                val model = mDialogView.etLicensePlateGiven.text.toString()
-                val seats = mDialogView.etLicensePlateGiven.text.toString()
-                */
+                val serial = mDialogView.etLicensePlateGiven.text.toString()
+                val brand = mDialogView.etCarBrandGiven.text.toString()
+                val model = mDialogView.etModelGiven.text.toString()
+
+                if (serial.isEmpty()) {
+                    mDialogView.etLicensePlateGiven.error = "Please give your car's plate"
+                    mDialogView.etLicensePlateGiven.requestFocus()
+                    return@setOnClickListener
+                }
+
+                if (brand.isEmpty()) {
+                    mDialogView.etCarBrandGiven.error = "Please give your car's brand"
+                    mDialogView.etCarBrandGiven.requestFocus()
+                    return@setOnClickListener
+                }
+
+                if (model.isEmpty()) {
+                    mDialogView.etModelGiven.error = "Please give your car's model"
+                    mDialogView.etModelGiven.requestFocus()
+                    return@setOnClickListener
+                }
+
+                RetrofitClient.INSTANCE.updateCar(userDataId, brand, model, serial)
+                    .enqueue(object: Callback<DefaultResponse> {
+                        override fun onResponse(
+                            call: Call<DefaultResponse>,
+                            response: Response<DefaultResponse>
+                        ) {
+                            val neededMessage = "Updated car with id: $userDataId"
+                            when (response.body()?.message) {
+                                neededMessage -> {
+                                    Toast.makeText(application, "Car updated successfully", Toast.LENGTH_LONG)
+                                        .show()
+                                    mAlertDialog.dismiss()
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
+                            Toast.makeText(application, "Something went wrong in updating the user's car", Toast.LENGTH_LONG)
+                                .show()
+                        }
+
+                    })
             }
             mDialogView.btnCancel.setOnClickListener {
                 mAlertDialog.dismiss()
             }
         }
+
+        updateLayout()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -184,5 +219,107 @@ class NavigationActivity : AppCompatActivity() {
             bitmap = MediaStore.Images.Media.getBitmap(contentResolver, filepath)
             mDialogView.car_image_button.setImageBitmap(bitmap)
         }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        drawer_layout.closeDrawers()
+
+        if (item.itemId == nav_view.checkedItem?.itemId)
+            return false
+
+        Handler().postDelayed({
+            when (item.itemId) {
+                R.id.nav_map -> {
+                    val bundle = bundleOf("userDataId" to userDataId)
+                    findNavController(R.id.nav_host_fragment).navigate(R.id.nav_map, bundle)
+                }
+
+                R.id.nav_credits -> {
+                    val bundle = bundleOf("userDataId" to userDataId)
+                    findNavController(R.id.nav_host_fragment).navigate(R.id.nav_credits, bundle)
+                }
+
+                R.id.nav_rating -> {
+                    val bundle = bundleOf("userDataId" to userDataId)
+                    findNavController(R.id.nav_host_fragment).navigate(R.id.nav_rating, bundle)
+                }
+
+                R.id.nav_trips -> {
+                    val bundle = bundleOf("userDataId" to userDataId)
+                    findNavController(R.id.nav_host_fragment).navigate(R.id.nav_trips, bundle)
+                }
+
+                R.id.nav_active_driver -> {
+                    switchDriver.isChecked = !switchDriver.isChecked
+                }
+
+                R.id.nav_settings -> {
+                    val bundle = bundleOf("userDataId" to userDataId)
+                    findNavController(R.id.nav_host_fragment).navigate(R.id.nav_settings, bundle)
+                }
+
+                R.id.nav_logout -> {
+                    AlertDialog.Builder(this)
+                        .setMessage(getString(R.string.are_you_sure_want_logout))
+                        .setPositiveButton(getString(R.string.no), null)
+                        .setNegativeButton(getString(R.string.yes)) { _, _ -> this.finish()
+                        }
+                        .show()
+                }
+            }
+        }, 200)
+
+        return true
+    }
+
+    fun updateHeader(userData: UserData) {
+        val headerView: View = navView.getHeaderView(0)
+
+        val headerName: TextView = headerView.header_name
+        val headerEmail: TextView = headerView.header_email
+
+        headerName.text = userData.name
+        headerEmail.text = userData.email
+
+        // TODO: Picture
+        //val headerPic: ImageView = headerView.header_image
+        //Picasso.get().load(userData.name).resize(headerPic.width, headerPic.height).centerCrop().into(headerPic)
+    }
+
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private fun updateLayout() {
+        var usersCarData: CarData
+        val btnRegisterAsDriver: Button = navView.btnRegisterAsDriver
+        val activeDriverMenuItem: MenuItem = navView.menu.findItem(R.id.nav_active_driver)
+        val swSwitchDriver: Switch = navView.findViewById(R.id.switchDriver)
+
+        RetrofitClient.INSTANCE.getCarById(userDataId)
+            .enqueue(object: Callback<CarData> {
+                override fun onResponse(call: Call<CarData>, response: Response<CarData>) {
+                    if (response.body() != null) {
+                        usersCarData = response.body()!!
+
+                        if (usersCarData.serial != null) {
+                            btnRegisterAsDriver.visibility = View.GONE
+                            activeDriverMenuItem.isVisible = false
+                            swSwitchDriver.visibility = View.GONE
+                        }
+                        else {
+                            btnRegisterAsDriver.visibility = View.VISIBLE
+                            activeDriverMenuItem.isVisible = true
+                            swSwitchDriver.visibility = View.VISIBLE
+                        }
+                    }
+                    else
+                        Toast.makeText(application, "Response body is empty", Toast.LENGTH_LONG)
+                            .show()
+                }
+
+                override fun onFailure(call: Call<CarData>, t: Throwable) {
+                    Toast.makeText(application, "Something went wrong in getting user's car", Toast.LENGTH_LONG)
+                        .show()
+                }
+
+            })
     }
 }

@@ -63,4 +63,5 @@
     <string name="menu_trips">Utazások</string>
     <string name="package_shipment">Csomag szállítmány</string>
     <string name="package_weight_in_kg">Csomag súlya kilogrammban</string>
+    <string name="controls">Beállítások</string>
 </resources>

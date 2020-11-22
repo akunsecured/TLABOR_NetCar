@@ -64,10 +64,9 @@
     <string name="profile_name2">Profile Name</string>
     <string name="new_password">New Password</string>
     <string name="menu_trips">Trips</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="btn_accept_text">Accept</string>
     <string name="trip_confirmation">Trip confirmation</string>
     <string name="package_shipment">Package shipment</string>
     <string name="package_weight_in_kg">Package weight in kg</string>
+    <string name="controls">Controls</string>
 </resources>

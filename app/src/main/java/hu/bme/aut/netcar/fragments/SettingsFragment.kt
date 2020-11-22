@@ -26,7 +26,14 @@ class SettingsFragment : Fragment() {
     private lateinit var filepath: Uri
     private lateinit var bitmap: Bitmap
     private var chooseImage = false
+    private var userDataId: Int = -1
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val id = arguments?.getInt("userDataId")
+        userDataId = id!!
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,61 +63,63 @@ class SettingsFragment : Fragment() {
                 detailChanges = true
             }
 
-            if (detailChanges) {
-                val dialogLayout = LayoutInflater.from(view.context).inflate(R.layout.dialog_settings, null)
-                val builder = AlertDialog.Builder(view.context).setView(dialogLayout)
-                val alertDialog = builder.show()
+            when {
+                detailChanges -> {
+                    val dialogLayout = LayoutInflater.from(view.context).inflate(R.layout.dialog_settings, null)
+                    val builder = AlertDialog.Builder(view.context).setView(dialogLayout)
+                    val alertDialog = builder.show()
 
-                dialogLayout.dialog_settings_btnSave.setOnClickListener {
-                    //val pw: String
-                    if (dialogLayout.etPassword1.text.isEmpty()) {
-                        dialogLayout.etPassword1.requestFocus()
-                        dialogLayout.etPassword1.error = getString(R.string.btn_sigin_error_password_1)
+                    dialogLayout.dialog_settings_btnSave.setOnClickListener {
+                        //val pw: String
+                        when {
+                            dialogLayout.etPassword1.text.isEmpty() -> {
+                                dialogLayout.etPassword1.requestFocus()
+                                dialogLayout.etPassword1.error = getString(R.string.btn_sigin_error_password_1)
+                            }
+                            dialogLayout.etPassword2.text.isEmpty() -> {
+                                dialogLayout.etPassword2.requestFocus()
+                                dialogLayout.etPassword2.error = getString(R.string.btn_sigin_error_password_1)
+                            }
+                            dialogLayout.etPassword1.text.toString() != dialogLayout.etPassword2.text.toString() -> {
+                                dialogLayout.etPassword2.requestFocus()
+                                dialogLayout.etPassword2.error = getString(R.string.btn_sigin_error_password_4)
+                            }
+                            else -> {
+                                if (chooseImage) {
+                                    navView.header_image.setImageBitmap(
+                                        Bitmap.createScaledBitmap(bitmap, headerImgWidth, headerImgHeight, false))
+                                    settings_userimage.setImageBitmap(null)
+                                }
+                                if (settings_etEmail.text.isNotEmpty()) {
+                                    navView.header_email.text = settings_etEmail.text
+                                }
+                                if (settings_etProfileName.text.isNotEmpty()) {
+                                    navView.header_name.text = settings_etProfileName.text
+                                }
+                                alertDialog.dismiss()
+                                Toast.makeText(view.context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
+                                clearSettings(view)
+                            }
+                        }
                     }
-                    else if (dialogLayout.etPassword2.text.isEmpty()) {
-                        dialogLayout.etPassword2.requestFocus()
-                        dialogLayout.etPassword2.error = getString(R.string.btn_sigin_error_password_1)
-                    }
-                    else if (dialogLayout.etPassword1.text.toString() != dialogLayout.etPassword2.text.toString()) {
-                        dialogLayout.etPassword2.requestFocus()
-                        dialogLayout.etPassword2.error = getString(R.string.btn_sigin_error_password_4)
-                    }
-                    else {
+
+                    dialogLayout.dialog_settings_btnCancel.setOnClickListener {
+                        clearSettings(view)
                         if (chooseImage) {
-                            navView.header_image.setImageBitmap(
-                                Bitmap.createScaledBitmap(bitmap, headerImgWidth, headerImgHeight, false))
                             settings_userimage.setImageBitmap(null)
                         }
-                        if (settings_etEmail.text.isNotEmpty()) {
-                            navView.header_email.text = settings_etEmail.text
-                        }
-                        if (settings_etProfileName.text.isNotEmpty()) {
-                            navView.header_name.text = settings_etProfileName.text
-                        }
                         alertDialog.dismiss()
-                        Toast.makeText(view.context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
-                        clearSettings(view)
                     }
                 }
-
-                dialogLayout.dialog_settings_btnCancel.setOnClickListener {
-                    clearSettings(view)
-                    if (chooseImage) {
-                        settings_userimage.setImageBitmap(null)
-                    }
-                    alertDialog.dismiss()
+                chooseImage -> {
+                    Toast.makeText(view.context, getString(R.string.image_saved), Toast.LENGTH_LONG).show()
+                    navView.header_image.setImageBitmap(
+                        Bitmap.createScaledBitmap(bitmap, headerImgWidth, headerImgHeight, false))
+                    settings_userimage.setImageBitmap(null)
                 }
-            }
-
-            else if (chooseImage) {
-                Toast.makeText(view.context, getString(R.string.image_saved), Toast.LENGTH_LONG).show()
-                navView.header_image.setImageBitmap(
-                    Bitmap.createScaledBitmap(bitmap, headerImgWidth, headerImgHeight, false))
-                settings_userimage.setImageBitmap(null)
-            }
-
-            else {
-                Toast.makeText(view.context, getString(R.string.no_changes), Toast.LENGTH_SHORT).show()
+                else -> {
+                    Toast.makeText(view.context, getString(R.string.no_changes), Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

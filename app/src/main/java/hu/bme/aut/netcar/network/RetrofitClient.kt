@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
 
-    //private val AUTH = "Basic " + Base64.encodeToString("akunsecured:123456".toByteArray(), Base64.NO_WRAP)
+    //private val AUTH = "Basic " + Base64.encodeToString("username:123456".toByteArray(), Base64.NO_WRAP)
     private const val BASE_URL = "https://tlab-netcar.herokuapp.com/"
 
     private val okHttpClient = OkHttpClient.Builder()

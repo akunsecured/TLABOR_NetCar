@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_LoginFragment_to_SignupFragment"
             app:destination="@id/SignupFragment" />
+        <action
+            android:id="@+id/action_LoginFragment_to_NavigationActivity"
+            app:destination="@id/NavigationActivity" />
     </fragment>
 
     <fragment
@@ -24,5 +27,17 @@
             android:id="@+id/action_SignupFragment_to_LoginFragment"
             app:destination="@id/LoginFragment" />
     </fragment>
+
+    <activity
+        android:id="@+id/NavigationActivity"
+        android:name="hu.bme.aut.netcar.NavigationActivity"
+        android:label="navigation_activity"
+        tools:layout="@layout/activity_navigation">
+
+        <argument
+            android:name="userDataId"
+            app:argType="integer"
+            android:defaultValue="-1"/>
+    </activity>
 
 </navigation>
