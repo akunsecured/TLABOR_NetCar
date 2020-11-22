@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/register_driver_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -89,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="84dp"
+        android:layout_marginBottom="184dp"
         android:hint="@string/seats"
         android:inputType="number"
         android:textColor="@color/editTextColor"
@@ -106,30 +107,76 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginStart="28dp"
-        android:layout_marginTop="10dp"
         android:background="@drawable/login_button"
         android:text="@string/btn_register_text"
         android:textColor="@color/btnTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnCancel"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.076"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etSeatsGiven"
-        app:layout_constraintVertical_bias="0.154" />
+        app:layout_constraintTop_toBottomOf="@+id/checkbox_editText_rd"
+        app:layout_constraintVertical_bias="0.686" />
 
     <Button
         android:id="@+id/btnCancel"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="28dp"
+        android:layout_marginEnd="36dp"
         android:background="@drawable/login_button"
         android:text="@string/btn_cancel_text"
         android:textColor="@color/btnTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkbox_editText_rd"
+        app:layout_constraintVertical_bias="0.686" />
+
+    <CheckBox
+        android:id="@+id/checkBox_rd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:theme="@style/CheckBox"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.795"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etSeatsGiven"
-        app:layout_constraintVertical_bias="0.157" />
+        app:layout_constraintVertical_bias="0.131" />
+
+    <TextView
+        android:id="@+id/checkbox_textview_rd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="36dp"
+        android:layout_marginBottom="132dp"
+        android:gravity="center"
+        android:text="@string/car_boot"
+        android:textColor="@color/textColor"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/checkBox_rd"
+        app:layout_constraintHorizontal_bias="0.01"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/car_plate"
+        app:layout_constraintVertical_bias="0.315" />
+
+    <EditText
+        android:id="@+id/checkbox_editText_rd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/number_of_package"
+        android:inputType="number"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.443"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/textColor"
+        android:textColorHint="@color/editTextHintColor"
+        android:theme="@style/editTextTheme"
+        app:layout_constraintTop_toBottomOf="@+id/etSeatsGiven"
+        app:layout_constraintVertical_bias="0.46" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

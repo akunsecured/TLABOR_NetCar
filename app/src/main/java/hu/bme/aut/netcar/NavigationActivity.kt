@@ -21,6 +21,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
+import androidx.core.view.isGone
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.navArgs
@@ -35,7 +36,9 @@ import hu.bme.aut.netcar.network.DefaultResponse
 import hu.bme.aut.netcar.network.RetrofitClient
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.activity_navigation.view.*
+import kotlinx.android.synthetic.main.dialog_marker.view.*
 import kotlinx.android.synthetic.main.dialog_register_driver.view.*
+import kotlinx.android.synthetic.main.dialog_register_driver.view.btnCancel
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -125,6 +128,16 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 startFileChooser()
             }
 
+            mDialogView.checkBox_rd.setOnCheckedChangeListener { _, _ ->
+                if (mDialogView.checkbox_editText_rd.isGone) {
+                    mDialogView.checkbox_editText_rd.visibility = View.VISIBLE
+                }
+
+                else {
+                    mDialogView.checkbox_editText_rd.visibility = View.GONE
+                }
+            }
+
             mDialogView.btnRegister.setOnClickListener{
                 val serial = mDialogView.etLicensePlateGiven.text.toString()
                 val brand = mDialogView.etCarBrandGiven.text.toString()
@@ -160,6 +173,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                                     Toast.makeText(application, "Car updated successfully", Toast.LENGTH_LONG)
                                         .show()
                                     mAlertDialog.dismiss()
+                                    updateLayout()
                                 }
                             }
                         }

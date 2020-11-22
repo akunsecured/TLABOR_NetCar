@@ -62,6 +62,7 @@
     <string name="trip_confirmation">Utazás megerősítése</string>
     <string name="menu_trips">Utazások</string>
     <string name="package_shipment">Csomag szállítmány</string>
-    <string name="package_weight_in_kg">Csomag súlya kilogrammban</string>
-    <string name="controls">Beállítások</string>
+    <string name="number_of_package">Csomagok darabszáma</string>
+    <string name="controls">Kezelés</string>
+    <string name="car_boot">Van csomagtartó</string>
 </resources>
