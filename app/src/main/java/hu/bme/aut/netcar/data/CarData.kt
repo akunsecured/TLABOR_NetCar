@@ -9,5 +9,9 @@ data class CarData(
     @SerializedName("user") var userData: UserData?,
     @SerializedName("brand") var brand: String?,
     @SerializedName("model") var model: String?,
-    @SerializedName("serial") var serial: String?
+    @SerializedName("serial") var serial: String?,
+    @SerializedName("pic") var pic: String?,
+    @SerializedName("hasBoot") var hasBoot: Boolean?,
+    @SerializedName("seats") var seats: Int?,
+    @SerializedName("placeInBoot") var placeInBoot: Int?
 )

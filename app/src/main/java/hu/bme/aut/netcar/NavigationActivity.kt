@@ -148,7 +148,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     return@setOnClickListener
                 }
 
-                RetrofitClient.INSTANCE.updateCar(userDataId, brand, model, serial)
+                RetrofitClient.INSTANCE.updateCar(userDataId, brand, model, serial, "", true, 4, 1)
                     .enqueue(object: Callback<DefaultResponse> {
                         override fun onResponse(
                             call: Call<DefaultResponse>,
@@ -173,6 +173,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             }
             mDialogView.btnCancel.setOnClickListener {
                 mAlertDialog.dismiss()
+                updateLayout()
             }
         }
 
@@ -222,7 +223,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        drawer_layout.closeDrawers()
+        if (item.itemId != R.id.nav_active_driver)
+            drawer_layout.closeDrawers()
 
         if (item.itemId == nav_view.checkedItem?.itemId)
             return false
@@ -269,6 +271,9 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             }
         }, 200)
 
+        if (item.itemId == R.id.nav_active_driver)
+            return false
+
         return true
     }
 
@@ -301,11 +306,16 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
                         if (usersCarData.serial != null) {
                             btnRegisterAsDriver.visibility = View.GONE
+                        }
+                        else {
+                            btnRegisterAsDriver.visibility = View.VISIBLE
+                        }
+
+                        if (!userData!!.valid) {
                             activeDriverMenuItem.isVisible = false
                             swSwitchDriver.visibility = View.GONE
                         }
                         else {
-                            btnRegisterAsDriver.visibility = View.VISIBLE
                             activeDriverMenuItem.isVisible = true
                             swSwitchDriver.visibility = View.VISIBLE
                         }

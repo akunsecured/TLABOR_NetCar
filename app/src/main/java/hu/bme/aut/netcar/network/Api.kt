@@ -43,6 +43,10 @@ interface Api {
         @Path("id") id: Int,
         @Field("brand") brand: String,
         @Field("model") model: String,
-        @Field("serial") serial: String
+        @Field("serial") serial: String,
+        @Field("pic") pic: String,
+        @Field("hasBoot") hasBoot: Boolean,
+        @Field("seats") seats: Int,
+        @Field("placeInBoot") placeInBoot: Int
     ) : Call<DefaultResponse>
 }

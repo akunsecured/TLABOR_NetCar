@@ -10,5 +10,6 @@ class UserData(
     @SerializedName("email") var email: String?,
     @SerializedName("password") var password: String?,
     @SerializedName("pictureUrl") var pictureUrl: String? = null,
-    @SerializedName("credits") var credits: Int? = 0
+    @SerializedName("credits") var credits: Int? = 0,
+    @SerializedName("valid") var valid: Boolean = false
 )
