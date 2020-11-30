@@ -161,7 +161,7 @@
         app:layout_constraintVertical_bias="0.315" />
 
     <EditText
-        android:id="@+id/checkbox_editText_rd"
+        android:id="@+id/etPlaceInBoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/number_of_package"

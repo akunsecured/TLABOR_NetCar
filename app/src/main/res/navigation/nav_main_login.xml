@@ -35,9 +35,8 @@
         tools:layout="@layout/activity_navigation">
 
         <argument
-            android:name="userDataId"
-            app:argType="integer"
-            android:defaultValue="-1"/>
+            android:name="message"
+            app:argType="string" />
     </activity>
 
 </navigation>

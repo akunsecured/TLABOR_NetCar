@@ -10,7 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import hu.bme.aut.netcar.R
-import hu.bme.aut.netcar.network.LoginResponse
+import hu.bme.aut.netcar.data.JwtRequest
+import hu.bme.aut.netcar.network.DefaultResponse
 import hu.bme.aut.netcar.network.RetrofitClient
 import kotlinx.android.synthetic.main.fragment_login.*
 import retrofit2.Call
@@ -34,12 +35,12 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         btnSignIn.setOnClickListener {
-            val email = etEmailAddress.text.toString().trim()
+            val username = etUsername.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
-            if (email.isEmpty()) {
-                etEmailAddress.error = getString(R.string.btn_sigin_error_email_1)
-                etEmailAddress.requestFocus()
+            if (username.isEmpty()) {
+                etUsername.error = getString(R.string.btn_sigin_error_username_1)
+                etUsername.requestFocus()
                 return@setOnClickListener
             }
 
@@ -49,32 +50,32 @@ class LoginFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            RetrofitClient.INSTANCE.userLogin(email, password)
-                .enqueue(object: Callback<LoginResponse> {
-                    override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+            RetrofitClient.INSTANCE.userLogin(JwtRequest(username = username, password = password))
+                .enqueue(object: Callback<DefaultResponse> {
+                    override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
                         when (response.body()?.message) {
-                            "WRONG_PASSWORD" -> {
+                            "Wrong username or password" -> {
                                 etPassword.text.clear()
                                 etPassword.error = "Wrong password, please try again"
                                 etPassword.requestFocus()
                             }
 
-                            "NO_EMAIL_FOUND" -> {
+                            "Username not found" -> {
                                 etPassword.text.clear()
-                                etEmailAddress.error = "There is no account with this email"
-                                etEmailAddress.requestFocus()
+                                etUsername.error = "There is no account with this username"
+                                etUsername.requestFocus()
                             }
 
-                            "SUCCESSFUL_LOGIN" -> {
+                            else -> {
                                 etPassword.text.clear()
-                                val userDataId = response.body()!!.id
-                                val action = LoginFragmentDirections.actionLoginFragmentToNavigationActivity(userDataId!!)
+                                val message = response.body()!!.message
+                                val action = LoginFragmentDirections.actionLoginFragmentToNavigationActivity(message!!)
                                 view.findNavController().navigate(action)
                             }
                         }
                     }
 
-                    override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
                         Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
                     }
 

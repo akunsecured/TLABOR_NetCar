@@ -31,7 +31,7 @@ class TripsAdapter : RecyclerView.Adapter<TripsAdapter.TripsViewHolder>() {
     override fun onBindViewHolder(holder: TripsViewHolder, position: Int) {
         val driver = list[position]
 
-        holder.driverName.text = driver.name
+        holder.driverName.text = driver.username
         // TODO: carPicture, iconPicture
 
         holder.driver = driver

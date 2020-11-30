@@ -1,6 +1,8 @@
 package hu.bme.aut.netcar.network
 
 import hu.bme.aut.netcar.data.CarData
+import hu.bme.aut.netcar.data.JwtRequest
+import hu.bme.aut.netcar.data.UserDTO
 import hu.bme.aut.netcar.data.UserData
 import retrofit2.Call
 import retrofit2.http.*
@@ -24,12 +26,22 @@ interface Api {
         @Body userData: UserData
     ) : Call<DefaultResponse>
 
+    @POST("register")
+    fun register(
+        @Body user: UserDTO
+    ) : Call<DefaultResponse>
+
     @FormUrlEncoded
     @POST("login")
     fun userLogin (
-        @Field("email") email: String,
+        @Field("username") username: String,
         @Field("password") password: String
-    ) : Call<LoginResponse>
+    ) : Call<DefaultResponse>
+
+    @POST("login")
+    fun userLogin(
+        @Body authenticationRequest: JwtRequest
+    ) : Call<DefaultResponse>
 
     @PUT("updateUser/{id}")
     fun updateUser(

@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-class UserData(
+data class UserData(
     @SerializedName("id") val userId: Int? = null,
-    @SerializedName("name") var name: String?,
+    @SerializedName("username") var username: String?,
     @SerializedName("email") var email: String?,
     @SerializedName("password") var password: String?,
     @SerializedName("pictureUrl") var pictureUrl: String? = null,

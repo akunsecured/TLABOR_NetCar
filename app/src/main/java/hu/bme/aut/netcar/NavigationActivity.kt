@@ -34,9 +34,9 @@ import hu.bme.aut.netcar.data.CarData
 import hu.bme.aut.netcar.data.UserData
 import hu.bme.aut.netcar.network.DefaultResponse
 import hu.bme.aut.netcar.network.RetrofitClient
+import hu.bme.aut.netcar.network.RetrofitClientAuth
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.activity_navigation.view.*
-import kotlinx.android.synthetic.main.dialog_marker.view.*
 import kotlinx.android.synthetic.main.dialog_register_driver.view.*
 import kotlinx.android.synthetic.main.dialog_register_driver.view.btnCancel
 import kotlinx.android.synthetic.main.nav_header_main.view.*
@@ -49,6 +49,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
     private val args: NavigationActivityArgs by navArgs()
 
+    private lateinit var retrofit: RetrofitClientAuth
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
     private lateinit var navBtn: FloatingActionButton
@@ -58,6 +59,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     private lateinit var mDialogView: View
     private lateinit var navView: NavigationView
     private var userData : UserData? = null
+    private var userToken: String = ""
     private var userDataId: Int = -1
 
     @SuppressLint("InflateParams")
@@ -66,7 +68,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
 
-        userDataId = args.userDataId
+        userToken = args.message.split(" ")[0]
+        userDataId = args.message.split(" ")[1].toInt()
 
         mDrawerLayout = drawer_layout
         actionBarDrawerToggle = ActionBarDrawerToggle(
@@ -91,7 +94,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         navView.setNavigationItemSelectedListener(this)
 
         //retrofit
-        RetrofitClient.INSTANCE.getUserById(userDataId)
+        retrofit = RetrofitClientAuth(userToken)
+        retrofit.INSTANCE.getUserById(userDataId)
             .enqueue(object : Callback<UserData> {
             override fun onFailure(call: Call<UserData>, t: Throwable) {
                 Toast.makeText(application, "Something went wrong", Toast.LENGTH_LONG).show()
@@ -129,19 +133,23 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             }
 
             mDialogView.checkBox_rd.setOnCheckedChangeListener { _, _ ->
-                if (mDialogView.checkbox_editText_rd.isGone) {
-                    mDialogView.checkbox_editText_rd.visibility = View.VISIBLE
+                if (mDialogView.etPlaceInBoot.isGone) {
+                    mDialogView.etPlaceInBoot.visibility = View.VISIBLE
                 }
 
                 else {
-                    mDialogView.checkbox_editText_rd.visibility = View.GONE
+                    mDialogView.etPlaceInBoot.visibility = View.GONE
                 }
             }
 
-            mDialogView.btnRegister.setOnClickListener{
+            mDialogView.btnRegister.setOnClickListener {
                 val serial = mDialogView.etLicensePlateGiven.text.toString()
                 val brand = mDialogView.etCarBrandGiven.text.toString()
                 val model = mDialogView.etModelGiven.text.toString()
+                val seatsText = mDialogView.etSeatsGiven.text.toString()
+                val hasBoot = mDialogView.checkBox_rd.isChecked
+                var placeInBoot = 0
+
 
                 if (serial.isEmpty()) {
                     mDialogView.etLicensePlateGiven.error = "Please give your car's plate"
@@ -161,7 +169,25 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     return@setOnClickListener
                 }
 
-                RetrofitClient.INSTANCE.updateCar(userDataId, brand, model, serial, "", true, 4, 1)
+                if (seatsText.isEmpty()) {
+                    mDialogView.etSeatsGiven.error = "Please give your car's available free seats"
+                    mDialogView.etSeatsGiven.requestFocus()
+                    return@setOnClickListener
+                }
+
+                val seats = seatsText.toInt()
+
+                if (mDialogView.checkBox_rd.isChecked) {
+                    val placeInBootText = mDialogView.etPlaceInBoot.text.toString()
+                    if (placeInBootText.isEmpty()) {
+                        mDialogView.etPlaceInBoot.error = "Please give how many packets can be storaged in the car's boot"
+                        mDialogView.etPlaceInBoot.requestFocus()
+                        return@setOnClickListener
+                    }
+                    placeInBoot = placeInBootText.toInt()
+                }
+
+                retrofit.INSTANCE.updateCar(userDataId, brand, model, serial, "", hasBoot, seats, placeInBoot)
                     .enqueue(object: Callback<DefaultResponse> {
                         override fun onResponse(
                             call: Call<DefaultResponse>,
@@ -172,8 +198,10 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                                 neededMessage -> {
                                     Toast.makeText(application, "Car updated successfully", Toast.LENGTH_LONG)
                                         .show()
+
                                     mAlertDialog.dismiss()
                                     updateLayout()
+                                    updateValidUser(userDataId, userData!!)
                                 }
                             }
                         }
@@ -182,7 +210,6 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                             Toast.makeText(application, "Something went wrong in updating the user's car", Toast.LENGTH_LONG)
                                 .show()
                         }
-
                     })
             }
             mDialogView.btnCancel.setOnClickListener {
@@ -246,22 +273,22 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         Handler().postDelayed({
             when (item.itemId) {
                 R.id.nav_map -> {
-                    val bundle = bundleOf("userDataId" to userDataId)
+                    val bundle = bundleOf("userDataId" to userDataId, "userToken" to userToken)
                     findNavController(R.id.nav_host_fragment).navigate(R.id.nav_map, bundle)
                 }
 
                 R.id.nav_credits -> {
-                    val bundle = bundleOf("userDataId" to userDataId)
+                    val bundle = bundleOf("userDataId" to userDataId, "userToken" to userToken)
                     findNavController(R.id.nav_host_fragment).navigate(R.id.nav_credits, bundle)
                 }
 
                 R.id.nav_rating -> {
-                    val bundle = bundleOf("userDataId" to userDataId)
+                    val bundle = bundleOf("userDataId" to userDataId, "userToken" to userToken)
                     findNavController(R.id.nav_host_fragment).navigate(R.id.nav_rating, bundle)
                 }
 
                 R.id.nav_trips -> {
-                    val bundle = bundleOf("userDataId" to userDataId)
+                    val bundle = bundleOf("userDataId" to userDataId, "userToken" to userToken)
                     findNavController(R.id.nav_host_fragment).navigate(R.id.nav_trips, bundle)
                 }
 
@@ -270,7 +297,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 }
 
                 R.id.nav_settings -> {
-                    val bundle = bundleOf("userDataId" to userDataId)
+                    val bundle = bundleOf("userDataId" to userDataId, "userToken" to userToken)
                     findNavController(R.id.nav_host_fragment).navigate(R.id.nav_settings, bundle)
                 }
 
@@ -297,7 +324,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         val headerName: TextView = headerView.header_name
         val headerEmail: TextView = headerView.header_email
 
-        headerName.text = userData.name
+        headerName.text = userData.username
         headerEmail.text = userData.email
 
         // TODO: Picture
@@ -312,7 +339,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         val activeDriverMenuItem: MenuItem = navView.menu.findItem(R.id.nav_active_driver)
         val swSwitchDriver: Switch = navView.findViewById(R.id.switchDriver)
 
-        RetrofitClient.INSTANCE.getCarById(userDataId)
+        retrofit.INSTANCE.getCarById(userDataId)
             .enqueue(object: Callback<CarData> {
                 override fun onResponse(call: Call<CarData>, response: Response<CarData>) {
                     if (response.body() != null) {
@@ -344,6 +371,20 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                         .show()
                 }
 
+            })
+    }
+
+    private fun updateValidUser(userDataId: Int, userData: UserData) {
+        userData.valid = false
+
+        RetrofitClient.INSTANCE.updateUser(userDataId, userData)
+            .enqueue(object: Callback<DefaultResponse> {
+                override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) { }
+
+                override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
+                    Toast.makeText(application, "Something went wrong in validing the user", Toast.LENGTH_LONG)
+                        .show()
+                }
             })
     }
 }

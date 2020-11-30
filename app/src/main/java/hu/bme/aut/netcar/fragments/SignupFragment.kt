@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import hu.bme.aut.netcar.R
+import hu.bme.aut.netcar.data.UserDTO
 import hu.bme.aut.netcar.data.UserData
 import hu.bme.aut.netcar.network.Api
 import hu.bme.aut.netcar.network.RetrofitClient
@@ -105,16 +106,18 @@ class SignupFragment : Fragment() {
                 etPasswordGiven.error = resources.getString(R.string.btn_sigin_error_password_4)
             }
             else {
-                val newUser = UserData(name = etNameGiven.text.toString(), email = etEmailGiven.text.toString(),
-                    password = etPasswordGiven.text.toString())
+                /*val newUser = UserData(name = etNameGiven.text.toString(), email = etEmailGiven.text.toString(),
+                    password = etPasswordGiven.text.toString())*/
 
-                api.addNewUser(newUser)
+                val newUser = UserDTO(etNameGiven.text.toString(), etPasswordGiven.text.toString())
+
+                api.register(newUser)
                     .enqueue(object : Callback<DefaultResponse> {
                         override fun onResponse(
                             call: Call<DefaultResponse>,
                             response: Response<DefaultResponse>
                         ) {
-                            if (response.body()?.message.equals("SUCCESSFUL_REGISTRATION")) {
+                            if (response.body()?.message.equals("Successful registration")) {
                                 findNavController().navigate(
                                     R.id.action_SignupFragment_to_LoginFragment, null
                                 )
@@ -124,10 +127,10 @@ class SignupFragment : Fragment() {
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
-                            if (response.body()?.message.equals("EMAIL_ALREADY_USED")) {
+                            if (response.body()?.message.equals("Username already used")) {
                                 Toast.makeText(
                                     context,
-                                    "Error: email is already used!",
+                                    "Error: username is already used!",
                                     Toast.LENGTH_LONG
                                 ).show()
                             }

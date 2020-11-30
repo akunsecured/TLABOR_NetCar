@@ -16,6 +16,7 @@ import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.UserData
 import hu.bme.aut.netcar.network.DefaultResponse
 import hu.bme.aut.netcar.network.RetrofitClient
+import hu.bme.aut.netcar.network.RetrofitClientAuth
 import kotlinx.android.synthetic.main.fragment_credits.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,6 +26,8 @@ class CreditsFragment : Fragment() {
 
     private var userDataId: Int = -1
     private var userData: UserData? = null
+    private var userToken: String = ""
+    private lateinit var retrofit: RetrofitClientAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +37,9 @@ class CreditsFragment : Fragment() {
 
         val id = arguments?.getInt("userDataId")
         userDataId = id!!
-        //userDataId = (activity as NavigationActivity).intent.getIntExtra(NavigationActivity.USERDATA_ID, -1)
+
+        val token = arguments?.getString("userToken")
+        userToken = token!!
     }
 
     override fun onCreateView(
@@ -44,7 +49,8 @@ class CreditsFragment : Fragment() {
     ): View?  {
         val view = inflater.inflate(R.layout.fragment_credits, container, false)
 
-        RetrofitClient.INSTANCE.getUserById(userDataId)
+        retrofit = RetrofitClientAuth(userToken)
+        retrofit.INSTANCE.getUserById(userDataId)
             .enqueue(object: Callback<UserData> {
                 override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
                     userData = response.body()
@@ -83,7 +89,7 @@ class CreditsFragment : Fragment() {
                     if(input.text.isNotEmpty()) {
                         val newCredit: Int = input.text.toString().toInt()
                         userData!!.credits = newCredit
-                        RetrofitClient.INSTANCE.updateUser(this.userDataId, this.userData!!)
+                        retrofit.INSTANCE.updateUser(this.userDataId, this.userData!!)
                             .enqueue(object: Callback<DefaultResponse>{
                                 override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
                                     if (response.body()!!.message == "USER_SUCCESSFUL_UPDATED") {

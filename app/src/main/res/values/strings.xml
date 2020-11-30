@@ -70,4 +70,5 @@
     <string name="number_of_package">Number of package</string>
     <string name="controls">Controls</string>
     <string name="car_boot">Car has boot</string>
+    <string name="username">Username</string>
 </resources>

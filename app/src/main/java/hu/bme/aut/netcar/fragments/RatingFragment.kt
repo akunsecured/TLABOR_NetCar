@@ -11,6 +11,7 @@ import hu.bme.aut.netcar.R
 class RatingFragment : Fragment() {
 
     private var userDataId: Int = -1
+    private var userToken: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +21,9 @@ class RatingFragment : Fragment() {
 
         val id = arguments?.getInt("userDataId")
         userDataId = id!!
+
+        val token = arguments?.getString("userToken")
+        userToken = token!!
     }
 
     override fun onCreateView(

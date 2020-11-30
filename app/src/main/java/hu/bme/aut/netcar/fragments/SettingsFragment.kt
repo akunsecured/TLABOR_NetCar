@@ -27,12 +27,16 @@ class SettingsFragment : Fragment() {
     private lateinit var bitmap: Bitmap
     private var chooseImage = false
     private var userDataId: Int = -1
+    private var userToken: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val id = arguments?.getInt("userDataId")
         userDataId = id!!
+
+        val token = arguments?.getString("userToken")
+        userToken = token!!
     }
 
     override fun onCreateView(

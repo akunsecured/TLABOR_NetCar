@@ -22,6 +22,7 @@ class TripsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var api: Api
     private var userDataId: Int = -1
+    private var userToken: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,6 +69,9 @@ class TripsFragment : Fragment() {
 
         val id = arguments?.getInt("userDataId")
         userDataId = id!!
+
+        val token = arguments?.getString("userToken")
+        userToken = token!!
     }
 
 }

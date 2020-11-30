@@ -28,12 +28,12 @@
             android:text="@string/please_login"
             android:textColor="@color/textColor"
             android:textSize="20dp"
-            app:layout_constraintBottom_toTopOf="@+id/etEmailAddress"
+            app:layout_constraintBottom_toTopOf="@+id/etUsername"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
-            android:id="@+id/etEmailAddress"
+            android:id="@+id/etUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -41,8 +41,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="4dp"
-            android:hint="@string/email_address"
-            android:inputType="textEmailAddress"
+            android:hint="@string/username"
             android:textColor="@color/editTextColor"
             android:textColorHint="@color/editTextHintColor"
             android:theme="@style/editTextTheme"
