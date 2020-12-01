@@ -2,6 +2,7 @@ package hu.bme.aut.netcar.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.InputFilter
 import android.text.InputType
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
@@ -11,11 +12,11 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.marginLeft
 import androidx.fragment.app.Fragment
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.UserData
 import hu.bme.aut.netcar.network.DefaultResponse
-import hu.bme.aut.netcar.network.RetrofitClient
 import hu.bme.aut.netcar.network.RetrofitClientAuth
 import kotlinx.android.synthetic.main.fragment_credits.*
 import retrofit2.Call
@@ -84,17 +85,18 @@ class CreditsFragment : Fragment() {
             lp.setMargins(4, 2, 4, 2)
             input.layoutParams = lp
             input.inputType = InputType.TYPE_CLASS_NUMBER
+            input.filters = arrayOf(InputFilter.LengthFilter(5))
             builder.setView(input)
                 .setNeutralButton(getString(R.string.dialog_button_adding_credits)) { _, _ ->
                     if(input.text.isNotEmpty()) {
                         val newCredit: Int = input.text.toString().toInt()
-                        userData!!.credits = newCredit
+                        userData!!.credits = userData!!.credits?.plus(newCredit)
                         retrofit.INSTANCE.updateUser(this.userDataId, this.userData!!)
                             .enqueue(object: Callback<DefaultResponse>{
                                 override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
                                     if (response.body()!!.message == "USER_SUCCESSFUL_UPDATED") {
                                         tvCreditAmount.text =
-                                            "$" + (credits + input.text.toString().toInt()).toString()
+                                            "$ " + (credits + input.text.toString().toInt()).toString()
                                     }
                                     else {
                                         Toast.makeText(context!!, "Something went wrong when adding credits.", Toast.LENGTH_LONG)

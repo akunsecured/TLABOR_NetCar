@@ -20,7 +20,8 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        android:contentDescription="@string/netcar_logo" />
 
     <TextView
         android:id="@+id/textView2"
@@ -31,7 +32,7 @@
         android:padding="24dp"
         android:text="@string/signup_text"
         android:textColor="@color/textColor"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/etNameGiven"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -46,6 +47,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:hint="@string/username"
+        android:singleLine="true"
         android:inputType="text"
         android:textColor="@color/editTextColor"
         android:textColorHint="@color/editTextHintColor"
@@ -64,6 +66,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:hint="@string/email_address"
+        android:singleLine="true"
         android:inputType="textEmailAddress"
         android:textColor="@color/editTextColor"
         android:textColorHint="@color/editTextHintColor"
@@ -82,6 +85,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:hint="@string/password"
+        android:singleLine="true"
         android:inputType="textWebPassword"
         android:textColor="@color/editTextColor"
         android:textColorHint="@color/editTextHintColor"
@@ -100,6 +104,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="24dp"
         android:hint="@string/password_confirm"
+        android:singleLine="true"
         android:inputType="textWebPassword"
         android:textColor="@color/editTextColor"
         android:textColorHint="@color/editTextHintColor"

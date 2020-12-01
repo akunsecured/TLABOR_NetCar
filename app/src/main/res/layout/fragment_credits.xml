@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bgColor"
@@ -14,7 +14,7 @@
         android:layout_gravity="center"
         android:paddingTop="16dp"
         android:textColor="@color/textColor"
-        android:textSize="35dp"
+        android:textSize="35sp"
         android:text="@string/credits"
         android:textAlignment="center"
         android:paddingBottom="24dp"/>
@@ -24,7 +24,8 @@
         android:layout_width="224dp"
         android:layout_height="224dp"
         android:layout_gravity="center"
-        android:src="@drawable/cash" />
+        android:src="@drawable/cash"
+        android:contentDescription="@string/credit_image" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -32,7 +33,7 @@
         android:layout_gravity="center"
         android:paddingTop="16dp"
         android:textColor="@color/textColor"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:text="@string/balance"
         android:textAlignment="center"/>
 
@@ -43,8 +44,7 @@
         android:layout_gravity="center"
         android:paddingTop="16dp"
         android:textColor="@color/textColor"
-        android:textSize="25dp"
-        android:text="$100"
+        android:textSize="25sp"
         android:textAlignment="center"
         android:layout_marginBottom="24dp"/>
 

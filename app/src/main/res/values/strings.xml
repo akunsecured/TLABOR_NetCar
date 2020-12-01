@@ -71,4 +71,8 @@
     <string name="controls">Controls</string>
     <string name="car_boot">Car has boot</string>
     <string name="username">Username</string>
+    <string name="car_image" translatable="false">Car\'s image</string>
+    <string name="netcar_logo" translatable="false">NetCar logo</string>
+    <string name="credit_image" translatable="false">Credit Image</string>
+    <string name="profile_image" translatable="false">Profile image</string>
 </resources>

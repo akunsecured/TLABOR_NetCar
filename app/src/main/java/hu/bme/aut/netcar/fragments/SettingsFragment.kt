@@ -111,6 +111,7 @@ class SettingsFragment : Fragment() {
                         clearSettings(view)
                         if (chooseImage) {
                             settings_userimage.setImageBitmap(null)
+                            chooseImage = false
                         }
                         alertDialog.dismiss()
                     }
@@ -120,6 +121,7 @@ class SettingsFragment : Fragment() {
                     navView.header_image.setImageBitmap(
                         Bitmap.createScaledBitmap(bitmap, headerImgWidth, headerImgHeight, false))
                     settings_userimage.setImageBitmap(null)
+                    chooseImage = false
                 }
                 else -> {
                     Toast.makeText(view.context, getString(R.string.no_changes), Toast.LENGTH_SHORT).show()
