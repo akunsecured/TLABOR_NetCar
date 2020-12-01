@@ -93,15 +93,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginStart="36dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/login_button"
         android:text="@string/btn_accept_text"
-        android:layout_marginBottom="24dp"
+
         android:textColor="@color/btnTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnCancel"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkbox_editText" />
+        app:layout_constraintTop_toBottomOf="@+id/checkbox_editText"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/btnCancel"
@@ -109,13 +111,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginEnd="36dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/login_button"
         android:text="@string/btn_cancel_text"
-        android:layout_marginBottom="24dp"
         android:textColor="@color/btnTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkbox_editText" />
+        app:layout_constraintTop_toBottomOf="@+id/checkbox_editText"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/checkbox_textview"
@@ -139,7 +142,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="120dp"
+        android:layout_marginBottom="80dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:hint="@string/number_of_package"
