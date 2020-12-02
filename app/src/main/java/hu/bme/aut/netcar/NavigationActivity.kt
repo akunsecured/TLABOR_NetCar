@@ -23,6 +23,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.isGone
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.navArgs
 import androidx.navigation.ui.AppBarConfiguration
@@ -33,13 +34,16 @@ import com.google.android.material.navigation.NavigationView
 import hu.bme.aut.netcar.data.CarData
 import hu.bme.aut.netcar.data.UserData
 import hu.bme.aut.netcar.network.DefaultResponse
-import hu.bme.aut.netcar.network.RetrofitClient
+import hu.bme.aut.netcar.network.Repository
 import hu.bme.aut.netcar.network.RetrofitClientAuth
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.activity_navigation.view.*
 import kotlinx.android.synthetic.main.dialog_register_driver.view.*
 import kotlinx.android.synthetic.main.dialog_register_driver.view.btnCancel
 import kotlinx.android.synthetic.main.nav_header_main.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -95,21 +99,34 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         //retrofit
         retrofit = RetrofitClientAuth(userToken)
-        retrofit.INSTANCE.getUserById(userDataId)
-            .enqueue(object : Callback<UserData> {
-            override fun onFailure(call: Call<UserData>, t: Throwable) {
-                Toast.makeText(application, "Something went wrong", Toast.LENGTH_LONG).show()
-            }
 
-            override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
-                if (response.body() != null) {
-                    userData = response.body()
-                    if (userData != null) {
-                        updateHeader(userData!!)
-                    }
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                /*
+
+                retrofit.INSTANCE.getUserById(userDataId)
+                    .enqueue(object : Callback<UserData> {
+                        override fun onFailure(call: Call<UserData>, t: Throwable) {
+                            Toast.makeText(application, "Something went wrong", Toast.LENGTH_LONG).show()
+                        }
+
+                        override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
+                            if (response.body() != null) {
+                                userData = response.body()
+                            }
+                        }
+                    })
+
+                 */
+                userData = Repository.getUser(userDataId, userToken)
+            }
+            withContext(Dispatchers.Main) {
+                if (userData != null) {
+                    updateHeader(userData!!)
                 }
             }
-        })
+        }
+
 
         switchDriver.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -334,52 +351,58 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun updateLayout() {
-        var usersCarData: CarData
+        var usersCarData: CarData? = null
         val btnRegisterAsDriver: Button = navView.btnRegisterAsDriver
         val activeDriverMenuItem: MenuItem = navView.menu.findItem(R.id.nav_active_driver)
         val swSwitchDriver: Switch = navView.findViewById(R.id.switchDriver)
 
-        Thread.sleep(100)
-        retrofit.INSTANCE.getCarById(userDataId)
-            .enqueue(object: Callback<CarData> {
-                override fun onResponse(call: Call<CarData>, response: Response<CarData>) {
-                    if (response.body() != null) {
-                        usersCarData = response.body()!!
-
-                        if (usersCarData.serial != null) {
-                            btnRegisterAsDriver.visibility = View.GONE
-                        }
-                        else {
-                            btnRegisterAsDriver.visibility = View.VISIBLE
-                        }
-
-                        if(userData != null) {
-                            if (!userData!!.valid) {
-                                activeDriverMenuItem.isVisible = false
-                                swSwitchDriver.visibility = View.GONE
-                            } else {
-                                activeDriverMenuItem.isVisible = true
-                                swSwitchDriver.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                retrofit.INSTANCE.getCarById(userDataId)
+                    .enqueue(object: Callback<CarData> {
+                        override fun onResponse(call: Call<CarData>, response: Response<CarData>) {
+                            if (response.body() != null) {
+                                usersCarData = response.body()!!
                             }
+                            else
+                                Toast.makeText(application, "Response body is empty", Toast.LENGTH_LONG)
+                                    .show()
                         }
+
+                        override fun onFailure(call: Call<CarData>, t: Throwable) {
+                            Toast.makeText(application, "Something went wrong in getting user's car", Toast.LENGTH_LONG)
+                                .show()
+                        }
+
+                    })
+            }
+
+            withContext(Dispatchers.Main) {
+                if (usersCarData?.serial != null) {
+                    btnRegisterAsDriver.visibility = View.GONE
+                }
+                else {
+                    btnRegisterAsDriver.visibility = View.VISIBLE
+                }
+
+                if(userData != null) {
+                    if (!userData!!.valid) {
+                        activeDriverMenuItem.isVisible = false
+                        swSwitchDriver.visibility = View.GONE
+                    } else {
+                        activeDriverMenuItem.isVisible = true
+                        swSwitchDriver.visibility = View.VISIBLE
                     }
-                    else
-                        Toast.makeText(application, "Response body is empty", Toast.LENGTH_LONG)
-                            .show()
                 }
+            }
+        }
 
-                override fun onFailure(call: Call<CarData>, t: Throwable) {
-                    Toast.makeText(application, "Something went wrong in getting user's car", Toast.LENGTH_LONG)
-                        .show()
-                }
-
-            })
     }
 
     private fun updateValidUser(userDataId: Int, userData: UserData) {
         userData.valid = false
 
-        RetrofitClient.INSTANCE.updateUser(userDataId, userData)
+        retrofit.INSTANCE.updateUser(userDataId, userData)
             .enqueue(object: Callback<DefaultResponse> {
                 override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) { }
 

@@ -44,5 +44,6 @@ class TripsAdapter : RecyclerView.Adapter<TripsAdapter.TripsViewHolder>() {
     fun addUser(userData: UserData) {
         list.add(userData)
         notifyItemInserted(list.size)
+        notifyDataSetChanged()
     }
 }

@@ -10,10 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.UserDTO
-import hu.bme.aut.netcar.data.UserData
-import hu.bme.aut.netcar.network.Api
-import hu.bme.aut.netcar.network.RetrofitClient
 import hu.bme.aut.netcar.network.DefaultResponse
+import hu.bme.aut.netcar.network.RetrofitClientAuth
 import kotlinx.android.synthetic.main.fragment_login.btnSignUp
 import kotlinx.android.synthetic.main.fragment_signup.*
 import retrofit2.Call
@@ -24,12 +22,10 @@ import java.util.regex.Pattern
 
 class SignupFragment : Fragment() {
 
-    private lateinit var api: Api
+    private lateinit var retrofit: RetrofitClientAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        api = RetrofitClient.INSTANCE
 
         val inflater = TransitionInflater.from(requireContext())
         enterTransition = inflater.inflateTransition(R.transition.slide_top)
@@ -102,7 +98,8 @@ class SignupFragment : Fragment() {
 
                 val newUser = UserDTO(etNameGiven.text.toString(), etPasswordGiven.text.toString())
 
-                api.register(newUser)
+                retrofit = RetrofitClientAuth()
+                retrofit.INSTANCE.register(newUser)
                     .enqueue(object : Callback<DefaultResponse> {
                         override fun onResponse(
                             call: Call<DefaultResponse>,

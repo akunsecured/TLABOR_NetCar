@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.JwtRequest
 import hu.bme.aut.netcar.network.DefaultResponse
-import hu.bme.aut.netcar.network.RetrofitClient
+import hu.bme.aut.netcar.network.RetrofitClientAuth
 import kotlinx.android.synthetic.main.fragment_login.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -50,7 +50,8 @@ class LoginFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            RetrofitClient.INSTANCE.userLogin(JwtRequest(username = username, password = password))
+            val retrofit = RetrofitClientAuth()
+            retrofit.INSTANCE.userLogin(JwtRequest(username = username, password = password))
                 .enqueue(object: Callback<DefaultResponse> {
                     override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
                         when (response.body()?.message) {

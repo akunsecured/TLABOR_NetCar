@@ -32,7 +32,6 @@ import hu.bme.aut.netcar.data.DataManager
 import hu.bme.aut.netcar.data.Driver
 import kotlinx.android.synthetic.main.dialog_marker.*
 import kotlinx.android.synthetic.main.dialog_marker.view.*
-import kotlinx.android.synthetic.main.dialog_register_driver.view.btnCancel
 
 
 @Suppress("DEPRECATION")

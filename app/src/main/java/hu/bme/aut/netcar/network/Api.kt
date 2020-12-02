@@ -5,7 +5,12 @@ import hu.bme.aut.netcar.data.JwtRequest
 import hu.bme.aut.netcar.data.UserDTO
 import hu.bme.aut.netcar.data.UserData
 import retrofit2.Call
+import retrofit2.HttpException
 import retrofit2.http.*
+
+data class GetUserResponse(
+    val userData: UserData
+)
 
 interface Api {
     @GET("getAllUsers")
@@ -15,6 +20,11 @@ interface Api {
     fun getUserById(
         @Path("id") id: Int
     ) : Call<UserData>
+
+    @GET("getUser/{id}")
+    suspend fun getUserById2(
+        @Path("id") id: Int
+    ) : GetUserResponse
 
     @GET("getCar/{id}")
     fun getCarById(
