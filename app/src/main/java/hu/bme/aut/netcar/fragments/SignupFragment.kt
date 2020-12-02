@@ -7,22 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.UserDTO
 import hu.bme.aut.netcar.network.DefaultResponse
-import hu.bme.aut.netcar.network.RetrofitClientAuth
+import hu.bme.aut.netcar.network.Repository
 import kotlinx.android.synthetic.main.fragment_login.btnSignUp
 import kotlinx.android.synthetic.main.fragment_signup.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.util.regex.Matcher
-import java.util.regex.Pattern
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SignupFragment : Fragment() {
-
-    private lateinit var retrofit: RetrofitClientAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,13 +41,6 @@ class SignupFragment : Fragment() {
             }
         }
         return true
-    }
-
-    private fun isValidEmail(string: String): Boolean{
-        val regex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$"
-        val pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE)
-        val matcher: Matcher = pattern.matcher(string as CharSequence)
-        return matcher.matches()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -93,12 +83,38 @@ class SignupFragment : Fragment() {
                 etPasswordGiven.error = resources.getString(R.string.btn_sigin_error_password_4)
             }
             else {
-                /*val newUser = UserData(name = etNameGiven.text.toString(), email = etEmailGiven.text.toString(),
-                    password = etPasswordGiven.text.toString())*/
-
+                var defaultResponse: DefaultResponse?
                 val newUser = UserDTO(etNameGiven.text.toString(), etPasswordGiven.text.toString())
 
-                retrofit = RetrofitClientAuth()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        defaultResponse = Repository.register(newUser)
+
+                        withContext(Dispatchers.Main) {
+                            when (defaultResponse?.message) {
+                                "Successful registration" -> {
+                                    findNavController().navigate(
+                                        R.id.action_SignupFragment_to_LoginFragment, null
+                                    )
+                                    Toast.makeText(
+                                        context,
+                                        getString(R.string.successfully_registered),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+
+                                "Username already used" -> {
+                                    Toast.makeText(
+                                        context,
+                                        "Error: username is already used!",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                        }
+                    }
+                }
+                /*retrofit = RetrofitClientAuth()
                 retrofit.INSTANCE.register(newUser)
                     .enqueue(object : Callback<DefaultResponse> {
                         override fun onResponse(
@@ -128,19 +144,7 @@ class SignupFragment : Fragment() {
                             Toast.makeText(requireContext(), "Something went wrong.", Toast.LENGTH_LONG).show()
                         }
 
-                    })
-
-
-                /*
-                findNavController().navigate(
-                    R.id.action_SignupFragment_to_LoginFragment, null
-                )
-                Toast.makeText(
-                    context,
-                    getString(R.string.successfully_registered),
-                    Toast.LENGTH_LONG
-                ).show()
-                 */
+                    })*/
             }
         }
     }

@@ -97,36 +97,18 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         navView.setupWithNavController(navController)
         navView.setNavigationItemSelectedListener(this)
 
-        //retrofit
-        retrofit = RetrofitClientAuth(userToken)
 
+        retrofit = RetrofitClientAuth(userToken)
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                /*
-
-                retrofit.INSTANCE.getUserById(userDataId)
-                    .enqueue(object : Callback<UserData> {
-                        override fun onFailure(call: Call<UserData>, t: Throwable) {
-                            Toast.makeText(application, "Something went wrong", Toast.LENGTH_LONG).show()
-                        }
-
-                        override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
-                            if (response.body() != null) {
-                                userData = response.body()
-                            }
-                        }
-                    })
-
-                 */
                 userData = Repository.getUser(userDataId, userToken)
-            }
-            withContext(Dispatchers.Main) {
-                if (userData != null) {
-                    updateHeader(userData!!)
+                withContext(Dispatchers.Main) {
+                    if (userData != null) {
+                        updateHeader(userData!!)
+                    }
                 }
             }
         }
-
 
         switchDriver.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -204,6 +186,20 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     placeInBoot = placeInBootText.toInt()
                 }
 
+                var defaultResponse: DefaultResponse
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        defaultResponse = Repository.updateCar(userDataId, brand, model, serial, "", hasBoot, seats, placeInBoot, userToken)!!
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(application, defaultResponse.message, Toast.LENGTH_LONG)
+                                .show()
+                            mAlertDialog.dismiss()
+                            updateLayout()
+                            updateValidUser(userDataId, userData!!)
+                        }
+                    }
+                }
+                /*
                 retrofit.INSTANCE.updateCar(userDataId, brand, model, serial, "", hasBoot, seats, placeInBoot)
                     .enqueue(object: Callback<DefaultResponse> {
                         override fun onResponse(
@@ -228,6 +224,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                                 .show()
                         }
                     })
+                 */
             }
             mDialogView.btnCancel.setOnClickListener {
                 mAlertDialog.dismiss()
@@ -358,6 +355,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
+                usersCarData = Repository.getCar(userDataId, userToken)
+                /*
                 retrofit.INSTANCE.getCarById(userDataId)
                     .enqueue(object: Callback<CarData> {
                         override fun onResponse(call: Call<CarData>, response: Response<CarData>) {
@@ -375,33 +374,48 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                         }
 
                     })
-            }
 
-            withContext(Dispatchers.Main) {
-                if (usersCarData?.serial != null) {
-                    btnRegisterAsDriver.visibility = View.GONE
-                }
-                else {
-                    btnRegisterAsDriver.visibility = View.VISIBLE
-                }
+                 */
+                withContext(Dispatchers.Main) {
+                    if (usersCarData?.serial != null) {
+                        btnRegisterAsDriver.visibility = View.GONE
+                    }
+                    else {
+                        btnRegisterAsDriver.visibility = View.VISIBLE
+                    }
 
-                if(userData != null) {
-                    if (!userData!!.valid) {
-                        activeDriverMenuItem.isVisible = false
-                        swSwitchDriver.visibility = View.GONE
-                    } else {
-                        activeDriverMenuItem.isVisible = true
-                        swSwitchDriver.visibility = View.VISIBLE
+                    if(userData != null) {
+                        if (!userData!!.valid) {
+                            activeDriverMenuItem.isVisible = false
+                            swSwitchDriver.visibility = View.GONE
+                        } else {
+                            activeDriverMenuItem.isVisible = true
+                            swSwitchDriver.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
+
+
         }
 
     }
 
     private fun updateValidUser(userDataId: Int, userData: UserData) {
         userData.valid = false
+        var defaultResponse: DefaultResponse?
 
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                defaultResponse = Repository.updateUser(userDataId, userData, userToken)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(application, defaultResponse?.message, Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        }
+
+        /*
         retrofit.INSTANCE.updateUser(userDataId, userData)
             .enqueue(object: Callback<DefaultResponse> {
                 override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) { }
@@ -411,5 +425,6 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                         .show()
                 }
             })
+         */
     }
 }

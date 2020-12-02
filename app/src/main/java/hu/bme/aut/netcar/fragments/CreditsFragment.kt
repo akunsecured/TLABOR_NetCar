@@ -14,11 +14,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.marginLeft
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.UserData
 import hu.bme.aut.netcar.network.DefaultResponse
+import hu.bme.aut.netcar.network.Repository
 import hu.bme.aut.netcar.network.RetrofitClientAuth
 import kotlinx.android.synthetic.main.fragment_credits.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -50,6 +55,16 @@ class CreditsFragment : Fragment() {
     ): View?  {
         val view = inflater.inflate(R.layout.fragment_credits, container, false)
 
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                userData = Repository.getUser(userDataId, userToken)
+
+                withContext(Dispatchers.Main) {
+                    tvCreditAmount.text = ("$ ").plus(userData!!.credits.toString())
+                }
+            }
+        }
+        /*
         retrofit = RetrofitClientAuth(userToken)
         retrofit.INSTANCE.getUserById(userDataId)
             .enqueue(object: Callback<UserData> {
@@ -64,7 +79,7 @@ class CreditsFragment : Fragment() {
                         .show()
                 }
 
-            })
+            })*/
 
         return view
     }
@@ -91,6 +106,20 @@ class CreditsFragment : Fragment() {
                     if(input.text.isNotEmpty()) {
                         val newCredit: Int = input.text.toString().toInt()
                         userData!!.credits = userData!!.credits?.plus(newCredit)
+                        var defaultResponse: DefaultResponse?
+                        lifecycleScope.launch {
+                            withContext(Dispatchers.IO) {
+                                defaultResponse = Repository.updateUser(userDataId, userData!!, userToken)
+
+                                withContext(Dispatchers.Main) {
+                                    tvCreditAmount.text =
+                                        "$ " + (credits + input.text.toString().toInt()).toString()
+                                    Toast.makeText(requireContext(), defaultResponse?.message, Toast.LENGTH_LONG)
+                                        .show()
+                                }
+                            }
+                        }
+                        /*
                         retrofit.INSTANCE.updateUser(this.userDataId, this.userData!!)
                             .enqueue(object: Callback<DefaultResponse>{
                                 override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
@@ -108,7 +137,7 @@ class CreditsFragment : Fragment() {
                                     Toast.makeText(context!!, "Something went wrong.", Toast.LENGTH_LONG)
                                         .show()
                                 }
-                            })
+                            })*/
                     }
                     else {
                         tvCreditAmount.text =

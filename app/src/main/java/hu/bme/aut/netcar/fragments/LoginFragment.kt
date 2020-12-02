@@ -5,18 +5,18 @@ import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.JwtRequest
 import hu.bme.aut.netcar.network.DefaultResponse
-import hu.bme.aut.netcar.network.RetrofitClientAuth
+import hu.bme.aut.netcar.network.Repository
 import kotlinx.android.synthetic.main.fragment_login.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +50,37 @@ class LoginFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            var defaultResponse: DefaultResponse?
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    defaultResponse = Repository.userLogin(JwtRequest(username = username, password = password))
+
+                    withContext(Dispatchers.Main) {
+                        when (defaultResponse?.message) {
+                            "Wrong username or password" -> {
+                                etPassword.text.clear()
+                                etPassword.error = "Wrong password, please try again"
+                                etPassword.requestFocus()
+                            }
+
+                            "Username not found" -> {
+                                etPassword.text.clear()
+                                etUsername.error = "There is no account with this username"
+                                etUsername.requestFocus()
+                            }
+
+                            else -> {
+                                etPassword.text.clear()
+                                val message = defaultResponse?.message
+                                val action = LoginFragmentDirections.actionLoginFragmentToNavigationActivity(message!!)
+                                view.findNavController().navigate(action)
+                            }
+                        }
+                    }
+                }
+            }
+
+            /*
             val retrofit = RetrofitClientAuth()
             retrofit.INSTANCE.userLogin(JwtRequest(username = username, password = password))
                 .enqueue(object: Callback<DefaultResponse> {
@@ -80,7 +111,7 @@ class LoginFragment : Fragment() {
                         Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
                     }
 
-                })
+                })*/
         }
         btnSignUp.setOnClickListener {
             findNavController().navigate(

@@ -5,63 +5,41 @@ import hu.bme.aut.netcar.data.JwtRequest
 import hu.bme.aut.netcar.data.UserDTO
 import hu.bme.aut.netcar.data.UserData
 import retrofit2.Call
-import retrofit2.HttpException
 import retrofit2.http.*
-
-data class GetUserResponse(
-    val userData: UserData
-)
 
 interface Api {
     @GET("getAllUsers")
     fun getUsers() : Call<List<UserData>>
 
     @GET("getUser/{id}")
-    fun getUserById(
+    suspend fun getUserById(
         @Path("id") id: Int
-    ) : Call<UserData>
-
-    @GET("getUser/{id}")
-    suspend fun getUserById2(
-        @Path("id") id: Int
-    ) : GetUserResponse
+    ) : UserData
 
     @GET("getCar/{id}")
-    fun getCarById(
+    suspend fun getCarById(
         @Path("id") id: Int
-    ) : Call<CarData>
-
-    @POST("addUser")
-    fun addNewUser(
-        @Body userData: UserData
-    ) : Call<DefaultResponse>
+    ) : CarData
 
     @POST("register")
-    fun register(
+    suspend fun register(
         @Body user: UserDTO
-    ) : Call<DefaultResponse>
-
-    @FormUrlEncoded
-    @POST("login")
-    fun userLogin (
-        @Field("username") username: String,
-        @Field("password") password: String
-    ) : Call<DefaultResponse>
+    ) : DefaultResponse
 
     @POST("login")
-    fun userLogin(
+    suspend fun userLogin(
         @Body authenticationRequest: JwtRequest
-    ) : Call<DefaultResponse>
+    ) : DefaultResponse
 
     @PUT("updateUser/{id}")
-    fun updateUser(
+    suspend fun updateUser(
         @Path("id") id: Int,
         @Body userData: UserData
-    ) : Call<DefaultResponse>
+    ) : DefaultResponse
 
     @FormUrlEncoded
     @PUT("/getUser/{id}/updateCar")
-    fun updateCar(
+    suspend fun updateCar(
         @Path("id") id: Int,
         @Field("brand") brand: String,
         @Field("model") model: String,
@@ -70,5 +48,5 @@ interface Api {
         @Field("hasBoot") hasBoot: Boolean,
         @Field("seats") seats: Int,
         @Field("placeInBoot") placeInBoot: Int
-    ) : Call<DefaultResponse>
+    ) : DefaultResponse
 }

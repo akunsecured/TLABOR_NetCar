@@ -13,12 +13,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
 import hu.bme.aut.netcar.R
+import hu.bme.aut.netcar.data.UserData
+import hu.bme.aut.netcar.network.DefaultResponse
+import hu.bme.aut.netcar.network.Repository
 import kotlinx.android.synthetic.main.dialog_settings.view.*
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.fragment_settings.view.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Suppress("DEPRECATION")
@@ -28,6 +35,7 @@ class SettingsFragment : Fragment() {
     private lateinit var bitmap: Bitmap
     private var chooseImage = false
     private var userDataId: Int = -1
+    private var userData: UserData? = null
     private var userToken: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +66,17 @@ class SettingsFragment : Fragment() {
         val headerImgWidth = navView.header_image.width
         val headerImgHeight = navView.header_image.height
 
-        settings_etProfileName.hint = navView.header_name.text
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                userData = Repository.getUser(userDataId, userToken)
+
+                withContext(Dispatchers.Main) {
+                    settings_etProfileName.hint = userData?.username
+                }
+            }
+        }
+
+        //settings_etProfileName.hint = navView.header_name.text
 
         settings_userimage.setOnClickListener {
             startFileChooser()
@@ -98,7 +116,22 @@ class SettingsFragment : Fragment() {
                                     settings_userimage.setImageBitmap(null)
                                 }
                                 if (settings_etProfileName.text.isNotEmpty()) {
-                                    navView.header_name.text = settings_etProfileName.text
+                                    var defaultResponse: DefaultResponse?
+                                    lifecycleScope.launch {
+                                        withContext(Dispatchers.IO) {
+                                            val newUser: UserData? = userData
+                                            newUser?.username = settings_etProfileName.text.toString()
+                                            defaultResponse = Repository.updateUser(userDataId, newUser!!, userToken)
+
+                                            withContext(Dispatchers.Main) {
+                                                navView.header_name.text = newUser.username
+                                                Toast.makeText(requireContext(), defaultResponse?.message, Toast.LENGTH_LONG)
+                                                    .show()
+                                                settings_etProfileName.hint = newUser.username
+                                            }
+                                        }
+                                    }
+
                                 }
                                 alertDialog.dismiss()
                                 Toast.makeText(view.context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()

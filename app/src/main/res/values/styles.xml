@@ -47,10 +47,10 @@
         <item name="colorControlActivated">#3A559F</item>
 
         <!-- inactive thumb color -->
-        <item name="colorSwitchThumbNormal">#9C9C9C</item>
+        <item name="colorSwitchThumbNormal">#3A559F</item>
 
         <!-- inactive track color (30% transparency) -->
-        <item name="android:colorForeground">#ffffffff
+        <item name="android:colorForeground">#3A559F
         </item>
     </style>
 </resources>
