@@ -112,7 +112,7 @@ class CreditsFragment : Fragment() {
                     }
                     else {
                         tvCreditAmount.text =
-                            "$" + (credits + 0).toString()
+                            "$ " + (credits + 0).toString()
                     }
                 }
 

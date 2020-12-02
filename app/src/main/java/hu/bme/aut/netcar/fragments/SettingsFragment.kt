@@ -53,7 +53,6 @@ class SettingsFragment : Fragment() {
         val headerImgWidth = navView.header_image.width
         val headerImgHeight = navView.header_image.height
 
-        settings_etEmail.hint = navView.header_email.text
         settings_etProfileName.hint = navView.header_name.text
 
         settings_userimage.setOnClickListener {
@@ -62,8 +61,7 @@ class SettingsFragment : Fragment() {
 
         settings_btnSave.setOnClickListener {
             var detailChanges = false
-            if (settings_etEmail.text.isNotEmpty() || settings_etPassword.text.isNotEmpty()
-                || settings_etProfileName.text.isNotEmpty()) {
+            if (settings_etPassword.text.isNotEmpty() || settings_etProfileName.text.isNotEmpty()) {
                 detailChanges = true
             }
 
@@ -93,9 +91,6 @@ class SettingsFragment : Fragment() {
                                     navView.header_image.setImageBitmap(
                                         Bitmap.createScaledBitmap(bitmap, headerImgWidth, headerImgHeight, false))
                                     settings_userimage.setImageBitmap(null)
-                                }
-                                if (settings_etEmail.text.isNotEmpty()) {
-                                    navView.header_email.text = settings_etEmail.text
                                 }
                                 if (settings_etProfileName.text.isNotEmpty()) {
                                     navView.header_name.text = settings_etProfileName.text
@@ -131,9 +126,6 @@ class SettingsFragment : Fragment() {
     }
 
     private fun clearSettings(view: View) {
-        if (view.settings_etEmail.text.isNotEmpty()) {
-            view.settings_etEmail.text.clear()
-        }
         if (view.settings_etProfileName.text.isNotEmpty()) {
             view.settings_etProfileName.text.clear()
         }

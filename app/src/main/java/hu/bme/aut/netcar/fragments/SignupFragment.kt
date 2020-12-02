@@ -62,7 +62,6 @@ class SignupFragment : Fragment() {
 
         btnSignUp.setOnClickListener {
             val userNameIn = etNameGiven.text.toString()
-            val emailAddressIn = etEmailGiven.text.toString()
             val passwordIn = etPasswordGiven.text.toString()
             val confpasswordIn = etPasswordConfGiven.text.toString()
 
@@ -77,14 +76,6 @@ class SignupFragment : Fragment() {
             else if (userNameIn.length < 3) {
                 etNameGiven.requestFocus()
                 etNameGiven.error = resources.getString(R.string.btn_sigin_error_username_2)
-            }
-            else if (emailAddressIn.isEmpty()) {
-                etEmailGiven.requestFocus()
-                etEmailGiven.error = resources.getString(R.string.btn_sigin_error_email_1)
-            }
-            else if (!isValidEmail(emailAddressIn)) {
-                etEmailGiven.requestFocus()
-                etEmailGiven.error = resources.getString(R.string.btn_sigin_error_email_2)
             }
             else if (passwordIn.isEmpty()) {
                 etPasswordGiven.requestFocus()

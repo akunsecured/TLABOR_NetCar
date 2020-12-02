@@ -52,25 +52,6 @@
         android:textColor="@color/editTextColor"
         android:textColorHint="@color/editTextHintColor"
         android:theme="@style/editTextTheme"
-        app:layout_constraintBottom_toTopOf="@+id/etEmailGiven"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:id="@+id/etEmailGiven"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        android:hint="@string/email_address"
-        android:singleLine="true"
-        android:inputType="textEmailAddress"
-        android:textColor="@color/editTextColor"
-        android:textColorHint="@color/editTextHintColor"
-        android:theme="@style/editTextTheme"
         app:layout_constraintBottom_toTopOf="@+id/etPasswordGiven"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

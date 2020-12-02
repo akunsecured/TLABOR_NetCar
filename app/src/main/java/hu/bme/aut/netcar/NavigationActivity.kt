@@ -339,6 +339,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         val activeDriverMenuItem: MenuItem = navView.menu.findItem(R.id.nav_active_driver)
         val swSwitchDriver: Switch = navView.findViewById(R.id.switchDriver)
 
+        Thread.sleep(100)
         retrofit.INSTANCE.getCarById(userDataId)
             .enqueue(object: Callback<CarData> {
                 override fun onResponse(call: Call<CarData>, response: Response<CarData>) {
@@ -352,13 +353,14 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                             btnRegisterAsDriver.visibility = View.VISIBLE
                         }
 
-                        if (!userData!!.valid) {
-                            activeDriverMenuItem.isVisible = false
-                            swSwitchDriver.visibility = View.GONE
-                        }
-                        else {
-                            activeDriverMenuItem.isVisible = true
-                            swSwitchDriver.visibility = View.VISIBLE
+                        if(userData != null) {
+                            if (!userData!!.valid) {
+                                activeDriverMenuItem.isVisible = false
+                                swSwitchDriver.visibility = View.GONE
+                            } else {
+                                activeDriverMenuItem.isVisible = true
+                                swSwitchDriver.visibility = View.VISIBLE
+                            }
                         }
                     }
                     else
