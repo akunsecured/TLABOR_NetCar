@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -93,8 +94,12 @@ class SignupFragment : Fragment() {
                         withContext(Dispatchers.Main) {
                             when (defaultResponse?.message) {
                                 "Successful registration" -> {
+                                    val bundle = bundleOf(
+                                        "username" to etNameGiven.text.toString(),
+                                        "password" to etPasswordGiven.text.toString()
+                                    )
                                     findNavController().navigate(
-                                        R.id.action_SignupFragment_to_LoginFragment, null
+                                        R.id.action_SignupFragment_to_LoginFragment, bundle
                                     )
                                     Toast.makeText(
                                         context,
@@ -114,37 +119,6 @@ class SignupFragment : Fragment() {
                         }
                     }
                 }
-                /*retrofit = RetrofitClientAuth()
-                retrofit.INSTANCE.register(newUser)
-                    .enqueue(object : Callback<DefaultResponse> {
-                        override fun onResponse(
-                            call: Call<DefaultResponse>,
-                            response: Response<DefaultResponse>
-                        ) {
-                            if (response.body()?.message.equals("Successful registration")) {
-                                findNavController().navigate(
-                                    R.id.action_SignupFragment_to_LoginFragment, null
-                                )
-                                Toast.makeText(
-                                    context,
-                                    getString(R.string.successfully_registered),
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                            if (response.body()?.message.equals("Username already used")) {
-                                Toast.makeText(
-                                    context,
-                                    "Error: username is already used!",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        }
-
-                        override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                            Toast.makeText(requireContext(), "Something went wrong.", Toast.LENGTH_LONG).show()
-                        }
-
-                    })*/
             }
         }
     }

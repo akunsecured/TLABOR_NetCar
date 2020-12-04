@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LoginFragment : Fragment() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val inflater = TransitionInflater.from(requireContext())
@@ -33,6 +34,9 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        etUsername.setText(arguments?.getString("username"))
+        etPassword.setText(arguments?.getString("password"))
 
         btnSignIn.setOnClickListener {
             val username = etUsername.text.toString().trim()
@@ -79,39 +83,6 @@ class LoginFragment : Fragment() {
                     }
                 }
             }
-
-            /*
-            val retrofit = RetrofitClientAuth()
-            retrofit.INSTANCE.userLogin(JwtRequest(username = username, password = password))
-                .enqueue(object: Callback<DefaultResponse> {
-                    override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
-                        when (response.body()?.message) {
-                            "Wrong username or password" -> {
-                                etPassword.text.clear()
-                                etPassword.error = "Wrong password, please try again"
-                                etPassword.requestFocus()
-                            }
-
-                            "Username not found" -> {
-                                etPassword.text.clear()
-                                etUsername.error = "There is no account with this username"
-                                etUsername.requestFocus()
-                            }
-
-                            else -> {
-                                etPassword.text.clear()
-                                val message = response.body()!!.message
-                                val action = LoginFragmentDirections.actionLoginFragmentToNavigationActivity(message!!)
-                                view.findNavController().navigate(action)
-                            }
-                        }
-                    }
-
-                    override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                        Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
-                    }
-
-                })*/
         }
         btnSignUp.setOnClickListener {
             findNavController().navigate(
