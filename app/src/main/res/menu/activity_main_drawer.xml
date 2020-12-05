@@ -18,17 +18,17 @@
             android:id="@+id/nav_rating"
             android:icon="@drawable/ic_menu_star"
             android:title="@string/menu_rating" />
-
-        <item
-            android:id="@+id/nav_trips"
-            android:icon="@drawable/ic_menu_trips"
-            android:title="@string/menu_trips" />
-
-        <item
-            android:id="@+id/nav_active_driver"
-            android:icon="@drawable/ic_menu_driver"
-            android:title="@string/active_driver" />
     </group>
+
+    <item
+        android:id="@+id/nav_trips"
+        android:icon="@drawable/ic_menu_trips"
+        android:title="@string/menu_trips" />
+
+    <item
+        android:id="@+id/nav_active_driver"
+        android:icon="@drawable/ic_menu_driver"
+        android:title="@string/active_driver" />
 
     <item android:title="@string/controls">
 

@@ -25,9 +25,15 @@
 
     <fragment
         android:id="@+id/nav_trips"
-        android:name="hu.bme.aut.netcar.fragments.TripsFragment"
+        android:name="hu.bme.aut.netcar.fragments.PassengerTripsFragment"
         android:label="@string/menu_trips"
-        tools:layout="@layout/fragment_trips" />
+        tools:layout="@layout/fragment_passenger_trips" />
+
+    <activity
+        android:id="@+id/nav_trips_activity"
+        android:name="hu.bme.aut.netcar.TripsActivity"
+        android:label="@string/menu_trips"
+        tools:layout="@layout/activity_trips"/>
 
     <fragment
         android:id="@+id/nav_settings"

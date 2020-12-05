@@ -16,7 +16,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TripsFragment : Fragment() {
+class DriverTripsFragment : Fragment() {
 
     private lateinit var adapter: TripsAdapter
     private lateinit var recyclerView: RecyclerView
@@ -28,12 +28,12 @@ class TripsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_trips, container, false)
+        val view = inflater.inflate(R.layout.fragment_driver_trips, container, false)
 
         recyclerView = view.findViewById(R.id.rv_recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        setUpData()
+        //setUpData()
         recyclerView.adapter = adapter
 
         return view
@@ -68,14 +68,14 @@ class TripsFragment : Fragment() {
         enterTransition = inflater.inflateTransition(R.transition.slide_right)
         exitTransition = inflater.inflateTransition(R.transition.fade)
 
-        retrofit = RetrofitClientAuth()
+        //retrofit = RetrofitClientAuth()
         adapter = TripsAdapter()
 
-        val id = arguments?.getInt("userDataId")
+        /*val id = arguments?.getInt("userDataId")
         userDataId = id!!
 
         val token = arguments?.getString("userToken")
-        userToken = token!!
+        userToken = token!!*/
     }
 
 }

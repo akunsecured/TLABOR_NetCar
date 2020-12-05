@@ -288,7 +288,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
                 R.id.nav_trips -> {
                     val bundle = bundleOf("userDataId" to userDataId, "userToken" to userToken)
-                    findNavController(R.id.nav_host_fragment).navigate(R.id.nav_trips, bundle)
+                    //findNavController(R.id.nav_host_fragment).navigate(R.id.nav_trips, bundle)
+                    findNavController(R.id.nav_host_fragment).navigate(R.id.nav_trips_activity, bundle)
                 }
 
                 R.id.nav_active_driver -> {
