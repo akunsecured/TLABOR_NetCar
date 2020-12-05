@@ -8,7 +8,7 @@
     android:weightSum="12">
 
     <ImageView
-        android:id="@+id/iv_carImage"
+        android:id="@+id/ivPassengerCarImage"
         android:layout_height="64dp"
         android:layout_margin="8dp"
         android:src="@drawable/placeholder"
@@ -29,11 +29,13 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/tvPassengerName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Teszt Passenger"
                 android:textSize="15sp"/>
             <TextView
+                android:id="@+id/tvPassengerStartDate"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="bottom"
@@ -47,12 +49,14 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/tvPassengerCredits"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:text="Credits"
                 android:textSize="15sp"/>
             <TextView
+                android:id="@+id/tvPassengerEndDate"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
@@ -71,7 +75,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/iv_tripIcon"
+            android:id="@+id/ivTripStatus"
             android:src="@drawable/placeholder"
             android:layout_width="match_parent"
             android:layout_height="0dp"

@@ -8,7 +8,7 @@
     android:weightSum="12">
 
     <ImageView
-        android:id="@+id/ivCarImage"
+        android:id="@+id/ivDriverCarImage"
         android:layout_height="64dp"
         android:layout_margin="8dp"
         android:src="@drawable/placeholder"
@@ -29,13 +29,13 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
-                android:id="@+id/tvDriver"
+                android:id="@+id/tvDriverName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Teszt Driver"
                 android:textSize="15sp"/>
             <TextView
-                android:id="@+id/tvStartDate"
+                android:id="@+id/tvDriverStartDate"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="bottom"
@@ -49,14 +49,14 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
-                android:id="@+id/tvCredits"
+                android:id="@+id/tvDriverCredits"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:text="Credits"
                 android:textSize="15sp"/>
             <TextView
-                android:id="@+id/tvEndDate"
+                android:id="@+id/tvDriverEndDate"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
