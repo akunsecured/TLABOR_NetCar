@@ -4,10 +4,12 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.transition.TransitionInflater
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +28,7 @@ import kotlinx.android.synthetic.main.nav_header_main.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 
 
 @Suppress("DEPRECATION")
@@ -76,7 +79,14 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        //settings_etProfileName.hint = navView.header_name.text
+        if (userData?.pictureUrl != null) {
+            val imageBytes = Base64.decode(userData?.pictureUrl, 0)
+            settings_userimage.setImageBitmap(
+                BitmapFactory.decodeByteArray(
+                    imageBytes, 0, imageBytes.size
+                )
+            )
+        }
 
         settings_userimage.setOnClickListener {
             startFileChooser()
@@ -88,77 +98,81 @@ class SettingsFragment : Fragment() {
                 detailChanges = true
             }
 
-            when {
-                detailChanges -> {
-                    val dialogLayout = LayoutInflater.from(view.context).inflate(R.layout.dialog_settings, null)
-                    val builder = AlertDialog.Builder(view.context).setView(dialogLayout)
-                    val alertDialog = builder.show()
+            if (detailChanges || chooseImage) {
+                val dialogLayout = LayoutInflater.from(view.context).inflate(R.layout.dialog_settings, null)
+                val builder = AlertDialog.Builder(view.context).setView(dialogLayout)
+                val alertDialog = builder.show()
 
-                    dialogLayout.dialog_settings_btnSave.setOnClickListener {
-                        //val pw: String
-                        when {
-                            dialogLayout.etPassword1.text.isEmpty() -> {
-                                dialogLayout.etPassword1.requestFocus()
-                                dialogLayout.etPassword1.error = getString(R.string.btn_sigin_error_password_1)
-                            }
-                            dialogLayout.etPassword2.text.isEmpty() -> {
-                                dialogLayout.etPassword2.requestFocus()
-                                dialogLayout.etPassword2.error = getString(R.string.btn_sigin_error_password_1)
-                            }
-                            dialogLayout.etPassword1.text.toString() != dialogLayout.etPassword2.text.toString() -> {
-                                dialogLayout.etPassword2.requestFocus()
-                                dialogLayout.etPassword2.error = getString(R.string.btn_sigin_error_password_4)
-                            }
-                            else -> {
-                                if (chooseImage) {
-                                    navView.header_image.setImageBitmap(
-                                        Bitmap.createScaledBitmap(bitmap, headerImgWidth, headerImgHeight, false))
-                                    settings_userimage.setImageBitmap(null)
-                                }
-                                if (settings_etProfileName.text.isNotEmpty()) {
-                                    var defaultResponse: DefaultResponse?
-                                    lifecycleScope.launch {
-                                        withContext(Dispatchers.IO) {
-                                            val newUser: UserData? = userData
-                                            newUser?.username = settings_etProfileName.text.toString()
-                                            defaultResponse = Repository.updateUser(userDataId, newUser!!, userToken)
+                dialogLayout.dialog_settings_btnSave.setOnClickListener {
+                    when {
+                        dialogLayout.etPassword1.text.isEmpty() -> {
+                            dialogLayout.etPassword1.requestFocus()
+                            dialogLayout.etPassword1.error = getString(R.string.btn_sigin_error_password_1)
+                        }
+                        dialogLayout.etPassword2.text.isEmpty() -> {
+                            dialogLayout.etPassword2.requestFocus()
+                            dialogLayout.etPassword2.error = getString(R.string.btn_sigin_error_password_1)
+                        }
+                        dialogLayout.etPassword1.text.toString() != dialogLayout.etPassword2.text.toString() -> {
+                            dialogLayout.etPassword2.requestFocus()
+                            dialogLayout.etPassword2.error = getString(R.string.btn_sigin_error_password_4)
+                        }
+                        else -> {
+                            val newUser: UserData? = userData
+                            val picture: String?
 
-                                            withContext(Dispatchers.Main) {
-                                                navView.header_name.text = newUser.username
-                                                Toast.makeText(requireContext(), defaultResponse?.message, Toast.LENGTH_LONG)
-                                                    .show()
-                                                settings_etProfileName.hint = newUser.username
-                                            }
-                                        }
+                            if (chooseImage) {
+                                navView.header_image.setImageBitmap(
+                                    Bitmap.createScaledBitmap(bitmap, headerImgWidth, headerImgHeight, false))
+
+                                val baos = ByteArrayOutputStream()
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 50, baos)
+                                val b = baos.toByteArray()
+                                picture = Base64.encodeToString(b, Base64.DEFAULT)
+                                newUser?.pictureUrl = picture
+                            }
+
+                            if (settings_etProfileName.text.isNotEmpty()) {
+                                newUser?.username = settings_etProfileName.text.toString()
+                            }
+
+                            if (settings_etPassword.text.isNotEmpty()) {
+                                newUser?.password = settings_etPassword.text.toString()
+                            }
+
+                            var defaultResponse: DefaultResponse?
+                            lifecycleScope.launch {
+                                withContext(Dispatchers.IO) {
+                                    defaultResponse = Repository.updateUser(userDataId, newUser!!, userToken)
+
+                                    withContext(Dispatchers.Main) {
+                                        navView.header_name.text = newUser.username
+                                        Toast.makeText(requireContext(), defaultResponse?.message, Toast.LENGTH_LONG)
+                                            .show()
+                                        settings_etProfileName.hint = newUser.username
                                     }
-
                                 }
-                                alertDialog.dismiss()
-                                Toast.makeText(view.context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
-                                clearSettings(view)
                             }
-                        }
-                    }
 
-                    dialogLayout.dialog_settings_btnCancel.setOnClickListener {
-                        clearSettings(view)
-                        if (chooseImage) {
-                            settings_userimage.setImageBitmap(null)
-                            chooseImage = false
+                            alertDialog.dismiss()
+                            Toast.makeText(view.context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
+                            clearSettings(view)
                         }
-                        alertDialog.dismiss()
                     }
                 }
-                chooseImage -> {
-                    Toast.makeText(view.context, getString(R.string.image_saved), Toast.LENGTH_LONG).show()
-                    navView.header_image.setImageBitmap(
-                        Bitmap.createScaledBitmap(bitmap, headerImgWidth, headerImgHeight, false))
-                    settings_userimage.setImageBitmap(null)
-                    chooseImage = false
+
+                dialogLayout.dialog_settings_btnCancel.setOnClickListener {
+                    clearSettings(view)
+                    if (chooseImage) {
+                        settings_userimage.setImageBitmap(null)
+                        chooseImage = false
+                    }
+                    alertDialog.dismiss()
                 }
-                else -> {
-                    Toast.makeText(view.context, getString(R.string.no_changes), Toast.LENGTH_SHORT).show()
-                }
+            }
+
+            else {
+                Toast.makeText(requireContext(), getString(R.string.no_changes), Toast.LENGTH_LONG).show()
             }
         }
     }

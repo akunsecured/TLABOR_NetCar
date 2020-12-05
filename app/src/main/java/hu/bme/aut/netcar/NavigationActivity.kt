@@ -4,18 +4,18 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.Switch
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -39,14 +39,9 @@ import hu.bme.aut.netcar.network.RetrofitClientAuth
 import kotlinx.android.synthetic.main.activity_navigation.*
 import kotlinx.android.synthetic.main.activity_navigation.view.*
 import kotlinx.android.synthetic.main.dialog_register_driver.view.*
-import kotlinx.android.synthetic.main.dialog_register_driver.view.btnCancel
 import kotlinx.android.synthetic.main.nav_header_main.view.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.*
+
 
 @Suppress("DEPRECATION")
 class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -65,6 +60,10 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     private var userData : UserData? = null
     private var userToken: String = ""
     private var userDataId: Int = -1
+
+    private val handler: Handler = Handler(Looper.getMainLooper())
+    private lateinit var runnable: java.lang.Runnable
+
 
     @SuppressLint("InflateParams")
     @Suppress("LABEL_NAME_CLASH")
@@ -96,7 +95,9 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         val navController = findNavController(R.id.nav_host_fragment)
         navView.setupWithNavController(navController)
         navView.setNavigationItemSelectedListener(this)
-
+        navView.getHeaderView(0).setOnClickListener {
+            onOptionsItemSelected(navView.menu.findItem(R.id.nav_settings))
+        }
 
         retrofit = RetrofitClientAuth(userToken)
         lifecycleScope.launch {
@@ -104,7 +105,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 userData = Repository.getUser(userDataId, userToken)
                 withContext(Dispatchers.Main) {
                     if (userData != null) {
-                        updateHeader(userData!!)
+                        updateHeader()
                     }
                 }
             }
@@ -189,7 +190,17 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 var defaultResponse: DefaultResponse
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
-                        defaultResponse = Repository.updateCar(userDataId, brand, model, serial, "", hasBoot, seats, placeInBoot, userToken)!!
+                        defaultResponse = Repository.updateCar(
+                            userDataId,
+                            brand,
+                            model,
+                            serial,
+                            "",
+                            hasBoot,
+                            seats,
+                            placeInBoot,
+                            userToken
+                        )!!
                         withContext(Dispatchers.Main) {
                             Toast.makeText(application, defaultResponse.message, Toast.LENGTH_LONG)
                                 .show()
@@ -199,32 +210,6 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                         }
                     }
                 }
-                /*
-                retrofit.INSTANCE.updateCar(userDataId, brand, model, serial, "", hasBoot, seats, placeInBoot)
-                    .enqueue(object: Callback<DefaultResponse> {
-                        override fun onResponse(
-                            call: Call<DefaultResponse>,
-                            response: Response<DefaultResponse>
-                        ) {
-                            val neededMessage = "Updated car with id: $userDataId"
-                            when (response.body()?.message) {
-                                neededMessage -> {
-                                    Toast.makeText(application, "Car updated successfully", Toast.LENGTH_LONG)
-                                        .show()
-
-                                    mAlertDialog.dismiss()
-                                    updateLayout()
-                                    updateValidUser(userDataId, userData!!)
-                                }
-                            }
-                        }
-
-                        override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                            Toast.makeText(application, "Something went wrong in updating the user's car", Toast.LENGTH_LONG)
-                                .show()
-                        }
-                    })
-                 */
             }
             mDialogView.btnCancel.setOnClickListener {
                 mAlertDialog.dismiss()
@@ -319,7 +304,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     AlertDialog.Builder(this)
                         .setMessage(getString(R.string.are_you_sure_want_logout))
                         .setPositiveButton(getString(R.string.no), null)
-                        .setNegativeButton(getString(R.string.yes)) { _, _ -> this.finish()
+                        .setNegativeButton(getString(R.string.yes)) { _, _ ->
+                            this.finish()
                         }
                         .show()
                 }
@@ -332,50 +318,37 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         return true
     }
 
-    fun updateHeader(userData: UserData) {
+    private fun updateHeader() {
         val headerView: View = navView.getHeaderView(0)
 
         val headerName: TextView = headerView.header_name
-        val headerEmail: TextView = headerView.header_email
 
-        headerName.text = userData.username
-        headerEmail.text = userData.email
+        headerName.text = userData?.username
 
-        // TODO: Picture
-        //val headerPic: ImageView = headerView.header_image
-        //Picasso.get().load(userData.name).resize(headerPic.width, headerPic.height).centerCrop().into(headerPic)
+        val headerPic: ImageView = headerView.header_image
+        if (userData?.pictureUrl != null) {
+            val imageBytes = Base64.decode(userData?.pictureUrl, 0)
+            headerPic.setImageBitmap(
+                BitmapFactory.decodeByteArray(
+                    imageBytes, 0, imageBytes.size
+                )
+            )
+        }
     }
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun updateLayout() {
-        var usersCarData: CarData? = null
-        val btnRegisterAsDriver: Button = navView.btnRegisterAsDriver
+        var usersCarData: CarData?
+
+        val btnRegisterAsDriver: Button = findViewById(R.id.btnRegisterAsDriver)
         val activeDriverMenuItem: MenuItem = navView.menu.findItem(R.id.nav_active_driver)
-        val swSwitchDriver: Switch = navView.findViewById(R.id.switchDriver)
+        val swSwitchDriver: Switch = findViewById(R.id.switchDriver)
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 usersCarData = Repository.getCar(userDataId, userToken)
-                /*
-                retrofit.INSTANCE.getCarById(userDataId)
-                    .enqueue(object: Callback<CarData> {
-                        override fun onResponse(call: Call<CarData>, response: Response<CarData>) {
-                            if (response.body() != null) {
-                                usersCarData = response.body()!!
-                            }
-                            else
-                                Toast.makeText(application, "Response body is empty", Toast.LENGTH_LONG)
-                                    .show()
-                        }
+                userData = Repository.getUser(userDataId, userToken)
 
-                        override fun onFailure(call: Call<CarData>, t: Throwable) {
-                            Toast.makeText(application, "Something went wrong in getting user's car", Toast.LENGTH_LONG)
-                                .show()
-                        }
-
-                    })
-
-                 */
                 withContext(Dispatchers.Main) {
                     if (usersCarData?.serial != null) {
                         btnRegisterAsDriver.visibility = View.GONE
@@ -395,10 +368,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     }
                 }
             }
-
-
         }
-
     }
 
     private fun updateValidUser(userDataId: Int, userData: UserData) {
@@ -414,17 +384,24 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 }
             }
         }
+    }
 
-        /*
-        retrofit.INSTANCE.updateUser(userDataId, userData)
-            .enqueue(object: Callback<DefaultResponse> {
-                override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) { }
+    private fun updateDetailsCyclic() {
+        runnable = Runnable {
+            updateLayout()
+            updateHeader()
+            handler.postDelayed(runnable, 5000)
+        }
+        handler.post(runnable)
+    }
 
-                override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                    Toast.makeText(application, "Something went wrong in validing the user", Toast.LENGTH_LONG)
-                        .show()
-                }
-            })
-         */
+    override fun onResume() {
+        super.onResume()
+        updateDetailsCyclic()
+    }
+
+    override fun onPause() {
+        handler.removeCallbacks(runnable)
+        super.onPause()
     }
 }

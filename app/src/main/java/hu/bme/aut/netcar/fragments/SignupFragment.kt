@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.fragment_signup.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class SignupFragment : Fragment() {
 
@@ -85,7 +86,10 @@ class SignupFragment : Fragment() {
             }
             else {
                 var defaultResponse: DefaultResponse?
-                val newUser = UserDTO(etNameGiven.text.toString(), etPasswordGiven.text.toString())
+                val newUser = UserDTO(
+                    etNameGiven.text.toString().toLowerCase(Locale.ROOT),
+                    etPasswordGiven.text.toString()
+                )
 
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {

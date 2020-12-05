@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class LoginFragment : Fragment() {
 
@@ -39,7 +40,7 @@ class LoginFragment : Fragment() {
         etPassword.setText(arguments?.getString("password"))
 
         btnSignIn.setOnClickListener {
-            val username = etUsername.text.toString().trim()
+            val username = etUsername.text.toString().toLowerCase(Locale.ROOT).trim()
             val password = etPassword.text.toString().trim()
 
             if (username.isEmpty()) {
