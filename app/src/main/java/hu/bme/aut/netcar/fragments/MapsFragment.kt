@@ -38,6 +38,7 @@ import kotlinx.android.synthetic.main.dialog_marker.view.*
 import kotlinx.android.synthetic.main.fragment_maps.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import java.lang.NullPointerException
 
 
 @Suppress("DEPRECATION")
@@ -293,35 +294,43 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     }
 
     override fun onMarkerClick(marker: Marker?): Boolean {
-        val mDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_marker, null)
-        val mBuilder = AlertDialog.Builder(requireContext())
-            .setView(mDialogView)
-            .setTitle(getString(R.string.trip_confirmation))
-        val mAlertDialog = mBuilder.show()
-        val str = marker?.title?.split(',')
-        mAlertDialog.driver_name.text = str!![0]
-        mAlertDialog.car_brand.text = str[1]
-        mAlertDialog.car_model.text = str[2]
-        mAlertDialog.car_plate.text = str[3]
+        if (!canPlaceMarker) {
+            var str: List<String>? = listOf()
+            try {
+                str = marker?.title?.split(',')
+                val s = str!![0]
+            } catch (e: NullPointerException) {
+                return false
+            }
+            val mDialogView = LayoutInflater.from(context).inflate(R.layout.dialog_marker, null)
+            val mBuilder = AlertDialog.Builder(requireContext())
+                .setView(mDialogView)
+                .setTitle(getString(R.string.trip_confirmation))
+            val mAlertDialog = mBuilder.show()
 
-        mDialogView.checkBox.setOnCheckedChangeListener { _, _ ->
-            if (mDialogView.checkbox_editText.isGone) {
-                mDialogView.checkbox_editText.visibility = View.VISIBLE
+            mAlertDialog.driver_name.text = str!![0]
+            mAlertDialog.car_brand.text = str[1]
+            mAlertDialog.car_model.text = str[2]
+            mAlertDialog.car_plate.text = str[3]
+
+            mDialogView.checkBox.setOnCheckedChangeListener { _, _ ->
+                if (mDialogView.checkbox_editText.isGone) {
+                    mDialogView.checkbox_editText.visibility = View.VISIBLE
+                } else {
+                    mDialogView.checkbox_editText.visibility = View.GONE
+                }
             }
 
-            else {
-                mDialogView.checkbox_editText.visibility = View.GONE
+            mDialogView.btnAccept.setOnClickListener {
+                btnFinalize.visibility = View.VISIBLE
+                tvSelectLocation.visibility = View.VISIBLE
+                canPlaceMarker = true
+                mAlertDialog.dismiss()
             }
-        }
-
-        mDialogView.btnAccept.setOnClickListener{
-            btnFinalize.visibility = View.VISIBLE
-            tvSelectLocation.visibility = View.VISIBLE
-            canPlaceMarker = true
-            mAlertDialog.dismiss()
-        }
-        mDialogView.btnCancel.setOnClickListener{
-            mAlertDialog.dismiss()
+            mDialogView.btnCancel.setOnClickListener {
+                mAlertDialog.dismiss()
+            }
+            return true
         }
         return true
     }
