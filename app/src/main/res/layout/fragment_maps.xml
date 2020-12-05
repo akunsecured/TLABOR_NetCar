@@ -4,6 +4,28 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="hu.bme.aut.netcar.fragments.MapsFragment"
-    />
+    tools:context="hu.bme.aut.netcar.fragments.MapsFragment">
+
+    <TextView
+        android:id="@+id/tvSelectLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/touch_on_map"
+        android:layout_gravity="center|top"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="90dp"
+        android:textSize="18sp"
+        android:background="@color/colorPrimary"
+        android:visibility="gone"/>
+    <Button
+        android:id="@+id/btnFinalize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:text="@string/finalize_location"
+        android:padding="10dp"
+        android:layout_marginTop="20dp"
+        android:paddingRight="10dp"
+        android:visibility="gone"/>
+</fragment>
 

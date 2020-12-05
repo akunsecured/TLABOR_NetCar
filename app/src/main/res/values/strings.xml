@@ -75,4 +75,7 @@
     <string name="netcar_logo" translatable="false">NetCar logo</string>
     <string name="credit_image" translatable="false">Credit Image</string>
     <string name="profile_image" translatable="false">Profile image</string>
+    <string name="give_destination">You must give your destination</string>
+    <string name="touch_on_map">Touch on the map to select your destination</string>
+    <string name="finalize_location">Finalize destination</string>
 </resources>

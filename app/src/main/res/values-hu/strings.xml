@@ -66,4 +66,7 @@
     <string name="controls">Kezelés</string>
     <string name="car_boot">Van csomagtartó</string>
     <string name="username">Felhasználónév</string>
+    <string name="give_destination">Előbb meg kell adnod az úticélod</string>
+    <string name="touch_on_map">Koppints a térképre az úticél kiválasztásához</string>
+    <string name="finalize_location">Úticél megerősítése</string>
 </resources>

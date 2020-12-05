@@ -5,14 +5,18 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
+import android.os.AsyncTask
 import android.os.Bundle
 import android.transition.TransitionInflater
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
@@ -23,15 +27,17 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
+import com.google.gson.Gson
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.DataManager
 import hu.bme.aut.netcar.data.Driver
+import hu.bme.aut.netcar.directionshelper.GoogleMapDTO
 import kotlinx.android.synthetic.main.dialog_marker.*
 import kotlinx.android.synthetic.main.dialog_marker.view.*
+import kotlinx.android.synthetic.main.fragment_maps.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
 
 
 @Suppress("DEPRECATION")
@@ -40,6 +46,38 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
     private var userDataId: Int = -1
+    lateinit var gMap: GoogleMap
+    lateinit var destinationMarker: LatLng
+    val driversArray = DataManager.drivers
+    var canPlaceMarker = false
+    lateinit var currentLatLng: LatLng
+
+    private val callback = OnMapReadyCallback { googleMap ->
+        setUpMap(googleMap)
+        placeMarkerOnMap(driversArray, googleMap)
+
+        gMap.setOnMapClickListener { point ->
+            if(canPlaceMarker) {
+                gMap.clear()
+                placeMarkerOnMap(driversArray, googleMap)
+                destinationMarker = point
+                gMap.addMarker(MarkerOptions().position(point))
+            }
+        }
+        btnFinalize.setOnClickListener {
+            try {
+                val URL = getDirectionURL(currentLatLng, destinationMarker)
+                GetDirection(URL).execute()
+                canPlaceMarker = false
+                btnFinalize.visibility = View.GONE
+                tvSelectLocation.visibility = View.GONE
+            }
+            catch (e: Exception){
+                Toast.makeText(context, getString(R.string.give_destination), Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -72,15 +110,9 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         mapFragment?.getMapAsync(callback)
     }
 
-    private val callback = OnMapReadyCallback { googleMap ->
-        setUpMap(googleMap)
-
-        val driversArray = DataManager.drivers
-        placeMarkerOnMap(driversArray, googleMap)
-    }
-
     // Asking for location permission
     private fun setUpMap(googleMap: GoogleMap) {
+        gMap = googleMap
         if (ContextCompat.checkSelfPermission(
                 this.requireActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -101,14 +133,101 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         // If permission was granted, we can see our device's current location
         googleMap.isMyLocationEnabled = true
 
+        val location1 = LatLng(13.0356745, 77.5881522)
+        googleMap.addMarker(MarkerOptions().position(location1).title("My Location"))
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location1, 5f))
+
         // Zoom into last location
         fusedLocationClient.lastLocation.addOnSuccessListener(this.requireActivity()) { location ->
             if (location != null) {
                 lastLocation = location
-                val currentLatLng = LatLng(location.latitude, location.longitude)
+                currentLatLng = LatLng(location.latitude, location.longitude)
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16.0f))
             }
         }
+    }
+
+    fun getDirectionURL(origin: LatLng, dest: LatLng) : String{
+        return "https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${dest.latitude},${dest.longitude}&sensor=false&mode=driving&key=" + getString(
+            R.string.google_maps_key
+        )
+    }
+
+    private inner class GetDirection(val url: String) : AsyncTask<Void, Void, List<List<LatLng>>>(){
+        override fun doInBackground(vararg params: Void?): List<List<LatLng>> {
+            val client = OkHttpClient()
+            val request = Request.Builder().url(url).build()
+            val response = client.newCall(request).execute()
+            val data = response.body()!!.string()
+            Log.d("GoogleMap", " data : $data")
+            val result =  ArrayList<List<LatLng>>()
+            try{
+                val respObj = Gson().fromJson(data, GoogleMapDTO::class.java)
+
+                val path =  ArrayList<LatLng>()
+
+                for (i in 0..(respObj.routes[0].legs[0].steps.size-1)){
+//                    val startLatLng = LatLng(respObj.routes[0].legs[0].steps[i].start_location.lat.toDouble()
+//                            ,respObj.routes[0].legs[0].steps[i].start_location.lng.toDouble())
+//                    path.add(startLatLng)
+//                    val endLatLng = LatLng(respObj.routes[0].legs[0].steps[i].end_location.lat.toDouble()
+//                            ,respObj.routes[0].legs[0].steps[i].end_location.lng.toDouble())
+                    path.addAll(decodePolyline(respObj.routes[0].legs[0].steps[i].polyline.points))
+                }
+                result.add(path)
+            }catch (e: Exception){
+                e.printStackTrace()
+            }
+            return result
+        }
+
+        override fun onPostExecute(result: List<List<LatLng>>) {
+            val lineoption = PolylineOptions()
+            for (i in result.indices){
+                lineoption.addAll(result[i])
+                lineoption.width(10f)
+                lineoption.color(Color.BLUE)
+                lineoption.geodesic(true)
+            }
+            gMap.addPolyline(lineoption)
+        }
+    }
+
+    fun decodePolyline(encoded: String): List<LatLng> {
+
+        val poly = ArrayList<LatLng>()
+        var index = 0
+        val len = encoded.length
+        var lat = 0
+        var lng = 0
+
+        while (index < len) {
+            var b: Int
+            var shift = 0
+            var result = 0
+            do {
+                b = encoded[index++].toInt() - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+            lat += dlat
+
+            shift = 0
+            result = 0
+            do {
+                b = encoded[index++].toInt() - 63
+                result = result or (b and 0x1f shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+            lng += dlng
+
+            val latLng = LatLng((lat.toDouble() / 1E5), (lng.toDouble() / 1E5))
+            poly.add(latLng)
+        }
+
+        return poly
     }
 
     override fun onRequestPermissionsResult(
@@ -196,6 +315,9 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         }
 
         mDialogView.btnAccept.setOnClickListener{
+            btnFinalize.visibility = View.VISIBLE
+            tvSelectLocation.visibility = View.VISIBLE
+            canPlaceMarker = true
             mAlertDialog.dismiss()
         }
         mDialogView.btnCancel.setOnClickListener{
