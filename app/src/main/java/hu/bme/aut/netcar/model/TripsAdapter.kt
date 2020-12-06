@@ -156,23 +156,9 @@ class TripsAdapter(val context: Context,
 
                 GlobalScope.launch {
                     withContext(Dispatchers.IO) {
-                        val passengerUserData = Repository.getUser(serviceRequest.passengerID!!, userToken)
-                        passengerUserData?.credits = passengerUserData?.credits?.minus(serviceRequest.payment!!)
-                        val passengerUpdateResponse =
-                            Repository.updateUser(serviceRequest.passengerID!!, passengerUserData!!, userToken)
                         var defaultResponse: DefaultResponse? = null
-
-                        if (passengerUpdateResponse?.message == "USER_SUCCESSFUL_UPDATED") {
-                            val driverUserData = Repository.getUser(serviceRequest.driverID!!, userToken)
-                            driverUserData?.credits = driverUserData?.credits?.plus(serviceRequest.payment!!)
-                            driverUserData?.ratings?.add(rating)
-                            val driverUpdateResponse =
-                                Repository.updateUser(serviceRequest.driverID!!, driverUserData!!, userToken)
-                            if (driverUpdateResponse?.message == "USER_SUCCESSFUL_UPDATED") {
-                                serviceRequest.sRstatus = SRstatus.FINISHED
-                                defaultResponse = Repository.updateRequest(serviceRequest, userToken)
-                            }
-                        }
+                        serviceRequest.sRstatus = SRstatus.FINISHED
+                        defaultResponse = Repository.updateRequest(serviceRequest, userToken)
 
                         withContext(Dispatchers.Main) {
                             if (defaultResponse?.message == "Successful update.") {
@@ -229,13 +215,6 @@ class TripsAdapter(val context: Context,
             withContext(Dispatchers.IO) {
                 serviceRequest.sRstatus = SRstatus.INPROGRESS
                 val defaultResponse = Repository.updateRequest(serviceRequest, userToken)
-
-                for (sr in serviceRequests) {
-                    if (sr.SRID != serviceRequest.SRID && sr.sRstatus == SRstatus.PENDING) {
-                        sr.sRstatus = SRstatus.DENIED
-                        Repository.updateRequest(sr, userToken)
-                    }
-                }
 
                 withContext(Dispatchers.Main) {
                     if (defaultResponse?.message == "Successful update.") {
