@@ -18,6 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".TripsActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.ActionBar">
         </activity>
         <!--

@@ -13,7 +13,8 @@
         android:layout_margin="8dp"
         android:src="@drawable/placeholder"
         android:layout_weight="3"
-        android:layout_width="0dp" />
+        android:layout_width="0dp"
+        android:background="@color/bgColor"/>
 
     <LinearLayout
         android:layout_height="match_parent"
@@ -33,12 +34,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Driver / Passenger"
+                android:textColor="@color/textColor"
                 android:textSize="15sp"/>
             <TextView
                 android:id="@+id/tvStartDate"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="bottom"
+                android:textColor="@color/textColor"
                 android:text="2020.12.01."
                 android:textSize="15sp"/>
         </LinearLayout>
@@ -53,6 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:textColor="@color/textColor"
                 android:text="Credits"
                 android:textSize="15sp"/>
             <TextView
@@ -61,6 +65,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
                 android:gravity="bottom"
+                android:textColor="@color/textColor"
                 android:text="2020.12.02."
                 android:textSize="15sp"/>
         </LinearLayout>
@@ -76,16 +81,18 @@
 
         <ImageButton
             android:id="@+id/ibTopButton"
-            android:src="@drawable/placeholder"
+            android:src="@drawable/ic_denied"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/bgColor"/>
         <ImageButton
             android:id="@+id/ibBottomButton"
             android:src="@drawable/placeholder"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/bgColor"/>
 
     </LinearLayout>
 
