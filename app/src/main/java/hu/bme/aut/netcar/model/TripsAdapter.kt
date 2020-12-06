@@ -40,7 +40,7 @@ class TripsAdapter(val context: Context,
         parent: ViewGroup,
         viewType: Int
     ): TripsViewHolder {
-        return TripsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.driver_trips_list_item, parent, false))
+        return TripsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.trips_list_item, parent, false))
     }
 
     @SuppressLint("SetTextI18n")
@@ -161,7 +161,7 @@ class TripsAdapter(val context: Context,
     fun finishRequest(position: Int, rating: Int){
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
-                var defaultResponse: DefaultResponse? = null
+                var defaultResponse: DefaultResponse?
                 val driverUserData = Repository.getUser(serviceRequests[position].driverID!!, userToken)
                 driverUserData?.ratings?.add(rating)
                 Repository.updateUser(driverUserData?.userId!!, driverUserData, userToken)
@@ -186,8 +186,10 @@ class TripsAdapter(val context: Context,
     }
 
     fun deleteAll() {
-        serviceRequests.clear()
-        notifyDataSetChanged()
+        if (serviceRequests.isNotEmpty()) {
+            serviceRequests.clear()
+            notifyDataSetChanged()
+        }
     }
 
     fun addAll(serviceRequest: List<ServiceRequest>) {

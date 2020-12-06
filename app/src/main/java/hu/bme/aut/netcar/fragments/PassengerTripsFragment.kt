@@ -45,17 +45,8 @@ class PassengerTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
     }
 
     private fun setUpData() {
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                val serviceRequests = Repository.getRequestsByPassenger(userDataId, userToken)
-
-
-                withContext(Dispatchers.Main) {
-                    adapter.addAll(serviceRequests!!)
-                    recyclerView.adapter = adapter
-                }
-            }
-        }
+        adapter = TripsAdapter(requireContext(), false, userToken, this)
+        recyclerView.adapter = adapter
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,8 +54,6 @@ class PassengerTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
 
         userDataId = arguments?.getInt("userDataId")!!
         userToken = arguments?.getString("userToken")!!
-
-        adapter = TripsAdapter(requireContext(), false, userToken, this)
     }
 
     private fun updateAdapterData() {
@@ -82,8 +71,8 @@ class PassengerTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
     private fun updateDetailsCyclic() {
         runnable = Runnable {
             updateAdapterData()
-            // in every 45 sec refresh
-            handler.postDelayed(runnable, 45000)
+            // in every 15 sec refresh
+            handler.postDelayed(runnable, 15000)
         }
         handler.post(runnable)
     }
@@ -103,18 +92,15 @@ class PassengerTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
     }
 
     override fun onClickItem(position: Int) {
-        var rateValue = -1
-
         val dialogLayout = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_rating, null)
         val builder = AlertDialog.Builder(requireContext()).setView(dialogLayout)
-        val alertdialog = builder.show()
+        val alertDialog = builder.show()
 
         val submitButton: Button = dialogLayout.findViewById(R.id.btnSubmit)
         val ratingBar: RatingBar = dialogLayout.findViewById(R.id.rbRating)
         submitButton.setOnClickListener {
-            rateValue = (ratingBar.rating).toInt()
-            adapter.finishRequest(position, rateValue)
-            alertdialog.dismiss()
+            adapter.finishRequest(position, (ratingBar.rating).toInt())
+            alertDialog.dismiss()
         }
     }
 }

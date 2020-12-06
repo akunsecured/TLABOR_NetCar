@@ -165,7 +165,9 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
         userDataId = arguments?.getInt("userDataId")
         userToken = arguments?.getString("token")
-        userData = arguments?.getSerializable("userData") as UserData
+        val serializableData = arguments?.getSerializable("userData")
+        if (serializableData != null)
+            userData = serializableData as UserData
 
         updateDetailsCyclic()
      }

@@ -8,10 +8,10 @@
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_recyclerView"
+        android:id="@+id/rv_driverRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="12dp"
-        tools:listitem="@layout/driver_trips_list_item"/>
+        tools:listitem="@layout/trips_list_item"/>
 
 </LinearLayout>

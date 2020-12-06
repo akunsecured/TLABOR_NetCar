@@ -33,7 +33,7 @@ class DriverTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_driver_trips, container, false)
 
-        recyclerView = view.findViewById(R.id.rv_recyclerView)
+        recyclerView = view.findViewById(R.id.rv_driverRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
         setUpData()
@@ -42,16 +42,8 @@ class DriverTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
     }
 
     private fun setUpData() {
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                val serviceRequests = Repository.getRequestsByDriver(userDataId, userToken)
-
-                withContext(Dispatchers.Main) {
-                    adapter.addAll(serviceRequests!!)
-                    recyclerView.adapter = adapter
-                }
-            }
-        }
+        adapter = TripsAdapter(requireContext(), true, userToken, this)
+        recyclerView.adapter = adapter
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,8 +51,6 @@ class DriverTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
 
         userDataId = arguments?.getInt("userDataId")!!
         userToken = arguments?.getString("userToken")!!
-
-        adapter = TripsAdapter(requireContext(), true, userToken, this)
     }
 
     private fun updateAdapterData() {
@@ -78,8 +68,8 @@ class DriverTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
     private fun updateDetailsCyclic() {
         runnable = Runnable {
             updateAdapterData()
-            // in every 45 sec refresh
-            handler.postDelayed(runnable, 45000)
+            // in every 15 sec refresh
+            handler.postDelayed(runnable, 15000)
         }
         handler.post(runnable)
     }
