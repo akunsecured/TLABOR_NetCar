@@ -2,6 +2,7 @@ package hu.bme.aut.netcar.data
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.JsonClass
+import java.io.Serializable
 
 @JsonClass(generateAdapter = true)
 data class ServiceRequest(
@@ -23,4 +24,4 @@ data class Coord(
     @SerializedName("serialVersionUID") val serialVersionUID: Long = 3583151228933783558L,
     @SerializedName("x") var x: Double?,
     @SerializedName("y") var y: Double?
-)
+) : Serializable

@@ -13,5 +13,7 @@ data class CarData(
     @SerializedName("pic") var pic: String?,
     @SerializedName("hasBoot") var hasBoot: Boolean?,
     @SerializedName("seats") var seats: Int?,
-    @SerializedName("placeInBoot") var placeInBoot: Int?
+    @SerializedName("placeInBoot") var placeInBoot: Int?,
+    @SerializedName("freeSeats") var freeSeats: Int?,
+    @SerializedName("freePlace") var freePlace: Int?
 )

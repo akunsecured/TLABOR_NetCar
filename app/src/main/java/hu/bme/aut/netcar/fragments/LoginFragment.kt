@@ -1,15 +1,22 @@
 package hu.bme.aut.netcar.fragments
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
+import hu.bme.aut.netcar.BuildConfig
 import hu.bme.aut.netcar.NavigationActivity
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.JwtRequest
@@ -34,7 +41,12 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_login, container, false)
 
-
+    private fun checkPermissions(): Boolean {
+        val permissionState = ActivityCompat.checkSelfPermission(requireContext(),
+            Manifest.permission.ACCESS_COARSE_LOCATION)
+        return permissionState == PackageManager.PERMISSION_GRANTED
+    }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -54,6 +66,21 @@ class LoginFragment : Fragment() {
             if (password.isEmpty()) {
                 etPassword.error = getString(R.string.btn_sigin_error_password_1)
                 etPassword.requestFocus()
+                return@setOnClickListener
+            }
+            
+            if (!checkPermissions()) {
+                Snackbar.make(view, "Location permissions are required to use the app!", Snackbar.LENGTH_LONG)
+                    .setAction("SETTINGS") {
+                        val intent = Intent()
+                        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                        val uri = Uri.fromParts("package",
+                            BuildConfig.APPLICATION_ID, null)
+                        intent.data = uri
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
+                    }
+                    .show()
                 return@setOnClickListener
             }
 

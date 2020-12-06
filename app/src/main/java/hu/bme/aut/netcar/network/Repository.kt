@@ -4,6 +4,19 @@ import hu.bme.aut.netcar.data.*
 import retrofit2.HttpException
 
 object Repository {
+    suspend fun getAllUsers(token: String) : List<UserData>? {
+        try {
+            val retrofit = RetrofitClientAuth(token)
+            return retrofit.INSTANCE.getAllUsers()
+        } catch (exception: HttpException) {
+            if (exception.code() == 404) {
+                return null
+            }
+
+            throw exception
+        }
+    }
+
     suspend fun getUser(id: Int, token: String) : UserData? {
         try {
             val retrofit = RetrofitClientAuth(token)
@@ -36,6 +49,19 @@ object Repository {
         try {
             val retrofit = RetrofitClientAuth(token)
             return retrofit.INSTANCE.getCarById(id)
+        } catch (exception: HttpException) {
+            if (exception.code() == 404) {
+                return null
+            }
+
+            throw exception
+        }
+    }
+
+    suspend fun getAllCars(token: String) : List<CarData>? {
+        try {
+            val retrofit = RetrofitClientAuth(token)
+            return retrofit.INSTANCE.getAllCars()
         } catch (exception: HttpException) {
             if (exception.code() == 404) {
                 return null

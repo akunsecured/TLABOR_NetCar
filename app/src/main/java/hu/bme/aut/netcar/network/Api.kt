@@ -6,7 +6,7 @@ import retrofit2.http.*
 
 interface Api {
     @GET("getAllUsers")
-    fun getUsers() : Call<List<UserData>>
+    suspend fun getAllUsers() : List<UserData>
 
     @GET("getUser/{id}")
     suspend fun getUserById(
@@ -17,6 +17,9 @@ interface Api {
     suspend fun getCarById(
         @Path("id") id: Int
     ) : CarData
+
+    @GET("getAllCars")
+    suspend fun getAllCars() : List<CarData>
 
     @POST("register")
     suspend fun register(

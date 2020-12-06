@@ -2,6 +2,8 @@ package hu.bme.aut.netcar.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -9,10 +11,13 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.text.InputFilter
 import android.text.InputType
 import android.transition.TransitionInflater
@@ -25,6 +30,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -50,41 +56,47 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.lang.NullPointerException
-
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 @Suppress("DEPRECATION")
 class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
+    private lateinit var userCoords: Coord
+    private lateinit var locationManager: LocationManager
+    private lateinit var runnable: Runnable
+
+    lateinit var gMap: GoogleMap
+    lateinit var destinationMarker: LatLng
+    lateinit var currentLatLng: LatLng
+
     private var userDataId: Int? = -1
     private var userToken: String? = null
     private var userData: UserData? = null
+    private var arrayOfUsers: List<UserData> = arrayListOf()
+    private var arrayOfCars: List<CarData> = arrayListOf()
     private var driverId: Int? = 1
-    lateinit var gMap: GoogleMap
-    lateinit var destinationMarker: LatLng
-    val driversArray = DataManager.drivers
+
     var canPlaceMarker = false
-    lateinit var currentLatLng: LatLng
 
+    private val activeVisibleDriversArray = arrayListOf<Driver>()
     private val handler: Handler = Handler(Looper.getMainLooper())
-    private lateinit var runnable: Runnable
-
     private val callback = OnMapReadyCallback { googleMap ->
         setUpMap(googleMap)
-        placeMarkerOnMap(driversArray, googleMap)
+        placeMarkerOnMap(activeVisibleDriversArray, googleMap)
 
         gMap.setOnMapClickListener { point ->
             if(canPlaceMarker) {
                 gMap.clear()
-                placeMarkerOnMap(driversArray, googleMap)
+                placeMarkerOnMap(activeVisibleDriversArray, googleMap)
                 destinationMarker = point
                 gMap.addMarker(MarkerOptions().position(point))
             }
         }
 
         btnFinalize.setOnClickListener {
-
             val builder : AlertDialog.Builder = AlertDialog.Builder(requireContext())
                 .setMessage("How much credit do you want to pay?")
             val input = EditText(context)
@@ -168,8 +180,6 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         val serializableData = arguments?.getSerializable("userData")
         if (serializableData != null)
             userData = serializableData as UserData
-
-        updateDetailsCyclic()
      }
 
     override fun onCreateView(
@@ -191,15 +201,16 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private fun setUpMap(googleMap: GoogleMap) {
         gMap = googleMap
         if (ContextCompat.checkSelfPermission(
-                this.requireActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED) {
+                this.requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ) {
             requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
             return
         }
+
+        gettingCoords()
 
         // Other map control buttons
         googleMap.setOnMarkerClickListener(this)
@@ -210,7 +221,7 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         // If permission was granted, we can see our device's current location
         googleMap.isMyLocationEnabled = true
 
-        // Zoom into last location
+        // Zoom into last / current location
         fusedLocationClient.lastLocation.addOnSuccessListener(this.requireActivity()) { location ->
             if (location != null) {
                 lastLocation = location
@@ -299,11 +310,8 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         return poly
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    @SuppressLint("MissingPermission")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
             LOCATION_PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty()) {
@@ -312,8 +320,9 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
                         if (grantResults[i] == PackageManager.PERMISSION_DENIED)
                             success = false
                     }
-                    if (success)
-                        refreshFragment()
+                    if (success) {
+
+                    }
                 }
             }
             else -> {
@@ -322,17 +331,11 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         }
     }
 
-    // To refresh the actual Fragment
-    private fun refreshFragment() {
-        activity?.supportFragmentManager?.beginTransaction()?.replace(this.id, MapsFragment())?.commit()
-    }
-
     // Function to place markers of a list on the map
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun placeMarkerOnMap(drivers: ArrayList<Driver>, map: GoogleMap) {
         for (driver in drivers) {
             val markerOptions = MarkerOptions().position(driver.location)
-                .title(driver.name + "," + driver.carbrand + "," + driver.carmodel + "," + driver.serial + "," + driver.seats.toString())
             val d = resources.getDrawable(R.drawable.ic_map_car)
             markerOptions.icon(
                 BitmapDescriptorFactory.fromBitmap(
@@ -405,7 +408,94 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private fun updateUserData() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                userData = Repository.getUser(userDataId!!, userToken!!)
+                if (userDataId != null && userToken != null)
+                    userData = Repository.getUser(userDataId!!, userToken!!)
+            }
+        }
+    }
+
+    private fun gettingActiveVisibleDrivers() {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                arrayOfUsers = Repository.getAllUsers(userToken!!)!!
+                arrayOfCars = Repository.getAllCars(userToken!!)!!
+
+                withContext(Dispatchers.Main) {
+                    for (user in arrayOfUsers) {
+                        if (user.valid && user.visible && !user.isInProgress) {
+                            var userCarData: CarData? = null
+                            var sum = 0.0
+
+                            for (rating in user.ratings) {
+                                sum += rating
+                            }
+
+                            val rating = (sum / user.ratings.size.toDouble()).roundTo(2)
+
+                            for (car in arrayOfCars) {
+                                if (car.carId == user.userId) {
+                                    userCarData = car
+                                    break
+                                }
+                            }
+
+                            if (user.location.x != null && user.location.y != null && userCarData?.serial != null) {
+                                activeVisibleDriversArray.add(
+                                    Driver(
+                                        user.username!!, LatLng(user.location.x!!, user.location.y!!),
+                                        userCarData!!.pic, userCarData.serial,
+                                        userCarData.brand!!, userCarData.model!!,
+                                        userCarData.freePlace!!, rating
+                                    )
+                                )
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun gettingCoords() {
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val hasGps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val hasNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
+        if (hasGps || hasNetwork) {
+            if (hasGps) {
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, 5000, 0F, object: LocationListener {
+                        override fun onLocationChanged(location: Location) {
+                            userCoords = Coord(x = location.latitude, y = location.longitude)
+                            lastLocation = location
+                            userData?.location = userCoords
+                            sendingCoords()
+                        }
+                    }
+                )
+            }
+
+            if (hasNetwork) {
+                locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, 5000, 0F, object: LocationListener {
+                        override fun onLocationChanged(location: Location) {
+                            userCoords = Coord(x = location.latitude, y = location.longitude)
+                            lastLocation = location
+                            userData?.location = userCoords
+                            sendingCoords()
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    private fun sendingCoords() {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                Repository.updateUser(userDataId!!, userData!!, userToken!!)
             }
         }
     }
@@ -413,7 +503,8 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private fun updateDetailsCyclic() {
         runnable = Runnable {
             updateUserData()
-            handler.postDelayed(runnable, 5000)
+            gettingActiveVisibleDrivers()
+            handler.postDelayed(runnable, 10000)
         }
         handler.post(runnable)
     }
@@ -426,5 +517,10 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     override fun onPause() {
         handler.removeCallbacks(runnable)
         super.onPause()
+    }
+
+    private fun Double.roundTo(numFractionDigits: Int): Double {
+        val factor = 10.0.pow(numFractionDigits.toDouble())
+        return (this * factor).roundToInt() / factor
     }
 }

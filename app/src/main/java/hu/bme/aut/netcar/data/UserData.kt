@@ -15,5 +15,6 @@ data class UserData(
     @SerializedName("valid") var valid: Boolean = false,
     @SerializedName("visible") var visible: Boolean = false,
     @SerializedName("isInProgress") var isInProgress: Boolean = false,
+    @SerializedName("location") var location: Coord,
     @SerializedName("ratings") var ratings: ArrayList<Int> = ArrayList()
 ) : Serializable

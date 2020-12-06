@@ -161,12 +161,12 @@ class TripsAdapter(val context: Context,
     fun finishRequest(position: Int, rating: Int){
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
-                var defaultResponse: DefaultResponse?
                 val driverUserData = Repository.getUser(serviceRequests[position].driverID!!, userToken)
                 driverUserData?.ratings?.add(rating)
                 Repository.updateUser(driverUserData?.userId!!, driverUserData, userToken)
                 serviceRequests[position].sRstatus = SRstatus.FINISHED
-                defaultResponse = Repository.updateRequest(serviceRequests[position], userToken)
+                val defaultResponse: DefaultResponse? =
+                    Repository.updateRequest(serviceRequests[position], userToken)
 
                 withContext(Dispatchers.Main) {
                     if (defaultResponse?.message == "Successful update.") {
