@@ -79,4 +79,6 @@
     <string name="touch_on_map">Touch on the map to select your destination</string>
     <string name="finalize_location">Finalize destination</string>
     <string name="back_arrow">back</string>
+    <string name="driver_rating">Driver rating</string>
+    <string name="submit">Submit</string>
 </resources>
