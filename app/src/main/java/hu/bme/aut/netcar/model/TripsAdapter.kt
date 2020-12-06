@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -103,15 +104,15 @@ class TripsAdapter(val context: Context,
                             }
                             SRstatus.DENIED -> {
                                 holder.topButton.setImageResource(R.drawable.ic_denied)
-                                holder.bottomButton.visibility = View.GONE
+                                holder.bottomButton.visibility = View.INVISIBLE
                             }
                             SRstatus.INPROGRESS -> {
                                 holder.topButton.setImageResource(R.drawable.ic_in_progress)
-                                holder.bottomButton.visibility = View.GONE
+                                holder.bottomButton.visibility = View.INVISIBLE
                             }
                             SRstatus.FINISHED -> {
                                 holder.topButton.setImageResource(R.drawable.ic_finished)
-                                holder.bottomButton.visibility = View.GONE
+                                holder.bottomButton.visibility = View.INVISIBLE
                             }
                         }
                     }
@@ -133,19 +134,19 @@ class TripsAdapter(val context: Context,
                         when (serviceRequest.sRstatus) {
                             SRstatus.PENDING -> {
                                 holder.topButton.setImageResource(R.drawable.ic_pending)
-                                holder.bottomButton.visibility = View.GONE
+                                holder.bottomButton.visibility = View.INVISIBLE
                             }
                             SRstatus.DENIED -> {
                                 holder.topButton.setImageResource(R.drawable.ic_denied)
-                                holder.bottomButton.visibility = View.GONE
+                                holder.bottomButton.visibility = View.INVISIBLE
                             }
                             SRstatus.INPROGRESS -> {
                                 holder.topButton.setImageResource(R.drawable.ic_in_progress)
-                                holder.bottomButton.visibility = View.GONE
+                                holder.bottomButton.visibility = View.INVISIBLE
                             }
                             SRstatus.FINISHED -> {
                                 holder.topButton.setImageResource(R.drawable.ic_finished)
-                                holder.bottomButton.visibility = View.GONE
+                                holder.bottomButton.visibility = View.INVISIBLE
                             }
                         }
                     }
@@ -179,6 +180,7 @@ class TripsAdapter(val context: Context,
         }
 
         override fun onClick(v: View?) {
+            Log.d("adapter", "onClick()")
             val serviceRequest = serviceRequests[adapterPosition]
             if (!isDriverView && serviceRequest.sRstatus == SRstatus.INPROGRESS) {
                 rating = listener.onClickItem(adapterPosition)
