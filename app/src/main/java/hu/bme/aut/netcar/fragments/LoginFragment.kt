@@ -1,14 +1,16 @@
 package hu.bme.aut.netcar.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import hu.bme.aut.netcar.NavigationActivity
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.JwtRequest
 import hu.bme.aut.netcar.network.DefaultResponse
@@ -77,8 +79,28 @@ class LoginFragment : Fragment() {
                             else -> {
                                 etPassword.text.clear()
                                 val message = defaultResponse?.message
-                                val action = LoginFragmentDirections.actionLoginFragmentToNavigationActivity(message!!)
-                                view.findNavController().navigate(action)
+
+                                val userToken: String = message!!.split(' ')[0]
+                                val userDataId: Int = message.split(' ')[1].toInt()
+
+                                withContext(Dispatchers.IO) {
+                                    val userData = Repository.getUser(userDataId, userToken)
+                                    userData?.picture = ""
+
+                                    val bundle = bundleOf(
+                                        "userToken" to userToken,
+                                        "userDataId" to userDataId
+                                    )
+
+                                    bundle.putSerializable("userData", userData)
+
+                                    withContext(Dispatchers.Main) {
+
+                                        val intent = Intent(requireContext(), NavigationActivity::class.java)
+                                        intent.putExtras(bundle)
+                                        startActivity(intent)
+                                    }
+                                }
                             }
                         }
                     }

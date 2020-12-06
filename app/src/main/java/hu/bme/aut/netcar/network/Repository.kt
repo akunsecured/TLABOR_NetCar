@@ -1,9 +1,6 @@
 package hu.bme.aut.netcar.network
 
-import hu.bme.aut.netcar.data.CarData
-import hu.bme.aut.netcar.data.JwtRequest
-import hu.bme.aut.netcar.data.UserDTO
-import hu.bme.aut.netcar.data.UserData
+import hu.bme.aut.netcar.data.*
 import retrofit2.HttpException
 
 object Repository {
@@ -82,6 +79,71 @@ object Repository {
         try {
             val retrofit = RetrofitClientAuth()
             return retrofit.INSTANCE.register(userDTO)
+        } catch (exception: HttpException) {
+            if (exception.code() == 404) {
+                return null
+            }
+
+            throw exception
+        }
+    }
+
+    suspend fun addRequest(sr: ServiceRequest, userToken: String) : DefaultResponse? {
+        try {
+            val retrofit = RetrofitClientAuth(userToken)
+            return retrofit.INSTANCE.addRequest(sr)
+        } catch (exception: HttpException) {
+            if (exception.code() == 404) {
+                return null
+            }
+
+            throw exception
+        }
+    }
+
+    suspend fun getRequestsByDriver(id: Int, userToken: String) : List<ServiceRequest>? {
+        try {
+            val retrofit = RetrofitClientAuth(userToken)
+            return retrofit.INSTANCE.getRequestsByDriver(id)
+        } catch (exception: HttpException) {
+            if (exception.code() == 404) {
+                return null
+            }
+
+            throw exception
+        }
+    }
+
+    suspend fun getRequestsByPassenger(id: Int, userToken: String) : List<ServiceRequest>? {
+        try {
+            val retrofit = RetrofitClientAuth(userToken)
+            return retrofit.INSTANCE.getRequestsByPassenger(id)
+        } catch (exception: HttpException) {
+            if (exception.code() == 404) {
+                return null
+            }
+
+            throw exception
+        }
+    }
+
+    suspend fun updateRequest(newer: ServiceRequest, userToken: String) : DefaultResponse? {
+        try {
+            val retrofit = RetrofitClientAuth(userToken)
+            return retrofit.INSTANCE.updateRequest(newer)
+        } catch (exception: HttpException) {
+            if (exception.code() == 404) {
+                return null
+            }
+
+            throw exception
+        }
+    }
+
+    suspend fun getUserPicture(id: Int) : String? {
+        try {
+            val retrofit = RetrofitClientAuth()
+            return retrofit.INSTANCE.getUserPicture(id)
         } catch (exception: HttpException) {
             if (exception.code() == 404) {
                 return null

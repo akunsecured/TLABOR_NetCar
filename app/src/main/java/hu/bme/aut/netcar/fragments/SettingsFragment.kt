@@ -79,8 +79,8 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        if (userData?.pictureUrl != null) {
-            val imageBytes = Base64.decode(userData?.pictureUrl, 0)
+        if (userData?.picture != null) {
+            val imageBytes = Base64.decode(userData?.picture, 0)
             settings_userimage.setImageBitmap(
                 BitmapFactory.decodeByteArray(
                     imageBytes, 0, imageBytes.size
@@ -129,7 +129,7 @@ class SettingsFragment : Fragment() {
                                 bitmap.compress(Bitmap.CompressFormat.PNG, 50, baos)
                                 val b = baos.toByteArray()
                                 picture = Base64.encodeToString(b, Base64.DEFAULT)
-                                newUser?.pictureUrl = picture
+                                newUser?.picture = picture
                             }
 
                             if (settings_etProfileName.text.isNotEmpty()) {

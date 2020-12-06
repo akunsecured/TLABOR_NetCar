@@ -13,38 +13,25 @@
         android:layout_gravity="center"
         android:paddingTop="16dp"
         android:textColor="@color/textColor"
-        android:textSize="35dp"
+        android:textSize="35sp"
         android:text="@string/your_rating"
         android:textAlignment="center"
         android:paddingBottom="24dp"/>
 
     <ImageView
-        android:id="@+id/creditimage"
+        android:id="@+id/ivRating"
         android:layout_width="224dp"
         android:layout_height="224dp"
         android:layout_gravity="center"
         android:src="@drawable/star"
         android:layout_marginBottom="40dp"/>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tvRating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:textColor="@color/textColor"
-            android:textSize="30dp"
-            android:text="1"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:textColor="@color/textColor"
-            android:textSize="30dp"
-            android:text="@string/out_of_5"
-            android:paddingLeft="5dp"/>
-    </LinearLayout>
+        android:paddingTop="16dp"
+        android:textColor="@color/textColor"
+        android:textSize="30sp"
+        android:text="@string/out_of_5"/>
 </LinearLayout>

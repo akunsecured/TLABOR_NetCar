@@ -25,7 +25,6 @@ import androidx.core.view.isGone
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.navigation.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
@@ -41,12 +40,11 @@ import kotlinx.android.synthetic.main.activity_navigation.view.*
 import kotlinx.android.synthetic.main.dialog_register_driver.view.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import kotlinx.coroutines.*
+import java.io.ByteArrayOutputStream
 
 
 @Suppress("DEPRECATION")
 class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
-    private val args: NavigationActivityArgs by navArgs()
 
     private lateinit var retrofit: RetrofitClientAuth
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -57,9 +55,10 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     private lateinit var bitmap: Bitmap
     private lateinit var mDialogView: View
     private lateinit var navView: NavigationView
+    private var isDriverVisible: Boolean = false
     private var userData : UserData? = null
-    private var userToken: String = ""
-    private var userDataId: Int = -1
+    var userToken: String = ""
+    var userDataId: Int = -1
 
     private val handler: Handler = Handler(Looper.getMainLooper())
     private lateinit var runnable: java.lang.Runnable
@@ -71,8 +70,13 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
 
-        userToken = args.message.split(" ")[0]
-        userDataId = args.message.split(" ")[1].toInt()
+        val bundle: Bundle = intent.extras!!
+
+        userToken = bundle.getString("userToken")!!
+        userDataId = bundle.getInt("userDataId")
+        userData = bundle.getSerializable("userData") as UserData?
+
+        isDriverVisible = userData?.visible!!
 
         mDrawerLayout = drawer_layout
         actionBarDrawerToggle = ActionBarDrawerToggle(
@@ -95,9 +99,13 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         val navController = findNavController(R.id.nav_host_fragment)
         navView.setupWithNavController(navController)
         navView.setNavigationItemSelectedListener(this)
-        navView.getHeaderView(0).setOnClickListener {
-            onOptionsItemSelected(navView.menu.findItem(R.id.nav_settings))
-        }
+
+        val bundle2 = bundleOf(
+            "token" to userToken,
+            "userDataId" to userDataId,
+        )
+        bundle2.putSerializable("userData", userData)
+        navController.setGraph(navController.graph, bundle2)
 
         retrofit = RetrofitClientAuth(userToken)
         lifecycleScope.launch {
@@ -111,13 +119,33 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             }
         }
 
+
+        switchDriver.isChecked = isDriverVisible
         switchDriver.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                Toast.makeText(application, "Enabled", Toast.LENGTH_SHORT)
-                    .show()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        userData?.visible = true
+                        Repository.updateUser(userDataId, userData!!, userToken)
+                        withContext(Dispatchers.Main) {
+                            isDriverVisible = true
+                            Toast.makeText(application, "Enabled", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+                }
             } else {
-                Toast.makeText(application, "Disabled", Toast.LENGTH_SHORT)
-                    .show()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        userData?.visible = false
+                        Repository.updateUser(userDataId, userData!!, userToken)
+                        withContext(Dispatchers.Main) {
+                            isDriverVisible = false
+                            Toast.makeText(application, "Disabled", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+                }
             }
         }
 
@@ -149,6 +177,11 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 val seatsText = mDialogView.etSeatsGiven.text.toString()
                 val hasBoot = mDialogView.checkBox_rd.isChecked
                 var placeInBoot = 0
+
+                val baos = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.PNG, 50, baos)
+                val b = baos.toByteArray()
+                val carImage = Base64.encodeToString(b, Base64.DEFAULT)
 
 
                 if (serial.isEmpty()) {
@@ -191,15 +224,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
                         defaultResponse = Repository.updateCar(
-                            userDataId,
-                            brand,
-                            model,
-                            serial,
-                            "",
-                            hasBoot,
-                            seats,
-                            placeInBoot,
-                            userToken
+                            userDataId, brand, model, serial, carImage, hasBoot, seats, placeInBoot, userToken
                         )!!
                         withContext(Dispatchers.Main) {
                             Toast.makeText(application, defaultResponse.message, Toast.LENGTH_LONG)
@@ -213,7 +238,6 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             }
             mDialogView.btnCancel.setOnClickListener {
                 mAlertDialog.dismiss()
-                updateLayout()
             }
         }
 
@@ -327,8 +351,8 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         headerName.text = userData?.username
 
         val headerPic: ImageView = headerView.header_image
-        if (userData?.pictureUrl != null) {
-            val imageBytes = Base64.decode(userData?.pictureUrl, 0)
+        if (userData?.picture != null) {
+            val imageBytes = Base64.decode(userData?.picture, 0)
             headerPic.setImageBitmap(
                 BitmapFactory.decodeByteArray(
                     imageBytes, 0, imageBytes.size
@@ -343,6 +367,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         val btnRegisterAsDriver: Button = findViewById(R.id.btnRegisterAsDriver)
         val activeDriverMenuItem: MenuItem = navView.menu.findItem(R.id.nav_active_driver)
+        val ratingMenuItem: MenuItem = navView.menu.findItem(R.id.nav_rating)
         val swSwitchDriver: Switch = findViewById(R.id.switchDriver)
 
         lifecycleScope.launch {
@@ -362,9 +387,11 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                         if (!userData!!.valid) {
                             activeDriverMenuItem.isVisible = false
                             swSwitchDriver.visibility = View.GONE
+                            ratingMenuItem.isVisible = false
                         } else {
                             activeDriverMenuItem.isVisible = true
                             swSwitchDriver.visibility = View.VISIBLE
+                            ratingMenuItem.isVisible = true
                         }
                     }
                 }

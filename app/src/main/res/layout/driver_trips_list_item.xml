@@ -8,7 +8,7 @@
     android:weightSum="12">
 
     <ImageView
-        android:id="@+id/ivDriverCarImage"
+        android:id="@+id/ivContactImage"
         android:layout_height="64dp"
         android:layout_margin="8dp"
         android:src="@drawable/placeholder"
@@ -29,13 +29,13 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
-                android:id="@+id/tvDriverName"
+                android:id="@+id/tvContactUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Teszt Driver"
+                android:text="Driver / Passenger"
                 android:textSize="15sp"/>
             <TextView
-                android:id="@+id/tvDriverStartDate"
+                android:id="@+id/tvStartDate"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="bottom"
@@ -49,14 +49,14 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <TextView
-                android:id="@+id/tvDriverCredits"
+                android:id="@+id/tvPayment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:text="Credits"
                 android:textSize="15sp"/>
             <TextView
-                android:id="@+id/tvDriverEndDate"
+                android:id="@+id/tvEndDate"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
@@ -75,13 +75,13 @@
         android:orientation="vertical">
 
         <ImageButton
-            android:id="@+id/ibTripAccept"
+            android:id="@+id/ibTopButton"
             android:src="@drawable/placeholder"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"/>
         <ImageButton
-            android:id="@+id/ibTripDecline"
+            android:id="@+id/ibBottomButton"
             android:src="@drawable/placeholder"
             android:layout_width="match_parent"
             android:layout_height="0dp"

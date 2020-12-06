@@ -33,7 +33,6 @@ class CreditsFragment : Fragment() {
     private var userDataId: Int = -1
     private var userData: UserData? = null
     private var userToken: String = ""
-    private lateinit var retrofit: RetrofitClientAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,22 +63,6 @@ class CreditsFragment : Fragment() {
                 }
             }
         }
-        /*
-        retrofit = RetrofitClientAuth(userToken)
-        retrofit.INSTANCE.getUserById(userDataId)
-            .enqueue(object: Callback<UserData> {
-                override fun onResponse(call: Call<UserData>, response: Response<UserData>) {
-                    userData = response.body()
-
-                    tvCreditAmount.text = ("$ ").plus(userData!!.credits.toString())
-                }
-
-                override fun onFailure(call: Call<UserData>, t: Throwable) {
-                    Toast.makeText(context!!, "Something went wrong.", Toast.LENGTH_LONG)
-                        .show()
-                }
-
-            })*/
 
         return view
     }
@@ -119,25 +102,6 @@ class CreditsFragment : Fragment() {
                                 }
                             }
                         }
-                        /*
-                        retrofit.INSTANCE.updateUser(this.userDataId, this.userData!!)
-                            .enqueue(object: Callback<DefaultResponse>{
-                                override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
-                                    if (response.body()!!.message == "USER_SUCCESSFUL_UPDATED") {
-                                        tvCreditAmount.text =
-                                            "$ " + (credits + input.text.toString().toInt()).toString()
-                                    }
-                                    else {
-                                        Toast.makeText(context!!, "Something went wrong when adding credits.", Toast.LENGTH_LONG)
-                                            .show()
-                                    }
-                                }
-
-                                override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                                    Toast.makeText(context!!, "Something went wrong.", Toast.LENGTH_LONG)
-                                        .show()
-                                }
-                            })*/
                     }
                     else {
                         tvCreditAmount.text =

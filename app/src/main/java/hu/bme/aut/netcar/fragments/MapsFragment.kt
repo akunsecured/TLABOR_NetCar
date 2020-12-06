@@ -11,16 +11,23 @@ import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.text.InputFilter
+import android.text.InputType
 import android.transition.TransitionInflater
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -30,12 +37,16 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.gson.Gson
 import hu.bme.aut.netcar.R
-import hu.bme.aut.netcar.data.DataManager
-import hu.bme.aut.netcar.data.Driver
+import hu.bme.aut.netcar.data.*
 import hu.bme.aut.netcar.directionshelper.GoogleMapDTO
+import hu.bme.aut.netcar.network.DefaultResponse
+import hu.bme.aut.netcar.network.Repository
 import kotlinx.android.synthetic.main.dialog_marker.*
 import kotlinx.android.synthetic.main.dialog_marker.view.*
 import kotlinx.android.synthetic.main.fragment_maps.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.lang.NullPointerException
@@ -46,12 +57,18 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
-    private var userDataId: Int = -1
+    private var userDataId: Int? = -1
+    private var userToken: String? = null
+    private var userData: UserData? = null
+    private var driverId: Int? = 1
     lateinit var gMap: GoogleMap
     lateinit var destinationMarker: LatLng
     val driversArray = DataManager.drivers
     var canPlaceMarker = false
     lateinit var currentLatLng: LatLng
+
+    private val handler: Handler = Handler(Looper.getMainLooper())
+    private lateinit var runnable: Runnable
 
     private val callback = OnMapReadyCallback { googleMap ->
         setUpMap(googleMap)
@@ -65,20 +82,76 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
                 gMap.addMarker(MarkerOptions().position(point))
             }
         }
+
         btnFinalize.setOnClickListener {
-            try {
-                val URL = getDirectionURL(currentLatLng, destinationMarker)
-                GetDirection(URL).execute()
-                canPlaceMarker = false
-                btnFinalize.visibility = View.GONE
-                tvSelectLocation.visibility = View.GONE
-            }
-            catch (e: Exception){
-                Toast.makeText(context, getString(R.string.give_destination), Toast.LENGTH_LONG).show()
-            }
+
+            val builder : AlertDialog.Builder = AlertDialog.Builder(requireContext())
+                .setMessage("How much credit do you want to pay?")
+            val input = EditText(context)
+            val lp = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            )
+            lp.setMargins(4, 2, 4, 2)
+            input.layoutParams = lp
+            input.inputType = InputType.TYPE_CLASS_NUMBER
+            input.filters = arrayOf(InputFilter.LengthFilter(5))
+            builder.setView(input)
+                .setNeutralButton("OK") { _, _ ->
+                    val payment: Int?
+                    if(input.text.isNotEmpty()) {
+                        payment = input.text.toString().toInt()
+                        if (payment <= 0) {
+                            Toast.makeText(requireContext(), "You should give something for your travel", Toast.LENGTH_LONG).show()
+                        }
+                        else if (payment < userData?.credits!!) {
+                            Toast.makeText(requireContext(), "You don't have enough credits for your travel", Toast.LENGTH_LONG).show()
+                        }
+                        else {
+                            try {
+                                val url = getDirectionURL(currentLatLng, destinationMarker)
+                                GetDirection(url).execute()
+                            }
+                            catch (e: Exception) {
+                                Toast.makeText(context, getString(R.string.give_destination), Toast.LENGTH_LONG).show()
+                            }
+
+                            var defaultResponse: DefaultResponse?
+                            lifecycleScope.launch {
+                                withContext(Dispatchers.IO) {
+                                    defaultResponse = Repository.addRequest(
+                                        ServiceRequest(
+                                            driverID = driverId,
+                                            passengerID = userDataId,
+                                            destinationPos = Coord(
+                                                x = destinationMarker.latitude,
+                                                y = destinationMarker.longitude
+                                            ),
+                                            payment = payment
+                                        ), userToken = userToken!!
+                                    )
+
+                                    withContext(Dispatchers.Main) {
+                                        canPlaceMarker = false
+                                        btnFinalize.visibility = View.GONE
+                                        tvSelectLocation.visibility = View.GONE
+                                        Toast.makeText(requireContext(), defaultResponse?.message, Toast.LENGTH_LONG)
+                                            .show()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        Toast.makeText(requireContext(), "You should give something for your travel", Toast.LENGTH_LONG).show()
+                    }
+                }
+
+            val dialog = builder.create()
+
+            dialog.show()
         }
     }
-
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -90,11 +163,12 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         enterTransition = inflater.inflateTransition(R.transition.fade)
         exitTransition = inflater.inflateTransition(R.transition.fade)
 
-        if (arguments != null) {
-            val id = arguments?.getInt("userDataId")
-            userDataId = id!!
-        }
-    }
+        userDataId = arguments?.getInt("userDataId")
+        userToken = arguments?.getString("token")
+        userData = arguments?.getSerializable("userData") as UserData
+
+        updateDetailsCyclic()
+     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -134,10 +208,6 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         // If permission was granted, we can see our device's current location
         googleMap.isMyLocationEnabled = true
 
-        val location1 = LatLng(13.0356745, 77.5881522)
-        googleMap.addMarker(MarkerOptions().position(location1).title("My Location"))
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location1, 5f))
-
         // Zoom into last location
         fusedLocationClient.lastLocation.addOnSuccessListener(this.requireActivity()) { location ->
             if (location != null) {
@@ -148,12 +218,13 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         }
     }
 
-    fun getDirectionURL(origin: LatLng, dest: LatLng) : String{
+    private fun getDirectionURL(origin: LatLng, dest: LatLng) : String{
         return "https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${dest.latitude},${dest.longitude}&sensor=false&mode=driving&key=" + getString(
             R.string.google_maps_key
         )
     }
 
+    @SuppressLint("StaticFieldLeak")
     private inner class GetDirection(val url: String) : AsyncTask<Void, Void, List<List<LatLng>>>(){
         override fun doInBackground(vararg params: Void?): List<List<LatLng>> {
             val client = OkHttpClient()
@@ -168,11 +239,6 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
                 val path =  ArrayList<LatLng>()
 
                 for (i in 0..(respObj.routes[0].legs[0].steps.size-1)){
-//                    val startLatLng = LatLng(respObj.routes[0].legs[0].steps[i].start_location.lat.toDouble()
-//                            ,respObj.routes[0].legs[0].steps[i].start_location.lng.toDouble())
-//                    path.add(startLatLng)
-//                    val endLatLng = LatLng(respObj.routes[0].legs[0].steps[i].end_location.lat.toDouble()
-//                            ,respObj.routes[0].legs[0].steps[i].end_location.lng.toDouble())
                     path.addAll(decodePolyline(respObj.routes[0].legs[0].steps[i].polyline.points))
                 }
                 result.add(path)
@@ -245,7 +311,6 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
                             success = false
                     }
                     if (success)
-                    // If the permission was granted, the fragment must be refreshed to see the current location
                         refreshFragment()
                 }
             }
@@ -295,7 +360,7 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     override fun onMarkerClick(marker: Marker?): Boolean {
         if (!canPlaceMarker) {
-            var str: List<String>? = listOf()
+            val str: List<String>?
             try {
                 str = marker?.title?.split(',')
                 val s = str!![0]
@@ -308,7 +373,7 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
                 .setTitle(getString(R.string.trip_confirmation))
             val mAlertDialog = mBuilder.show()
 
-            mAlertDialog.driver_name.text = str!![0]
+            mAlertDialog.driver_name.text = str[0]
             mAlertDialog.car_brand.text = str[1]
             mAlertDialog.car_model.text = str[2]
             mAlertDialog.car_plate.text = str[3]
@@ -333,5 +398,31 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
             return true
         }
         return true
+    }
+
+    private fun updateUserData() {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                userData = Repository.getUser(userDataId!!, userToken!!)
+            }
+        }
+    }
+
+    private fun updateDetailsCyclic() {
+        runnable = Runnable {
+            updateUserData()
+            handler.postDelayed(runnable, 5000)
+        }
+        handler.post(runnable)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateDetailsCyclic()
+    }
+
+    override fun onPause() {
+        handler.removeCallbacks(runnable)
+        super.onPause()
     }
 }

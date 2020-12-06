@@ -1,9 +1,6 @@
 package hu.bme.aut.netcar.network
 
-import hu.bme.aut.netcar.data.CarData
-import hu.bme.aut.netcar.data.JwtRequest
-import hu.bme.aut.netcar.data.UserDTO
-import hu.bme.aut.netcar.data.UserData
+import hu.bme.aut.netcar.data.*
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -49,4 +46,29 @@ interface Api {
         @Field("seats") seats: Int,
         @Field("placeInBoot") placeInBoot: Int
     ) : DefaultResponse
+
+    @POST("addRequest")
+    suspend fun addRequest(
+        @Body sr: ServiceRequest
+    ) : DefaultResponse
+
+    @GET("getRequestsByDriver/{id}")
+    suspend fun getRequestsByDriver(
+        @Path("id") id: Int
+    ) : List<ServiceRequest>
+
+    @GET("getRequestsByPassenger/{id}")
+    suspend fun getRequestsByPassenger(
+        @Path("id") id: Int
+    ) : List<ServiceRequest>
+
+    @PUT("updateRequest")
+    suspend fun updateRequest(
+        @Body newer: ServiceRequest
+    ) : DefaultResponse
+
+    @GET("getUserPicture/{id}")
+    suspend fun getUserPicture(
+        @Path("id") id: Int
+    ) : String
 }
