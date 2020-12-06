@@ -104,7 +104,7 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
                         if (payment <= 0) {
                             Toast.makeText(requireContext(), "You should give something for your travel", Toast.LENGTH_LONG).show()
                         }
-                        else if (payment < userData?.credits!!) {
+                        else if (payment > userData?.credits!!) {
                             Toast.makeText(requireContext(), "You don't have enough credits for your travel", Toast.LENGTH_LONG).show()
                         }
                         else {

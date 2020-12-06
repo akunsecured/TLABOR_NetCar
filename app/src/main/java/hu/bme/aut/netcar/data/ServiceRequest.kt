@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class ServiceRequest(
-    @SerializedName("SRID") val SRID: Int? = null,
+    @SerializedName("srid") val srid: Int? = null,
     @SerializedName("driverID") var driverID: Int?,
     @SerializedName("passengerID") var passengerID: Int?,
     @SerializedName("payment") var payment: Int?,

@@ -1,5 +1,6 @@
 package hu.bme.aut.netcar.model
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -29,11 +30,10 @@ class TripsAdapter(val context: Context,
                    private val listener: TripsAdapterListener) : RecyclerView.Adapter<TripsAdapter.TripsViewHolder>() {
 
     private val serviceRequests: MutableList<ServiceRequest> = mutableListOf()
-    private var rating: Int = -1
 
     interface TripsAdapterListener {
         fun refresh()
-        fun onClickItem(position: Int) : Int
+        fun onClickItem(position: Int)
     }
 
     override fun onCreateViewHolder(
@@ -43,6 +43,7 @@ class TripsAdapter(val context: Context,
         return TripsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.driver_trips_list_item, parent, false))
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: TripsViewHolder, position: Int) {
         val serviceRequest = serviceRequests[position]
 
@@ -55,7 +56,7 @@ class TripsAdapter(val context: Context,
                         holder.contactImage.setImageBitmap(decodePicture(imageBase64!!))
                         holder.startDate.text = serviceRequest.startTime
                         holder.contactUsername.text = contactName
-                        holder.payment.text = serviceRequest.payment.toString()
+                        holder.payment.text = serviceRequest.payment.toString() + "$"
                         if (serviceRequest.finishTime != null) {
                             holder.endDate.text = serviceRequest.finishTime
                         }
@@ -152,23 +153,28 @@ class TripsAdapter(val context: Context,
             Log.d("adapter", "onClick()")
             val serviceRequest = serviceRequests[adapterPosition]
             if (!isDriverView && serviceRequest.sRstatus == SRstatus.INPROGRESS) {
-                rating = listener.onClickItem(adapterPosition)
+                listener.onClickItem(adapterPosition)
+            }
+        }
+    }
 
-                GlobalScope.launch {
-                    withContext(Dispatchers.IO) {
-                        var defaultResponse: DefaultResponse? = null
-                        serviceRequest.sRstatus = SRstatus.FINISHED
-                        defaultResponse = Repository.updateRequest(serviceRequest, userToken)
+    fun finishRequest(position: Int, rating: Int){
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                var defaultResponse: DefaultResponse? = null
+                val driverUserData = Repository.getUser(serviceRequests[position].driverID!!, userToken)
+                driverUserData?.ratings?.add(rating)
+                Repository.updateUser(driverUserData?.userId!!, driverUserData, userToken)
+                serviceRequests[position].sRstatus = SRstatus.FINISHED
+                defaultResponse = Repository.updateRequest(serviceRequests[position], userToken)
 
-                        withContext(Dispatchers.Main) {
-                            if (defaultResponse?.message == "Successful update.") {
-                                Toast.makeText(
-                                    context,
-                                    "Request has been successfully finished",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        }
+                withContext(Dispatchers.Main) {
+                    if (defaultResponse?.message == "Successful update.") {
+                        Toast.makeText(
+                            context,
+                            "Request has been successfully finished",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }

@@ -98,8 +98,7 @@ class DriverTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
         updateAdapterData()
     }
 
-    override fun onClickItem(position: Int): Int {
+    override fun onClickItem(position: Int) {
         // never happens
-        return -1
     }
 }

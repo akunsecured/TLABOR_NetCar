@@ -81,7 +81,7 @@
 
         <ImageButton
             android:id="@+id/ibTopButton"
-            android:src="@drawable/ic_denied"
+            android:src="@drawable/placeholder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"

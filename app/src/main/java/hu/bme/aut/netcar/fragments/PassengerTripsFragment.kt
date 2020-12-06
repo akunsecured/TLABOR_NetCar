@@ -102,20 +102,19 @@ class PassengerTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
         updateAdapterData()
     }
 
-    override fun onClickItem(position: Int) : Int {
+    override fun onClickItem(position: Int) {
         var rateValue = -1
 
         val dialogLayout = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_rating, null)
         val builder = AlertDialog.Builder(requireContext()).setView(dialogLayout)
-        builder.show()
+        val alertdialog = builder.show()
 
         val submitButton: Button = dialogLayout.findViewById(R.id.btnSubmit)
-
+        val ratingBar: RatingBar = dialogLayout.findViewById(R.id.rbRating)
         submitButton.setOnClickListener {
-            val bar = it as RatingBar
-            rateValue = (bar.rating).toInt()
+            rateValue = (ratingBar.rating).toInt()
+            adapter.finishRequest(position, rateValue)
+            alertdialog.dismiss()
         }
-
-        return rateValue
     }
 }
