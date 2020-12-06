@@ -64,41 +64,10 @@ class TripsAdapter(val context: Context,
                                 holder.bottomButton.setImageResource(R.drawable.ic_deny)
 
                                 holder.topButton.setOnClickListener {
-                                    GlobalScope.launch {
-                                        withContext(Dispatchers.IO) {
-                                            serviceRequest.sRstatus = SRstatus.INPROGRESS
-                                            val defaultResponse = Repository.updateRequest(serviceRequest, userToken)
-
-                                            for (sr in serviceRequests) {
-                                                if (sr.SRID != serviceRequest.SRID && sr.sRstatus == SRstatus.PENDING) {
-                                                    sr.sRstatus = SRstatus.DENIED
-                                                    Repository.updateRequest(sr, userToken)
-                                                }
-                                            }
-
-                                            withContext(Dispatchers.Main) {
-                                                if (defaultResponse?.message == "Successful update.") {
-                                                    Toast.makeText(context, "Request has been successfully accepted", Toast.LENGTH_LONG).show()
-                                                    listener.refresh()
-                                                }
-                                            }
-                                        }
-                                    }
+                                    acceptRequest(serviceRequest)
                                 }
                                 holder.bottomButton.setOnClickListener {
-                                    GlobalScope.launch {
-                                        withContext(Dispatchers.IO) {
-                                            serviceRequest.sRstatus = SRstatus.DENIED
-                                            val defaultResponse = Repository.updateRequest(serviceRequest, userToken)
-
-                                            withContext(Dispatchers.Main) {
-                                                if (defaultResponse?.message == "Successful update.") {
-                                                    Toast.makeText(context, "Request has been successfully denied", Toast.LENGTH_LONG).show()
-                                                    listener.refresh()
-                                                }
-                                            }
-                                        }
-                                    }
+                                    denyRequest(serviceRequest)
                                 }
                             }
                             SRstatus.DENIED -> {
@@ -251,5 +220,44 @@ class TripsAdapter(val context: Context,
         serviceRequests.addAll(denied)
 
         notifyDataSetChanged()
+    }
+
+    private fun acceptRequest(serviceRequest: ServiceRequest) {
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                serviceRequest.sRstatus = SRstatus.INPROGRESS
+                val defaultResponse = Repository.updateRequest(serviceRequest, userToken)
+
+                for (sr in serviceRequests) {
+                    if (sr.SRID != serviceRequest.SRID && sr.sRstatus == SRstatus.PENDING) {
+                        sr.sRstatus = SRstatus.DENIED
+                        Repository.updateRequest(sr, userToken)
+                    }
+                }
+
+                withContext(Dispatchers.Main) {
+                    if (defaultResponse?.message == "Successful update.") {
+                        Toast.makeText(context, "Request has been successfully accepted", Toast.LENGTH_LONG).show()
+                        listener.refresh()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun denyRequest(serviceRequest: ServiceRequest) {
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                serviceRequest.sRstatus = SRstatus.DENIED
+                val defaultResponse = Repository.updateRequest(serviceRequest, userToken)
+
+                withContext(Dispatchers.Main) {
+                    if (defaultResponse?.message == "Successful update.") {
+                        Toast.makeText(context, "Request has been successfully denied", Toast.LENGTH_LONG).show()
+                        listener.refresh()
+                    }
+                }
+            }
+        }
     }
 }
