@@ -25,7 +25,7 @@ class TripsActivity : AppCompatActivity() {
 
         val b = intent.extras
         userDataId = b?.getInt("userDataId")
-        userToken = b?.getString("userToken")
+        userToken = b?.getString("token")
 
         setupViewPager(viewPager)
         tabs.setupWithViewPager(viewPager)
@@ -45,7 +45,7 @@ class TripsActivity : AppCompatActivity() {
 
         val bundle = bundleOf(
             "userDataId" to userDataId,
-            "userToken" to userToken
+            "token" to userToken
         )
 
         val passengerTripsFragment = PassengerTripsFragment()

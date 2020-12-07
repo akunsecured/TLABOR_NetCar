@@ -115,7 +115,7 @@ class LoginFragment : Fragment() {
                                     userData?.picture = ""
 
                                     val bundle = bundleOf(
-                                        "userToken" to userToken,
+                                        "token" to userToken,
                                         "userDataId" to userDataId
                                     )
 

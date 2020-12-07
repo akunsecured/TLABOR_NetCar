@@ -3,9 +3,9 @@ package hu.bme.aut.netcar.fragments
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
@@ -17,10 +17,10 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings
 import android.text.InputFilter
 import android.text.InputType
 import android.transition.TransitionInflater
+import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +30,6 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -64,7 +63,7 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
-    private lateinit var userCoords: Coord
+    private lateinit var userCoords: CoordData
     private lateinit var locationManager: LocationManager
     private lateinit var runnable: Runnable
 
@@ -75,9 +74,10 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     private var userDataId: Int? = -1
     private var userToken: String? = null
     private var userData: UserData? = null
-    private var arrayOfUsers: List<UserData> = arrayListOf()
-    private var arrayOfCars: List<CarData> = arrayListOf()
+    private var arrayOfUsers: ArrayList<UserData> = arrayListOf()
+    private var arrayOfCars: ArrayList<CarData> = arrayListOf()
     private var driverId: Int? = 1
+    private var url: String = ""
 
     var canPlaceMarker = false
 
@@ -121,7 +121,7 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
                         }
                         else {
                             try {
-                                val url = getDirectionURL(currentLatLng, destinationMarker)
+                                url = getDirectionURL(currentLatLng, destinationMarker)
                                 GetDirection(url).execute()
                             }
                             catch (e: Exception) {
@@ -251,7 +251,7 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
                 val path =  ArrayList<LatLng>()
 
-                for (i in 0..(respObj.routes[0].legs[0].steps.size-1)){
+                for (i in 0 until respObj.routes[0].legs[0].steps.size){
                     path.addAll(decodePolyline(respObj.routes[0].legs[0].steps[i].polyline.points))
                 }
                 result.add(path)
@@ -310,32 +310,12 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         return poly
     }
 
-    @SuppressLint("MissingPermission")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when (requestCode) {
-            LOCATION_PERMISSION_REQUEST_CODE -> {
-                if (grantResults.isNotEmpty()) {
-                    var success = true
-                    for (i in grantResults.indices) {
-                        if (grantResults[i] == PackageManager.PERMISSION_DENIED)
-                            success = false
-                    }
-                    if (success) {
-
-                    }
-                }
-            }
-            else -> {
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-            }
-        }
-    }
-
     // Function to place markers of a list on the map
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun placeMarkerOnMap(drivers: ArrayList<Driver>, map: GoogleMap) {
         for (driver in drivers) {
             val markerOptions = MarkerOptions().position(driver.location)
+                .title(driver.name + "," + driver.picture + "," + driver.serial + "," + driver.carbrand + "," + driver.carmodel + "," + driver.rating + "," + driver.driverid)
             val d = resources.getDrawable(R.drawable.ic_map_car)
             markerOptions.icon(
                 BitmapDescriptorFactory.fromBitmap(
@@ -368,7 +348,7 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
             val str: List<String>?
             try {
                 str = marker?.title?.split(',')
-                val s = str!![0]
+                str!![0]
             } catch (e: NullPointerException) {
                 return false
             }
@@ -379,9 +359,17 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
             val mAlertDialog = mBuilder.show()
 
             mAlertDialog.driver_name.text = str[0]
-            mAlertDialog.car_brand.text = str[1]
-            mAlertDialog.car_model.text = str[2]
-            mAlertDialog.car_plate.text = str[3]
+            val imageBytes = Base64.decode(str[1], 0)
+            mAlertDialog.car_image.setImageBitmap(
+                BitmapFactory.decodeByteArray(
+                    imageBytes, 0, imageBytes.size
+                )
+            )
+            mAlertDialog.car_plate.text = str[2]
+            mAlertDialog.car_brand.text = str[3]
+            mAlertDialog.car_model.text = str[4]
+            val rating: Float = str[5].toFloat()
+            mAlertDialog.user_rating.rating = rating
 
             mDialogView.checkBox.setOnCheckedChangeListener { _, _ ->
                 if (mDialogView.checkbox_editText.isGone) {
@@ -392,6 +380,7 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
             }
 
             mDialogView.btnAccept.setOnClickListener {
+                driverId = str[6].toInt()
                 btnFinalize.visibility = View.VISIBLE
                 tvSelectLocation.visibility = View.VISIBLE
                 canPlaceMarker = true
@@ -415,41 +404,65 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
     }
 
     private fun gettingActiveVisibleDrivers() {
+        activeVisibleDriversArray.clear()
+        arrayOfCars.clear()
+        arrayOfUsers.clear()
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                arrayOfUsers = Repository.getAllUsers(userToken!!)!!
-                arrayOfCars = Repository.getAllCars(userToken!!)!!
-
+                val allUsers = Repository.getAllUsers(userToken!!)
+                val allCars = Repository.getAllCars(userToken!!)
+                if(!allUsers.isNullOrEmpty()) {
+                    arrayOfUsers = ArrayList(allUsers)
+                }
+                if(!allCars.isNullOrEmpty()) {
+                    arrayOfCars = ArrayList(allCars)
+                }
                 withContext(Dispatchers.Main) {
-                    for (user in arrayOfUsers) {
-                        if (user.valid && user.visible && !user.isInProgress) {
-                            var userCarData: CarData? = null
-                            var sum = 0.0
+                    if(arrayOfUsers.isNotEmpty()) {
+                        for (user in arrayOfUsers) {
+                            if (user.valid && user.visible && !user.isInProgress) {
+                                var userCarData: CarData? = null
+                                var sum = 0.0
 
-                            for (rating in user.ratings) {
-                                sum += rating
-                            }
+                                for (rating in user.ratings) {
+                                    sum += rating
+                                }
 
-                            val rating = (sum / user.ratings.size.toDouble()).roundTo(2)
+                                val rating = (sum / user.ratings.size.toDouble()).roundTo(2)
 
-                            for (car in arrayOfCars) {
-                                if (car.carId == user.userId) {
-                                    userCarData = car
-                                    break
+                                for (car in arrayOfCars) {
+                                    if (car.carId == user.userId) {
+                                        userCarData = car
+                                        break
+                                    }
+                                }
+
+                                if (user.location.x != null && user.location.y != null && userCarData?.serial != null) {
+                                    activeVisibleDriversArray.add(
+                                        Driver(
+                                            user.username!!,
+                                            LatLng(user.location.x!!, user.location.y!!),
+                                            userCarData.pic,
+                                            userCarData.serial,
+                                            userCarData.brand!!,
+                                            userCarData.model!!,
+                                            userCarData.freePlace!!,
+                                            rating,
+                                            user.userId!!
+                                        )
+                                    )
                                 }
                             }
-
-                            if (user.location.x != null && user.location.y != null && userCarData?.serial != null) {
-                                activeVisibleDriversArray.add(
-                                    Driver(
-                                        user.username!!, LatLng(user.location.x!!, user.location.y!!),
-                                        userCarData!!.pic, userCarData.serial,
-                                        userCarData.brand!!, userCarData.model!!,
-                                        userCarData.freePlace!!, rating
-                                    )
-                                )
+                        }
+                        gMap.clear()
+                        placeMarkerOnMap(activeVisibleDriversArray, gMap)
+                        try {
+                            if(url != "") {
+                                GetDirection(url).execute()
                             }
-
+                            gMap.addMarker(MarkerOptions().position(destinationMarker))
+                        } catch (e: Exception) {
+                            //
                         }
                     }
                 }
@@ -466,12 +479,13 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         if (hasGps || hasNetwork) {
             if (hasGps) {
                 locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, 5000, 0F, object: LocationListener {
+                    LocationManager.GPS_PROVIDER, 10000, 0F, object: LocationListener {
                         override fun onLocationChanged(location: Location) {
-                            userCoords = Coord(x = location.latitude, y = location.longitude)
+                            userCoords = CoordData(x = location.latitude, y = location.longitude)
                             lastLocation = location
                             userData?.location = userCoords
-                            sendingCoords()
+                            if(!userToken.isNullOrBlank())
+                                sendingCoords()
                         }
                     }
                 )
@@ -479,12 +493,13 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
             if (hasNetwork) {
                 locationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, 5000, 0F, object: LocationListener {
+                    LocationManager.NETWORK_PROVIDER, 10000, 0F, object: LocationListener {
                         override fun onLocationChanged(location: Location) {
-                            userCoords = Coord(x = location.latitude, y = location.longitude)
+                            userCoords = CoordData(x = location.latitude, y = location.longitude)
                             lastLocation = location
                             userData?.location = userCoords
-                            sendingCoords()
+                            if(!userToken.isNullOrBlank())
+                                sendingCoords()
                         }
                     }
                 )
@@ -502,8 +517,10 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
 
     private fun updateDetailsCyclic() {
         runnable = Runnable {
-            updateUserData()
-            gettingActiveVisibleDrivers()
+            if(!userToken.isNullOrBlank()){
+                updateUserData()
+                gettingActiveVisibleDrivers()
+            }
             handler.postDelayed(runnable, 10000)
         }
         handler.post(runnable)

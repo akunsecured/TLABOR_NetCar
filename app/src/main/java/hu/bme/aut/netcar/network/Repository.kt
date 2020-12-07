@@ -30,12 +30,10 @@ object Repository {
         }
     }
 
-    suspend fun updateCar(id: Int, brand: String, model: String,
-                          serial: String, pic: String, hasBoot: Boolean,
-                          seats: Int, placeInBoot: Int, token: String) : DefaultResponse? {
+    suspend fun updateCar(id: Int, carData: CarData, token: String) : DefaultResponse? {
         try {
             val retrofit = RetrofitClientAuth(token)
-            return retrofit.INSTANCE.updateCar(id, brand, model, serial, pic, hasBoot, seats, placeInBoot)
+            return retrofit.INSTANCE.updateCar(id, carData)
         } catch (exception: HttpException) {
             if (exception.code() == 404) {
                 return null

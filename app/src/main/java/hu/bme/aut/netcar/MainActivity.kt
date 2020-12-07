@@ -2,7 +2,6 @@ package hu.bme.aut.netcar
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -10,10 +9,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
-import android.util.AttributeSet
 import android.util.Log
-import android.view.View
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -96,29 +92,33 @@ class MainActivity : AppCompatActivity() {
                                             grantResults: IntArray) {
         Log.i(TAG, "onRequestPermissionResult")
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
-            if (grantResults.size <= 0) {
-                Log.i(TAG, "User interaction was cancelled.")
-            } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted.
-                getLastLocation()
-            } else {
-                Snackbar.make(findViewById(R.id.container_main), "Location permissions are required to use the app!", Snackbar.LENGTH_LONG)
-                    .setAction("SETTINGS") {
-                        val intent = Intent()
-                        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                        val uri = Uri.fromParts("package",
-                            BuildConfig.APPLICATION_ID, null)
-                        intent.data = uri
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        startActivity(intent)
-                    }
-                    .show()
+            when {
+                grantResults.isEmpty() -> {
+                    Log.i(TAG, "User interaction was cancelled.")
+                }
+                grantResults[0] == PackageManager.PERMISSION_GRANTED -> {
+                    // Permission granted.
+                    getLastLocation()
+                }
+                else -> {
+                    Snackbar.make(findViewById(R.id.container_main), "Location permissions are required to use the app!", Snackbar.LENGTH_LONG)
+                        .setAction("SETTINGS") {
+                            val intent = Intent()
+                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                            val uri = Uri.fromParts("package",
+                                BuildConfig.APPLICATION_ID, null)
+                            intent.data = uri
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            startActivity(intent)
+                        }
+                        .show()
+                }
             }
         }
     }
 
     companion object {
-        private val TAG = "LocationProvider"
-        private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
+        private const val TAG = "LocationProvider"
+        private const val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     }
 }

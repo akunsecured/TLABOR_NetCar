@@ -52,7 +52,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     private lateinit var navBtn: FloatingActionButton
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var filepath: Uri
-    private lateinit var bitmap: Bitmap
+    private var bitmap: Bitmap? = null
     private lateinit var mDialogView: View
     private lateinit var navView: NavigationView
     private var isDriverVisible: Boolean = false
@@ -72,7 +72,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         val bundle: Bundle = intent.extras!!
 
-        userToken = bundle.getString("userToken")!!
+        userToken = bundle.getString("token")!!
         userDataId = bundle.getInt("userDataId")
         userData = bundle.getSerializable("userData") as UserData?
 
@@ -179,7 +179,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 var placeInBoot = 0
 
                 val baos = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.PNG, 50, baos)
+                bitmap?.compress(Bitmap.CompressFormat.PNG, 50, baos)
                 val b = baos.toByteArray()
                 val carImage = Base64.encodeToString(b, Base64.DEFAULT)
 
@@ -224,7 +224,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
                         defaultResponse = Repository.updateCar(
-                            userDataId, brand, model, serial, carImage, hasBoot, seats, placeInBoot, userToken
+                            userDataId, CarData(userData = userData, brand = brand, model = model, serial = serial, pic = carImage, hasBoot = hasBoot, seats = seats, placeInBoot = placeInBoot), userToken
                         )!!
                         withContext(Dispatchers.Main) {
                             Toast.makeText(application, defaultResponse.message, Toast.LENGTH_LONG)
@@ -296,22 +296,22 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         Handler().postDelayed({
             when (item.itemId) {
                 R.id.nav_map -> {
-                    val bundle = bundleOf("userDataId" to userDataId, "userToken" to userToken)
+                    val bundle = bundleOf("userDataId" to userDataId, "token" to userToken)
                     findNavController(R.id.nav_host_fragment).navigate(R.id.nav_map, bundle)
                 }
 
                 R.id.nav_credits -> {
-                    val bundle = bundleOf("userDataId" to userDataId, "userToken" to userToken)
+                    val bundle = bundleOf("userDataId" to userDataId, "token" to userToken)
                     findNavController(R.id.nav_host_fragment).navigate(R.id.nav_credits, bundle)
                 }
 
                 R.id.nav_rating -> {
-                    val bundle = bundleOf("userDataId" to userDataId, "userToken" to userToken)
+                    val bundle = bundleOf("userDataId" to userDataId, "token" to userToken)
                     findNavController(R.id.nav_host_fragment).navigate(R.id.nav_rating, bundle)
                 }
 
                 R.id.nav_trips -> {
-                    val bundle = bundleOf("userDataId" to userDataId, "userToken" to userToken)
+                    val bundle = bundleOf("userDataId" to userDataId, "token" to userToken)
                     //findNavController(R.id.nav_host_fragment).navigate(R.id.nav_trips, bundle)
                     findNavController(R.id.nav_host_fragment).navigate(R.id.nav_trips_activity, bundle)
                 }
@@ -321,7 +321,7 @@ class NavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 }
 
                 R.id.nav_settings -> {
-                    val bundle = bundleOf("userDataId" to userDataId, "userToken" to userToken)
+                    val bundle = bundleOf("userDataId" to userDataId, "token" to userToken)
                     findNavController(R.id.nav_host_fragment).navigate(R.id.nav_settings, bundle)
                 }
 

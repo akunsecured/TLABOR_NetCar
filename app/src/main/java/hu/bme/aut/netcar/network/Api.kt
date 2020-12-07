@@ -1,7 +1,6 @@
 package hu.bme.aut.netcar.network
 
 import hu.bme.aut.netcar.data.*
-import retrofit2.Call
 import retrofit2.http.*
 
 interface Api {
@@ -37,17 +36,10 @@ interface Api {
         @Body userData: UserData
     ) : DefaultResponse
 
-    @FormUrlEncoded
     @PUT("/getUser/{id}/updateCar")
     suspend fun updateCar(
         @Path("id") id: Int,
-        @Field("brand") brand: String,
-        @Field("model") model: String,
-        @Field("serial") serial: String,
-        @Field("pic") pic: String,
-        @Field("hasBoot") hasBoot: Boolean,
-        @Field("seats") seats: Int,
-        @Field("placeInBoot") placeInBoot: Int
+        @Body carData: CarData
     ) : DefaultResponse
 
     @POST("addRequest")

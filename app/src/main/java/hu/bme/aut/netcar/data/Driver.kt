@@ -10,5 +10,6 @@ data class Driver(
     val carbrand: String,
     val carmodel: String,
     val freePlace: Int,
-    val rating: Double
+    val rating: Double,
+    val driverid: Int
 )

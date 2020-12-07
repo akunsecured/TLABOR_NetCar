@@ -53,7 +53,7 @@ class PassengerTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
         super.onCreate(savedInstanceState)
 
         userDataId = arguments?.getInt("userDataId")!!
-        userToken = arguments?.getString("userToken")!!
+        userToken = arguments?.getString("token")!!
     }
 
     private fun updateAdapterData() {
@@ -93,7 +93,7 @@ class PassengerTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
 
     override fun onClickItem(position: Int) {
         val dialogLayout = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_rating, null)
-        val builder = AlertDialog.Builder(requireContext()).setView(dialogLayout)
+        val builder = AlertDialog.Builder(requireContext()).setView(dialogLayout).setTitle(getString(R.string.driver_rating))
         val alertDialog = builder.show()
 
         val submitButton: Button = dialogLayout.findViewById(R.id.btnSubmit)

@@ -50,7 +50,7 @@ class DriverTripsFragment : Fragment(), TripsAdapter.TripsAdapterListener {
         super.onCreate(savedInstanceState)
 
         userDataId = arguments?.getInt("userDataId")!!
-        userToken = arguments?.getString("userToken")!!
+        userToken = arguments?.getString("token")!!
     }
 
     private fun updateAdapterData() {

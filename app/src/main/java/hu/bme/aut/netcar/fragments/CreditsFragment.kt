@@ -12,21 +12,16 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.marginLeft
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import hu.bme.aut.netcar.R
 import hu.bme.aut.netcar.data.UserData
 import hu.bme.aut.netcar.network.DefaultResponse
 import hu.bme.aut.netcar.network.Repository
-import hu.bme.aut.netcar.network.RetrofitClientAuth
 import kotlinx.android.synthetic.main.fragment_credits.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class CreditsFragment : Fragment() {
 
@@ -43,7 +38,7 @@ class CreditsFragment : Fragment() {
         val id = arguments?.getInt("userDataId")
         userDataId = id!!
 
-        val token = arguments?.getString("userToken")
+        val token = arguments?.getString("token")
         userToken = token!!
     }
 

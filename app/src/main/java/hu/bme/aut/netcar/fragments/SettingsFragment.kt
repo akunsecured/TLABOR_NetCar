@@ -51,7 +51,7 @@ class SettingsFragment : Fragment() {
         val id = arguments?.getInt("userDataId")
         userDataId = id!!
 
-        val token = arguments?.getString("userToken")
+        val token = arguments?.getString("token")
         userToken = token!!
     }
 

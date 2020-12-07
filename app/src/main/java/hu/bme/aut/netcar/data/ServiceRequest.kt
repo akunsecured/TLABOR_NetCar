@@ -21,7 +21,6 @@ enum class SRstatus {
 }
 
 data class Coord(
-    @SerializedName("serialVersionUID") val serialVersionUID: Long = 3583151228933783558L,
     @SerializedName("x") var x: Double?,
     @SerializedName("y") var y: Double?
-) : Serializable
+)

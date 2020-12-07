@@ -14,6 +14,6 @@ data class CarData(
     @SerializedName("hasBoot") var hasBoot: Boolean?,
     @SerializedName("seats") var seats: Int?,
     @SerializedName("placeInBoot") var placeInBoot: Int?,
-    @SerializedName("freeSeats") var freeSeats: Int?,
-    @SerializedName("freePlace") var freePlace: Int?
+    @SerializedName("freeSeats") var freeSeats: Int? = null,
+    @SerializedName("freePlace") var freePlace: Int? = null
 )
