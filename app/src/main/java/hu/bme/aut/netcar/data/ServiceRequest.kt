@@ -7,9 +7,9 @@ import java.io.Serializable
 @JsonClass(generateAdapter = true)
 data class ServiceRequest(
     @SerializedName("srid") val srid: Int? = null,
-    @SerializedName("driverID") var driverID: Int?,
-    @SerializedName("passengerID") var passengerID: Int?,
-    @SerializedName("payment") var payment: Int?,
+    @SerializedName("driverID") var driverID: Int? = null,
+    @SerializedName("passengerID") var passengerID: Int? = null,
+    @SerializedName("payment") var payment: Int? = null,
     @SerializedName("destinationPos") var destinationPos: Coord? = null,
     @SerializedName("startTime") var startTime: String? = null,
     @SerializedName("finishTime") var finishTime: String? = null,

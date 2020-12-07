@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.lang.NullPointerException
+import kotlin.NullPointerException
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -477,15 +477,20 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
             } else if (userData!!.isInProgress) {
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
-                        val activeRequest = Repository.getActiveRequest(userDataId!!, userToken!!)
+                        var activeRequest: ServiceRequest = ServiceRequest()
+                        try {
+                            activeRequest = Repository.getActiveRequest(userDataId!!, userToken!!)!!
+                        } catch (e: NullPointerException) {
+                            return@withContext
+                        }
                         var driverCarData: CarData? = null
                         var passengerUserData: UserData? = null
-                        if (activeRequest?.passengerID == userDataId) {
+                        if (activeRequest.passengerID == userDataId) {
                             driverCarData =
-                                Repository.getCar(activeRequest?.driverID!!, userToken!!)
+                                Repository.getCar(activeRequest.driverID!!, userToken!!)
                         } else {
                             passengerUserData =
-                                Repository.getUser(activeRequest?.passengerID!!, userToken!!)
+                                Repository.getUser(activeRequest.passengerID!!, userToken!!)
                         }
 
                         withContext(Dispatchers.Main) {
