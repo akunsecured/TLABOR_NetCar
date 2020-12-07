@@ -33,33 +33,6 @@
             android:textSize="12sp"
             android:layout_gravity="center"/>
 
-        <TextView
-            android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/profile_name2"/>
-
-        <EditText
-            android:id="@+id/settings_etProfileName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/profile_name2"
-            android:singleLine="true"/>
-
-        <TextView
-            android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/password"/>
-
-        <EditText
-            android:id="@+id/settings_etPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/new_password"
-            android:singleLine="true"
-            android:inputType="textWebPassword"/>
-
         <Button
             android:id="@+id/settings_btnSave"
             android:background="@drawable/login_button"

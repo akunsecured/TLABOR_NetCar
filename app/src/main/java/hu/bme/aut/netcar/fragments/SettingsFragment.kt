@@ -69,16 +69,6 @@ class SettingsFragment : Fragment() {
         val headerImgWidth = navView.header_image.width
         val headerImgHeight = navView.header_image.height
 
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                userData = Repository.getUser(userDataId, userToken)
-
-                withContext(Dispatchers.Main) {
-                    settings_etProfileName.hint = userData?.username
-                }
-            }
-        }
-
         if (userData?.picture != null) {
             val imageBytes = Base64.decode(userData?.picture, 0)
             settings_userimage.setImageBitmap(
@@ -94,9 +84,6 @@ class SettingsFragment : Fragment() {
 
         settings_btnSave.setOnClickListener {
             var detailChanges = false
-            if (settings_etPassword.text.isNotEmpty() || settings_etProfileName.text.isNotEmpty()) {
-                detailChanges = true
-            }
 
             if (detailChanges || chooseImage) {
                 val dialogLayout = LayoutInflater.from(view.context).inflate(R.layout.dialog_settings, null)
@@ -132,37 +119,25 @@ class SettingsFragment : Fragment() {
                                 newUser?.picture = picture
                             }
 
-                            if (settings_etProfileName.text.isNotEmpty()) {
-                                newUser?.username = settings_etProfileName.text.toString()
-                            }
-
-                            if (settings_etPassword.text.isNotEmpty()) {
-                                newUser?.password = settings_etPassword.text.toString()
-                            }
-
                             var defaultResponse: DefaultResponse?
                             lifecycleScope.launch {
                                 withContext(Dispatchers.IO) {
                                     defaultResponse = Repository.updateUser(userDataId, newUser!!, userToken)
 
                                     withContext(Dispatchers.Main) {
-                                        navView.header_name.text = newUser.username
                                         Toast.makeText(requireContext(), defaultResponse?.message, Toast.LENGTH_LONG)
                                             .show()
-                                        settings_etProfileName.hint = newUser.username
                                     }
                                 }
                             }
 
                             alertDialog.dismiss()
                             Toast.makeText(view.context, getString(R.string.changes_saved), Toast.LENGTH_LONG).show()
-                            clearSettings(view)
                         }
                     }
                 }
 
                 dialogLayout.dialog_settings_btnCancel.setOnClickListener {
-                    clearSettings(view)
                     if (chooseImage) {
                         settings_userimage.setImageBitmap(null)
                         chooseImage = false
@@ -174,15 +149,6 @@ class SettingsFragment : Fragment() {
             else {
                 Toast.makeText(requireContext(), getString(R.string.no_changes), Toast.LENGTH_LONG).show()
             }
-        }
-    }
-
-    private fun clearSettings(view: View) {
-        if (view.settings_etProfileName.text.isNotEmpty()) {
-            view.settings_etProfileName.text.clear()
-        }
-        if (view.settings_etPassword.text.isNotEmpty()) {
-            view.settings_etPassword.text.clear()
         }
     }
 
