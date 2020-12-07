@@ -164,10 +164,10 @@ object Repository {
         }
     }
 
-    suspend fun getUserPicture(id: Int) : String? {
+    suspend fun getActiveRequest(id: Int, userToken: String) : ServiceRequest? {
         try {
-            val retrofit = RetrofitClientAuth()
-            return retrofit.INSTANCE.getUserPicture(id)
+            val retrofit = RetrofitClientAuth(userToken)
+            return retrofit.INSTANCE.getActiveRequest(id)
         } catch (exception: HttpException) {
             if (exception.code() == 404) {
                 return null

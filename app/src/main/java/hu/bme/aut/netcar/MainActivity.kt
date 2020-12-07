@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         if (shouldProvideRationale) {
             Log.i(TAG, "Displaying permission rationale to provide additional context.")
 
-            Snackbar.make(
+            /*Snackbar.make(
                 applicationContext,
                 findViewById(R.id.container_main),
                 "Permission is needed to use the application",
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                 .setAction("Settings") {
                     startLocationPermissionRequest()
                 }
-                .show()
+                .show()*/
 
         } else {
             Log.i(TAG, "Requesting permission")

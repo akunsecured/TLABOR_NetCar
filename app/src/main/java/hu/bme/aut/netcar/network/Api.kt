@@ -62,8 +62,8 @@ interface Api {
         @Body newer: ServiceRequest
     ) : DefaultResponse
 
-    @GET("getUserPicture/{id}")
-    suspend fun getUserPicture(
+    @GET("getActiveRequest/{id}")
+    suspend fun getActiveRequest(
         @Path("id") id: Int
-    ) : String
+    ) : ServiceRequest?
 }

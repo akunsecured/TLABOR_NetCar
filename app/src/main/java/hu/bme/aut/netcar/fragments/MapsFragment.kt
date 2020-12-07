@@ -403,66 +403,126 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun gettingActiveVisibleDrivers() {
         activeVisibleDriversArray.clear()
         arrayOfCars.clear()
         arrayOfUsers.clear()
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                val allUsers = Repository.getAllUsers(userToken!!)
-                val allCars = Repository.getAllCars(userToken!!)
-                if(!allUsers.isNullOrEmpty()) {
-                    arrayOfUsers = ArrayList(allUsers)
-                }
-                if(!allCars.isNullOrEmpty()) {
-                    arrayOfCars = ArrayList(allCars)
-                }
-                withContext(Dispatchers.Main) {
-                    if(arrayOfUsers.isNotEmpty()) {
-                        for (user in arrayOfUsers) {
-                            if (user.valid && user.visible && !user.isInProgress) {
-                                var userCarData: CarData? = null
-                                var sum = 0.0
+        if (!userData!!.isInProgress) {
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    val allUsers = Repository.getAllUsers(userToken!!)
+                    val allCars = Repository.getAllCars(userToken!!)
+                    if(!allUsers.isNullOrEmpty()) {
+                        arrayOfUsers = ArrayList(allUsers)
+                    }
+                    if(!allCars.isNullOrEmpty()) {
+                        arrayOfCars = ArrayList(allCars)
+                    }
+                    withContext(Dispatchers.Main) {
+                        if(arrayOfUsers.isNotEmpty()) {
+                            for (user in arrayOfUsers) {
+                                if (user.valid && user.visible && !user.isInProgress && user.userId != userDataId) {
+                                    var userCarData: CarData? = null
+                                    var sum = 0.0
 
-                                for (rating in user.ratings) {
-                                    sum += rating
-                                }
+                                    for (rating in user.ratings) {
+                                        sum += rating
+                                    }
 
-                                val rating = (sum / user.ratings.size.toDouble()).roundTo(2)
+                                    val rating = (sum / user.ratings.size.toDouble()).roundTo(2)
 
-                                for (car in arrayOfCars) {
-                                    if (car.carId == user.userId) {
-                                        userCarData = car
-                                        break
+                                    for (car in arrayOfCars) {
+                                        if (car.carId == user.userId) {
+                                            userCarData = car
+                                            break
+                                        }
+                                    }
+
+                                    if (user.location.x != null && user.location.y != null && userCarData?.serial != null) {
+                                        activeVisibleDriversArray.add(
+                                            Driver(
+                                                user.username!!,
+                                                LatLng(user.location.x!!, user.location.y!!),
+                                                userCarData.pic,
+                                                userCarData.serial,
+                                                userCarData.brand!!,
+                                                userCarData.model!!,
+                                                userCarData.freePlace!!,
+                                                rating,
+                                                user.userId!!
+                                            )
+                                        )
                                     }
                                 }
-
-                                if (user.location.x != null && user.location.y != null && userCarData?.serial != null) {
-                                    activeVisibleDriversArray.add(
-                                        Driver(
-                                            user.username!!,
-                                            LatLng(user.location.x!!, user.location.y!!),
-                                            userCarData.pic,
-                                            userCarData.serial,
-                                            userCarData.brand!!,
-                                            userCarData.model!!,
-                                            userCarData.freePlace!!,
-                                            rating,
-                                            user.userId!!
-                                        )
-                                    )
+                            }
+                            gMap.clear()
+                            placeMarkerOnMap(activeVisibleDriversArray, gMap)
+                            try {
+                                if(url != "") {
+                                    GetDirection(url).execute()
                                 }
+                                gMap.addMarker(MarkerOptions().position(destinationMarker))
+                            } catch (e: Exception) {
+                                //
                             }
                         }
-                        gMap.clear()
-                        placeMarkerOnMap(activeVisibleDriversArray, gMap)
-                        try {
-                            if(url != "") {
-                                GetDirection(url).execute()
-                            }
-                            gMap.addMarker(MarkerOptions().position(destinationMarker))
-                        } catch (e: Exception) {
-                            //
+                    }
+                }
+            }
+        }
+        else if (userData!!.isInProgress) {
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    val activeRequest = Repository.getActiveRequest(userDataId!!, userToken!!)
+                    var driverCarData: CarData? = null
+                    var passengerUserData: UserData? = null
+                    if (activeRequest?.passengerID == userDataId) {
+                        driverCarData = Repository.getCar(activeRequest?.driverID!!, userToken!!)
+                    } else {
+                        passengerUserData = Repository.getUser(activeRequest?.driverID!!, userToken!!)
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        if (driverCarData != null) {
+                            val loc = LatLng(
+                                driverCarData.userData?.location?.x!!,
+                                driverCarData.userData?.location?.y!!
+                            )
+                            val markerOptions = MarkerOptions().position(loc)
+                            val d = resources.getDrawable(R.drawable.ic_map_car)
+                            markerOptions.icon(
+                                BitmapDescriptorFactory.fromBitmap(
+                                    drawableToBitmap(d)
+                                )
+                            )
+                            gMap.addMarker(markerOptions)
+                        } else {
+                            val loc = LatLng(
+                                passengerUserData?.location?.x!!,
+                                passengerUserData.location.y!!
+                            )
+                            val markerOptions = MarkerOptions().position(loc)
+                            /*
+                            val imageBytes = Base64.decode(passengerUserData.picture, 0)
+                            val bitmap = BitmapFactory.decodeByteArray(
+                                imageBytes, 0, imageBytes.size
+                            )
+                            markerOptions.icon(
+                                BitmapDescriptorFactory.fromBitmap(
+                                    Bitmap.createScaledBitmap(
+                                        bitmap, 30, 30, false
+                                    )
+                                )
+                            )*/
+
+                            val d = resources.getDrawable(R.drawable.ic_map_car)
+                            markerOptions.icon(
+                                BitmapDescriptorFactory.fromBitmap(
+                                    drawableToBitmap(d)
+                                )
+                            )
+                            gMap.addMarker(markerOptions)
                         }
                     }
                 }

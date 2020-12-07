@@ -112,7 +112,7 @@ class LoginFragment : Fragment() {
 
                                 withContext(Dispatchers.IO) {
                                     val userData = Repository.getUser(userDataId, userToken)
-                                    userData?.picture = ""
+                                    userData?.picture = null
 
                                     val bundle = bundleOf(
                                         "token" to userToken,

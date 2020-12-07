@@ -16,9 +16,11 @@ data class UserData(
     @SerializedName("visible") var visible: Boolean = false,
     @SerializedName("isInProgress") var isInProgress: Boolean = false,
     @SerializedName("location") var location: CoordData,
+
     @SerializedName("ratings") var ratings: ArrayList<Int> = ArrayList()
 ) : Serializable
 
+@JsonClass(generateAdapter = true)
 data class CoordData(
     @SerializedName("x") var x: Double?,
     @SerializedName("y") var y: Double?

@@ -20,6 +20,7 @@ enum class SRstatus {
     PENDING, DENIED, INPROGRESS, FINISHED
 }
 
+@JsonClass(generateAdapter = true)
 data class Coord(
     @SerializedName("x") var x: Double?,
     @SerializedName("y") var y: Double?

@@ -50,13 +50,14 @@ class TripsAdapter(val context: Context,
         if (isDriverView) {
             GlobalScope.launch {
                 withContext(Dispatchers.IO) {
-                    val imageBase64 = Repository.getUserPicture(serviceRequest.passengerID!!)
-                    val contactName = Repository.getUser(serviceRequest.passengerID!!, userToken)?.username
+                    val passengerUserData = Repository.getUser(serviceRequest.passengerID!!, userToken)
+                    val imageBase64 = passengerUserData?.picture
+                    val contactName = passengerUserData?.username
                     withContext(Dispatchers.Main) {
                         holder.contactImage.setImageBitmap(decodePicture(imageBase64!!))
                         holder.startDate.text = serviceRequest.startTime
                         holder.contactUsername.text = contactName
-                        holder.payment.text = serviceRequest.payment.toString()
+                        holder.payment.text = serviceRequest.payment.toString().plus(" Ft")
                         if (serviceRequest.finishTime != null) {
                             holder.endDate.text = serviceRequest.finishTime
                         }
@@ -91,13 +92,14 @@ class TripsAdapter(val context: Context,
         } else {
             GlobalScope.launch {
                 withContext(Dispatchers.IO) {
-                    val imageBase64 = Repository.getUserPicture(serviceRequest.driverID!!)
-                    val contactName = Repository.getUser(serviceRequest.driverID!!, userToken)?.username
+                    val driverUserData = Repository.getUser(serviceRequest.driverID!!, userToken)
+                    val imageBase64 = driverUserData?.picture
+                    val contactName = driverUserData?.username
                     withContext(Dispatchers.Main) {
                         holder.contactImage.setImageBitmap(decodePicture(imageBase64!!))
                         holder.startDate.text = serviceRequest.startTime
                         holder.contactUsername.text = contactName
-                        holder.payment.text = serviceRequest.payment.toString()
+                        holder.payment.text = serviceRequest.payment.toString().plus(" Ft")
                         if (serviceRequest.finishTime != null) {
                             holder.endDate.text = serviceRequest.finishTime
                         }
