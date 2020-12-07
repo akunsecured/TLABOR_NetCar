@@ -57,7 +57,7 @@ class TripsAdapter(val context: Context,
                         holder.contactImage.setImageBitmap(decodePicture(imageBase64!!))
                         holder.startDate.text = serviceRequest.startTime
                         holder.contactUsername.text = contactName
-                        holder.payment.text = serviceRequest.payment.toString().plus(" Ft")
+                        holder.payment.text = serviceRequest.payment.toString().plus(" $")
                         if (serviceRequest.finishTime != null) {
                             holder.endDate.text = serviceRequest.finishTime
                         }
@@ -99,7 +99,7 @@ class TripsAdapter(val context: Context,
                         holder.contactImage.setImageBitmap(decodePicture(imageBase64!!))
                         holder.startDate.text = serviceRequest.startTime
                         holder.contactUsername.text = contactName
-                        holder.payment.text = serviceRequest.payment.toString().plus(" Ft")
+                        holder.payment.text = serviceRequest.payment.toString().plus(" $")
                         if (serviceRequest.finishTime != null) {
                             holder.endDate.text = serviceRequest.finishTime
                         }

@@ -2,9 +2,12 @@ package hu.bme.aut.netcar.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.InputFilter
 import android.text.InputType
 import android.transition.TransitionInflater
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +31,8 @@ class CreditsFragment : Fragment() {
     private var userDataId: Int = -1
     private var userData: UserData? = null
     private var userToken: String = ""
+    private lateinit var runnable: Runnable
+    private val handler: Handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,19 +52,7 @@ class CreditsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View?  {
-        val view = inflater.inflate(R.layout.fragment_credits, container, false)
-
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                userData = Repository.getUser(userDataId, userToken)
-
-                withContext(Dispatchers.Main) {
-                    tvCreditAmount.text = ("$ ").plus(userData!!.credits.toString())
-                }
-            }
-        }
-
-        return view
+        return inflater.inflate(R.layout.fragment_credits, container, false)
     }
 
     @SuppressLint("SetTextI18n")
@@ -82,12 +75,13 @@ class CreditsFragment : Fragment() {
             builder.setView(input)
                 .setNeutralButton(getString(R.string.dialog_button_adding_credits)) { _, _ ->
                     if(input.text.isNotEmpty()) {
-                        val newCredit: Int = input.text.toString().toInt()
-                        userData!!.credits = userData!!.credits?.plus(newCredit)
-                        var defaultResponse: DefaultResponse?
+
                         lifecycleScope.launch {
                             withContext(Dispatchers.IO) {
-                                defaultResponse = Repository.updateUser(userDataId, userData!!, userToken)
+                                val newCredit: Int = input.text.toString().toInt()
+                                userData!!.credits = userData!!.credits?.plus(newCredit)
+                                val defaultResponse: DefaultResponse? =
+                                    Repository.updateUser(userDataId, userData!!, userToken)
 
                                 withContext(Dispatchers.Main) {
                                     tvCreditAmount.text =
@@ -108,5 +102,35 @@ class CreditsFragment : Fragment() {
 
             dialog.show()
         }
+    }
+    private fun updateDetailsCyclic() {
+        runnable = Runnable {
+            if(!userToken.isBlank()){
+                updateUserData()
+            }
+            handler.postDelayed(runnable, 1000)
+        }
+        handler.post(runnable)
+    }
+
+    private fun updateUserData() {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                userData = Repository.getUser(userDataId, userToken)
+                withContext(Dispatchers.Main) {
+                    tvCreditAmount.text = ("$ ").plus(userData!!.credits.toString())
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateDetailsCyclic()
+    }
+
+    override fun onPause() {
+        handler.removeCallbacks(runnable)
+        super.onPause()
     }
 }

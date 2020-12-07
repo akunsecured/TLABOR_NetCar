@@ -408,121 +408,115 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
         activeVisibleDriversArray.clear()
         arrayOfCars.clear()
         arrayOfUsers.clear()
-        if (!userData!!.isInProgress) {
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    val allUsers = Repository.getAllUsers(userToken!!)
-                    val allCars = Repository.getAllCars(userToken!!)
-                    if(!allUsers.isNullOrEmpty()) {
-                        arrayOfUsers = ArrayList(allUsers)
-                    }
-                    if(!allCars.isNullOrEmpty()) {
-                        arrayOfCars = ArrayList(allCars)
-                    }
-                    withContext(Dispatchers.Main) {
-                        if(arrayOfUsers.isNotEmpty()) {
-                            for (user in arrayOfUsers) {
-                                if (user.valid && user.visible && !user.isInProgress && user.userId != userDataId) {
-                                    var userCarData: CarData? = null
-                                    var sum = 0.0
+        if(userData != null) {
+            if (!userData!!.isInProgress) {
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val allUsers = Repository.getAllUsers(userToken!!)
+                        val allCars = Repository.getAllCars(userToken!!)
+                        if (!allUsers.isNullOrEmpty()) {
+                            arrayOfUsers = ArrayList(allUsers)
+                        }
+                        if (!allCars.isNullOrEmpty()) {
+                            arrayOfCars = ArrayList(allCars)
+                        }
+                        withContext(Dispatchers.Main) {
+                            if (arrayOfUsers.isNotEmpty()) {
+                                for (user in arrayOfUsers) {
+                                    if (user.valid && user.visible && !user.isInProgress && user.userId != userDataId) {
+                                        var userCarData: CarData? = null
+                                        var sum = 0.0
 
-                                    for (rating in user.ratings) {
-                                        sum += rating
-                                    }
+                                        for (rating in user.ratings) {
+                                            sum += rating
+                                        }
 
-                                    val rating = (sum / user.ratings.size.toDouble()).roundTo(2)
+                                        var rating = 0.0
+                                        if(sum != 0.0) {
+                                            rating = (sum / user.ratings.size.toDouble()).roundTo(2)
+                                        }
 
-                                    for (car in arrayOfCars) {
-                                        if (car.carId == user.userId) {
-                                            userCarData = car
-                                            break
+                                        for (car in arrayOfCars) {
+                                            if (car.carId == user.userId) {
+                                                userCarData = car
+                                                break
+                                            }
+                                        }
+
+                                        if (user.location.x != null && user.location.y != null && userCarData?.serial != null) {
+                                            activeVisibleDriversArray.add(
+                                                Driver(
+                                                    user.username!!,
+                                                    LatLng(user.location.x!!, user.location.y!!),
+                                                    userCarData.pic,
+                                                    userCarData.serial,
+                                                    userCarData.brand!!,
+                                                    userCarData.model!!,
+                                                    userCarData.freePlace!!,
+                                                    rating,
+                                                    user.userId!!
+                                                )
+                                            )
                                         }
                                     }
-
-                                    if (user.location.x != null && user.location.y != null && userCarData?.serial != null) {
-                                        activeVisibleDriversArray.add(
-                                            Driver(
-                                                user.username!!,
-                                                LatLng(user.location.x!!, user.location.y!!),
-                                                userCarData.pic,
-                                                userCarData.serial,
-                                                userCarData.brand!!,
-                                                userCarData.model!!,
-                                                userCarData.freePlace!!,
-                                                rating,
-                                                user.userId!!
-                                            )
-                                        )
+                                }
+                                gMap.clear()
+                                placeMarkerOnMap(activeVisibleDriversArray, gMap)
+                                try {
+                                    if (url != "") {
+                                        GetDirection(url).execute()
                                     }
+                                    gMap.addMarker(MarkerOptions().position(destinationMarker))
+                                } catch (e: Exception) {
+                                    //
                                 }
-                            }
-                            gMap.clear()
-                            placeMarkerOnMap(activeVisibleDriversArray, gMap)
-                            try {
-                                if(url != "") {
-                                    GetDirection(url).execute()
-                                }
-                                gMap.addMarker(MarkerOptions().position(destinationMarker))
-                            } catch (e: Exception) {
-                                //
                             }
                         }
                     }
                 }
-            }
-        }
-        else if (userData!!.isInProgress) {
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    val activeRequest = Repository.getActiveRequest(userDataId!!, userToken!!)
-                    var driverCarData: CarData? = null
-                    var passengerUserData: UserData? = null
-                    if (activeRequest?.passengerID == userDataId) {
-                        driverCarData = Repository.getCar(activeRequest?.driverID!!, userToken!!)
-                    } else {
-                        passengerUserData = Repository.getUser(activeRequest?.driverID!!, userToken!!)
-                    }
-
-                    withContext(Dispatchers.Main) {
-                        if (driverCarData != null) {
-                            val loc = LatLng(
-                                driverCarData.userData?.location?.x!!,
-                                driverCarData.userData?.location?.y!!
-                            )
-                            val markerOptions = MarkerOptions().position(loc)
-                            val d = resources.getDrawable(R.drawable.ic_map_car)
-                            markerOptions.icon(
-                                BitmapDescriptorFactory.fromBitmap(
-                                    drawableToBitmap(d)
-                                )
-                            )
-                            gMap.addMarker(markerOptions)
+            } else if (userData!!.isInProgress) {
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val activeRequest = Repository.getActiveRequest(userDataId!!, userToken!!)
+                        var driverCarData: CarData? = null
+                        var passengerUserData: UserData? = null
+                        if (activeRequest?.passengerID == userDataId) {
+                            driverCarData =
+                                Repository.getCar(activeRequest?.driverID!!, userToken!!)
                         } else {
-                            val loc = LatLng(
-                                passengerUserData?.location?.x!!,
-                                passengerUserData.location.y!!
-                            )
-                            val markerOptions = MarkerOptions().position(loc)
-                            /*
-                            val imageBytes = Base64.decode(passengerUserData.picture, 0)
-                            val bitmap = BitmapFactory.decodeByteArray(
-                                imageBytes, 0, imageBytes.size
-                            )
-                            markerOptions.icon(
-                                BitmapDescriptorFactory.fromBitmap(
-                                    Bitmap.createScaledBitmap(
-                                        bitmap, 30, 30, false
+                            passengerUserData =
+                                Repository.getUser(activeRequest?.passengerID!!, userToken!!)
+                        }
+
+                        withContext(Dispatchers.Main) {
+                            if (driverCarData != null) {
+                                val loc = LatLng(
+                                    driverCarData.userData?.location?.x!!,
+                                    driverCarData.userData?.location?.y!!
+                                )
+                                val markerOptions = MarkerOptions().position(loc)
+                                val d = resources.getDrawable(R.drawable.ic_map_car)
+                                markerOptions.icon(
+                                    BitmapDescriptorFactory.fromBitmap(
+                                        drawableToBitmap(d)
                                     )
                                 )
-                            )*/
-
-                            val d = resources.getDrawable(R.drawable.ic_map_car)
-                            markerOptions.icon(
-                                BitmapDescriptorFactory.fromBitmap(
-                                    drawableToBitmap(d)
+                                gMap.addMarker(markerOptions)
+                            } else {
+                                val loc = LatLng(
+                                    passengerUserData?.location?.x!!,
+                                    passengerUserData.location.y!!
                                 )
-                            )
-                            gMap.addMarker(markerOptions)
+                                val markerOptions = MarkerOptions().position(loc)
+
+                                val d = resources.getDrawable(R.drawable.ic_user)
+                                markerOptions.icon(
+                                    BitmapDescriptorFactory.fromBitmap(
+                                        drawableToBitmap(d)
+                                    )
+                                )
+                                gMap.addMarker(markerOptions)
+                            }
                         }
                     }
                 }
@@ -541,11 +535,19 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
                 locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER, 10000, 0F, object: LocationListener {
                         override fun onLocationChanged(location: Location) {
-                            userCoords = CoordData(x = location.latitude, y = location.longitude)
-                            lastLocation = location
-                            userData?.location = userCoords
-                            if(!userToken.isNullOrBlank())
-                                sendingCoords()
+                            lifecycleScope.launch {
+                                withContext(Dispatchers.IO){
+                                    userData = Repository.getUser(userDataId!!, userToken!!)
+                                    withContext(Dispatchers.Main){
+                                        userCoords =
+                                            CoordData(x = location.latitude, y = location.longitude)
+                                        lastLocation = location
+                                        userData?.location = userCoords
+                                        if (!userToken.isNullOrBlank())
+                                            sendingCoords()
+                                    }
+                                }
+                            }
                         }
                     }
                 )
@@ -555,11 +557,19 @@ class MapsFragment : Fragment(), GoogleMap.OnMarkerClickListener {
                 locationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER, 10000, 0F, object: LocationListener {
                         override fun onLocationChanged(location: Location) {
-                            userCoords = CoordData(x = location.latitude, y = location.longitude)
-                            lastLocation = location
-                            userData?.location = userCoords
-                            if(!userToken.isNullOrBlank())
-                                sendingCoords()
+                            lifecycleScope.launch {
+                                withContext(Dispatchers.IO){
+                                    userData = Repository.getUser(userDataId!!, userToken!!)
+                                    withContext(Dispatchers.Main){
+                                        userCoords =
+                                            CoordData(x = location.latitude, y = location.longitude)
+                                        lastLocation = location
+                                        userData?.location = userCoords
+                                        if (!userToken.isNullOrBlank())
+                                            sendingCoords()
+                                    }
+                                }
+                            }
                         }
                     }
                 )

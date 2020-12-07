@@ -52,5 +52,7 @@
         android:id="@+id/btnAddCredits"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/login_button"
+        android:textColor="@color/btnTextColor"
         android:text="@string/btn_add_credits"/>
 </LinearLayout>

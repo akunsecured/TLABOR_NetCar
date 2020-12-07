@@ -169,7 +169,7 @@ object Repository {
             val retrofit = RetrofitClientAuth(userToken)
             return retrofit.INSTANCE.getActiveRequest(id)
         } catch (exception: HttpException) {
-            if (exception.code() == 404) {
+            if (exception.code() == 404 || exception.code() == 201) {
                 return null
             }
 
